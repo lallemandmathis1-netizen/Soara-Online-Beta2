@@ -638,6 +638,9 @@ const REWARD_TECHNIQUES = {
           <div class="small">ATK: ${eqStats.atk}</div>
           <div class="small">DEF: ${eqStats.def}</div>
           <div class="small">ESQ: ${eqStats.esq}</div>
+          <div style="height:6px"></div>
+          <button class="btn" id="btnToggleAutoTempoPlayer" style="width:100%;"></button>
+          <div id="autoTempoPlayerStatus" class="small" style="margin-top:4px;"></div>
         </section>
 
         <section class="card playerSheetCard">
@@ -676,6 +679,26 @@ const REWARD_TECHNIQUES = {
         </section>
       </div>
     `);
+    const renderAutoTempoInPlayerSheet = () => {
+      const btn = document.getElementById("btnToggleAutoTempoPlayer");
+      const status = document.getElementById("autoTempoPlayerStatus");
+      if (!btn || !status) return;
+      const enabled = !!(getPlayerSnapshot()?.combatConfig?.autoTempo);
+      btn.textContent = `Tempo automatique: ${enabled ? "ON" : "OFF"}`;
+      status.textContent = enabled
+        ? "Actif: roll Tutoriel/PVE en 1u."
+        : "Inactif: roll standard.";
+    };
+    const toggleAutoTempoInPlayerSheet = () => {
+      playerState.patch((s) => {
+        if (!s.player.combatConfig || typeof s.player.combatConfig !== "object") s.player.combatConfig = {};
+        s.player.combatConfig.autoTempo = !s.player.combatConfig.autoTempo;
+      });
+      renderAutoTempoInPlayerSheet();
+    };
+    const autoTempoBtn = document.getElementById("btnToggleAutoTempoPlayer");
+    if (autoTempoBtn) autoTempoBtn.onclick = toggleAutoTempoInPlayerSheet;
+    renderAutoTempoInPlayerSheet();
   }
 
   function openTech(){
