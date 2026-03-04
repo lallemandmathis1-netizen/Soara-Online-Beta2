@@ -1,6 +1,6 @@
 import { escapeHtml } from "../utils/escapeHtml.js";
 
-export function createPinModal({ modal, getCampaigns, campaignRunner, openCombatScreen, pvpApi }){
+export function createPinModal({ modal, getCampaigns, campaignRunner, openCombatScreen, pvpApi, onCombatLaunch }){
   const ROLL_SPEED_MS = 45;
   let pvpPollingTimer = null;
   let pvpStartTimeout = null;
@@ -31,12 +31,14 @@ export function createPinModal({ modal, getCampaigns, campaignRunner, openCombat
 
     if (pin.kind === "combat_tutorial"){
       modal.close();
+      onCombatLaunch?.("tutorial", pin);
       if (typeof openCombatScreen === "function") openCombatScreen();
       return;
     }
 
     if (pin.kind === "combat_narrative_music"){
       modal.close();
+      onCombatLaunch?.("narrative", pin);
       if (typeof openCombatScreen === "function") {
         openCombatScreen({
           combatType: "narrative",
@@ -55,6 +57,7 @@ export function createPinModal({ modal, getCampaigns, campaignRunner, openCombat
 
     if (pin.kind === "combat_pve"){
       modal.close();
+      onCombatLaunch?.("pve", pin);
       if (typeof openCombatScreen === "function") {
         openCombatScreen({
           combatType: "pve",

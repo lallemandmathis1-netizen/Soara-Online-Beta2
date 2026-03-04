@@ -3,15 +3,17 @@ export const EQUIPMENT_BASE = {
 
   weapon_training_sword: { id: "weapon_training_sword", slot: "rightHand", name: "Epee d'entrainement", atk: 2, def: 0, esq: 0, hpMax: 0, energyMax: 0, regen: 0 },
   offhand_wood_shield: { id: "offhand_wood_shield", slot: "leftHand", name: "Bouclier bois", atk: 0, def: 2, esq: -1, hpMax: 0, energyMax: 0, regen: 0 },
+  offhand_tutorial_shield: { id: "offhand_tutorial_shield", slot: "leftHand", name: "Bouclier de tutoriel", atk: 0, def: 2, esq: 0, hpMax: 0, energyMax: 0, regen: 0 },
   armor_padded: { id: "armor_padded", slot: "armor", name: "Armure matelassee", atk: 0, def: 1, esq: 0, hpMax: 4, energyMax: 0, regen: 0 },
-  accessory_focus_band: { id: "accessory_focus_band", slot: "accessory", name: "Bandeau focus", atk: 0, def: 0, esq: 2, hpMax: 0, energyMax: 1, regen: 0 }
+  accessory_focus_band: { id: "accessory_focus_band", slot: "accessory", name: "Bandeau focus", atk: 0, def: 0, esq: 2, hpMax: 0, energyMax: 1, regen: 0 },
+  accessory_training_gloves: { id: "accessory_training_gloves", slot: "accessory", name: "Gants d'entrainement", atk: 0, def: 0, esq: 1, hpMax: 0, energyMax: 0, regen: 0 }
 };
 
 export const STARTER_EQUIPMENT = {
-  rightHand: "weapon_training_sword",
-  leftHand: "offhand_wood_shield",
-  armor: "armor_padded",
-  accessory: "accessory_focus_band"
+  rightHand: "none",
+  leftHand: "none",
+  armor: "none",
+  accessory: "none"
 };
 
 function resolveItem(id) {
@@ -50,4 +52,3 @@ export function computeEquipmentStats(loadout = {}) {
   }
   return out;
 }
-

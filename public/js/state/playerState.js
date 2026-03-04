@@ -176,7 +176,6 @@ export function createPlayerState({ initialName = "Joueur1" } = {}) {
       }
       s.player.learnedTechniques = [...learned];
       s.player.techniquesBySlot = Array.from({ length: 10 }, (_, i) => (i < 4 ? starter[i] || null : null));
-      s.player.equipment = { ...STARTER_EQUIPMENT };
       s.player.hasStarterKitV2 = true;
     });
   }

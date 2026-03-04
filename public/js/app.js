@@ -31,6 +31,17 @@ let CATALOGUE_MAP = buildCatalogueMap(runtimeTechCatalogue);
 const CAMPAIGN_C01_POS = { x: 0.5, y: 0.58 };
 const PLAYER_SPAWN_POS = { x: 0.515, y: 0.58 };
 const ENABLE_MULTI_MODE = false;
+const PROGRESS_MARKERS = {
+  dialogue: "prog_dialogue_done_v1",
+  tutorial: "prog_t_done_v1",
+  pveU: "prog_u_done_v1",
+  narrativeN: "prog_n_done_v1"
+};
+const REWARD_TECHNIQUES = {
+  tutorial: "base_003",
+  pveU: "base_008",
+  narrativeN: "base_009"
+};
 
   function createNarrativeMusicController() {
   const VOLUME_KEY = "soara_music_volume";
@@ -161,6 +172,7 @@ const ENABLE_MULTI_MODE = false;
   const narrativeMusic = createNarrativeMusicController();
   let musicRequestedByCombatOpen = false;
   let musicStartedForCurrentCombat = false;
+  let pendingProgressCombat = null;
 
   async function tryStartNarrativeMusic() {
     const ok = await narrativeMusic.start();
@@ -221,9 +233,12 @@ const ENABLE_MULTI_MODE = false;
       }
     },
     onClose: () => {
+      const completedStage = pendingProgressCombat;
+      pendingProgressCombat = null;
       narrativeMusic.stop();
       musicRequestedByCombatOpen = false;
       musicStartedForCurrentCombat = false;
+      if (completedStage) void applyProgressionReward(completedStage);
     },
     onOpenSettings: openSettings,
     onCombatSyncPayload: (payload) => {
@@ -333,6 +348,127 @@ const ENABLE_MULTI_MODE = false;
     return String(userState?.username || "").trim().toLowerCase() === "alkane";
   }
 
+  function getUserHistory() {
+    return Array.isArray(userState?.history) ? userState.history : [];
+  }
+
+  function hasHistoryMarker(marker) {
+    return getUserHistory().includes(marker);
+  }
+
+  function getProgressFlags() {
+    return {
+      dialogueDone: hasHistoryMarker(PROGRESS_MARKERS.dialogue),
+      tutorialDone: hasHistoryMarker(PROGRESS_MARKERS.tutorial),
+      pveUDone: hasHistoryMarker(PROGRESS_MARKERS.pveU),
+      narrativeNDone: hasHistoryMarker(PROGRESS_MARKERS.narrativeN)
+    };
+  }
+
+  async function appendHistoryEntries(entries) {
+    const current = getUserHistory();
+    const next = [...current];
+    for (const item of entries) {
+      if (!item || next.includes(item)) continue;
+      next.push(item);
+    }
+    if (next.length === current.length) return true;
+    try {
+      await stateSvc.patchState({ history: next });
+      userState = { ...(userState || {}), history: next };
+      return true;
+    } catch (e) {
+      console.warn("Echec mise a jour historique progression:", e);
+      return false;
+    }
+  }
+
+  function grantTechniqueIfMissing(techId) {
+    if (!techId || !CATALOGUE_MAP.has(techId)) return;
+    playerState.patch((s) => {
+      const learned = Array.isArray(s.player.learnedTechniques) ? [...s.player.learnedTechniques] : [];
+      if (!learned.includes(techId)) learned.push(techId);
+      s.player.learnedTechniques = learned;
+      if (!Array.isArray(s.player.techniquesBySlot)) {
+        s.player.techniquesBySlot = Array.from({ length: Number(s.player.techSlotsTotal || 10) }, () => null);
+      }
+      if (!s.player.techniquesBySlot.includes(techId)) {
+        const slot = s.player.techniquesBySlot.findIndex((id) => !id);
+        if (slot >= 0) s.player.techniquesBySlot[slot] = techId;
+      }
+    });
+  }
+
+  function applyEquipmentReward({ rightHand, leftHand, accessory } = {}) {
+    playerState.patch((s) => {
+      if (!s.player.equipment || typeof s.player.equipment !== "object") s.player.equipment = {};
+      if (rightHand) s.player.equipment.rightHand = rightHand;
+      if (leftHand) s.player.equipment.leftHand = leftHand;
+      if (accessory) s.player.equipment.accessory = accessory;
+    });
+  }
+
+  function refreshProgressionUi() {
+    hud.render(userState || {});
+    if (pins && staticData) pins.render(getRuntimePins(), userState || {});
+  }
+
+  async function applyProgressionReward(stage) {
+    if (stage === "dialogue") {
+      if (!hasHistoryMarker(PROGRESS_MARKERS.dialogue)) {
+        applyEquipmentReward({ rightHand: "weapon_training_sword" });
+        await appendHistoryEntries([PROGRESS_MARKERS.dialogue, "Recompense: epee en bois (+2 ATK)."]);
+        refreshProgressionUi();
+      }
+      return;
+    }
+    if (stage === "tutorial") {
+      if (!hasHistoryMarker(PROGRESS_MARKERS.tutorial)) {
+        applyEquipmentReward({ leftHand: "offhand_tutorial_shield" });
+        grantTechniqueIfMissing(REWARD_TECHNIQUES.tutorial);
+        await syncTechniquesToAccount({ silent: true });
+        await appendHistoryEntries([PROGRESS_MARKERS.tutorial, "Recompense T: technique commune + bouclier (+2 DEF)."]);
+        refreshProgressionUi();
+      }
+      return;
+    }
+    if (stage === "pveU") {
+      if (!hasHistoryMarker(PROGRESS_MARKERS.pveU)) {
+        applyEquipmentReward({ accessory: "accessory_training_gloves" });
+        grantTechniqueIfMissing(REWARD_TECHNIQUES.pveU);
+        await syncTechniquesToAccount({ silent: true });
+        await appendHistoryEntries([PROGRESS_MARKERS.pveU, "Recompense U: technique commune + gants (+1 ESQ)."]);
+        refreshProgressionUi();
+      }
+      return;
+    }
+    if (stage === "narrativeN") {
+      if (!hasHistoryMarker(PROGRESS_MARKERS.narrativeN)) {
+        grantTechniqueIfMissing(REWARD_TECHNIQUES.narrativeN);
+        await syncTechniquesToAccount({ silent: true });
+        await appendHistoryEntries([PROGRESS_MARKERS.narrativeN, "Recompense N: technique commune."]);
+        refreshProgressionUi();
+      }
+    }
+  }
+
+  async function applyProgressionFromHistory() {
+    const flags = getProgressFlags();
+    if (flags.dialogueDone) applyEquipmentReward({ rightHand: "weapon_training_sword" });
+    if (flags.tutorialDone) {
+      applyEquipmentReward({ leftHand: "offhand_tutorial_shield" });
+      grantTechniqueIfMissing(REWARD_TECHNIQUES.tutorial);
+    }
+    if (flags.pveUDone) {
+      applyEquipmentReward({ accessory: "accessory_training_gloves" });
+      grantTechniqueIfMissing(REWARD_TECHNIQUES.pveU);
+    }
+    if (flags.narrativeNDone) {
+      grantTechniqueIfMissing(REWARD_TECHNIQUES.narrativeN);
+    }
+    await syncTechniquesToAccount({ silent: true });
+  }
+
   function normalizeTechniqueProfileFromAccount(stateLike) {
     const learnedSet = new Set(
       (Array.isArray(stateLike?.learnedTechniques) ? stateLike.learnedTechniques : [])
@@ -393,11 +529,13 @@ const ENABLE_MULTI_MODE = false;
   }
 
   function getRuntimePins() {
-    const base = [...(staticData?.pins || [])];
-    const s = playerState.get();
-    if (s.campaign.tutorialDialogueDone && !s.campaign.tutorialCombatDone) {
-      base.push(tutorialCombatPin());
-    }
+    const flags = getProgressFlags();
+    const base = [...(staticData?.pins || [])].filter((pin) => {
+      if (pin?.id === "U") return flags.tutorialDone;
+      if (pin?.id === "N") return flags.pveUDone;
+      return true;
+    });
+    if (flags.dialogueDone && !flags.tutorialDone) base.push(tutorialCombatPin());
     return base;
   }
 
@@ -437,7 +575,12 @@ const ENABLE_MULTI_MODE = false;
     getCampaigns: () => (staticData?.campaigns || {}),
     campaignRunner,
     openCombatScreen: (options) => openCombatScreen(options),
-    pvpApi
+    pvpApi,
+    onCombatLaunch: (stage) => {
+      if (stage === "tutorial") pendingProgressCombat = "tutorial";
+      if (stage === "pve") pendingProgressCombat = "pveU";
+      if (stage === "narrative") pendingProgressCombat = "narrativeN";
+    }
   });
 
   function openReputation(){
@@ -997,7 +1140,7 @@ const ENABLE_MULTI_MODE = false;
         <button class="btn" id="btnOpenCombatRules" style="width:100%; margin-bottom:8px;">Regles de resolution</button>
         <button class="btn" id="btnOpenSymbolsGuide" style="width:100%; margin-bottom:8px;">Reference symboles</button>
         <button class="btn" id="btnOpenTechList" style="width:100%; margin-bottom:8px;">Catalogue technique</button>
-        <button class="btn" id="btnOpenLoreCodex" style="width:100%; margin-bottom:8px;">Codex de campagne</button>
+        ${isAlkane ? `<button class="btn" id="btnOpenLoreCodex" style="width:100%; margin-bottom:8px;">Codex de campagne</button>` : ``}
         <button class="btn" id="btnLogoutInSettings" style="width:100%;">Quitter la session</button>
       </div>
     `);
@@ -1044,7 +1187,29 @@ const ENABLE_MULTI_MODE = false;
       `);
     };
     document.getElementById("btnOpenSymbolsGuide").onclick = () => {
-      const symbolRows = (SYMBOLS_V6_UI || [])
+      const learnedSet = new Set(
+        (Array.isArray(getPlayerSnapshot()?.learnedTechniques) ? getPlayerSnapshot().learnedTechniques : [])
+          .map((x) => (typeof x === "string" ? x : x?.id))
+          .filter(Boolean)
+      );
+      const allowedSymbols = new Set();
+      if (!isAlkane) {
+        for (const id of learnedSet) {
+          const tech = CATALOGUE_MAP.get(id);
+          if (!tech) continue;
+          const tokens = Array.isArray(tech?.tokens) ? tech.tokens : (Array.isArray(tech?.seq) ? tech.seq : []);
+          for (const token of tokens) {
+            const sym = String(typeof token === "string" ? token : token?.sym || "").trim();
+            if (sym) allowedSymbols.add(sym);
+          }
+        }
+      }
+      const rowsSource = (SYMBOLS_V6_UI || []).filter((s) => {
+        if (String(s?.key || "") === "v") return false;
+        if (isAlkane) return true;
+        return allowedSymbols.has(String(s?.key || ""));
+      });
+      const symbolRows = rowsSource
         .filter((s) => String(s?.key || "") !== "v")
         .map((s) => `
         <tr>
@@ -1057,6 +1222,7 @@ const ENABLE_MULTI_MODE = false;
       modal.open("Reference symboles", `
         <div class="card" style="max-height:72vh; overflow-y:auto;">
           <div class="small">Table officielle Soara V6 (moteur actuel)</div>
+          ${isAlkane ? `` : `<div class="small">Affichage limite aux symboles des techniques apprises.</div>`}
           <div style="height:8px"></div>
           <div class="card" style="margin-bottom:8px; overflow-x:auto;">
             <table style="width:100%; border-collapse:collapse;">
@@ -1070,16 +1236,17 @@ const ENABLE_MULTI_MODE = false;
               </thead>
               <tbody>
                 ${symbolRows}
-                <tr>
+                ${isAlkane ? `<tr>
                   <td><b>↓S</b></td>
                   <td>Prefixe de retombee</td>
                   <td style="text-align:right;">+1</td>
                   <td>Si S est une attaque, ajoute +ATK. Sinon, pas d'effet offensif.</td>
-                </tr>
+                </tr>` : ``}
               </tbody>
             </table>
           </div>
-          <div class="card" style="margin-bottom:6px;">
+          ${!isAlkane && rowsSource.length === 0 ? `<div class="small">Aucun symbole visible: apprends une technique pour debloquer la table.</div>` : ``}
+          ${isAlkane ? `<div class="card" style="margin-bottom:6px;">
             <div><b>Prefixes et suffixes V6</b></div>
             <div class="small"><b>/S</b>: protection alliee (+1 energie sur S).</div>
             <div class="small"><b>//S</b>: double protection (+2 energie sur S).</div>
@@ -1093,7 +1260,7 @@ const ENABLE_MULTI_MODE = false;
             <div class="small"><b>[ ]</b>: reflexe (2 symboles, cout x2).</div>
             <div class="small"><b>{ }</b>: symbole joue en l'air (cout x3).</div>
             <div class="small"><b>^ puis ↓S</b>: saut puis retombee prefixee dans la meme technique.</div>
-          </div>
+          </div>` : ``}
         </div>
       `);
     };
@@ -1215,7 +1382,8 @@ const ENABLE_MULTI_MODE = false;
       }
       renderTechList("");
     };
-    document.getElementById("btnOpenLoreCodex").onclick = openLoreCodex;
+    const loreBtn = document.getElementById("btnOpenLoreCodex");
+    if (loreBtn) loreBtn.onclick = openLoreCodex;
     document.getElementById("btnLogoutInSettings").onclick = doLogout;
   }
 
@@ -1224,6 +1392,7 @@ const ENABLE_MULTI_MODE = false;
       modal,
       playerState,
       onDone: () => {
+        void applyProgressionReward("dialogue");
         hud.render(userState || {});
         if (pins && staticData) pins.render(getRuntimePins(), userState || {});
       }
@@ -1315,6 +1484,7 @@ const ENABLE_MULTI_MODE = false;
       s.player.hasStarterKitV2 = !!accountTechProfile.hasStarterKitV2;
     });
     playerState.grantStarterTechniques();
+    await applyProgressionFromHistory();
     await syncTechniquesToAccount({ silent: true });
 
     const isLegacySpawnOnCampaignPin = userState.pos
@@ -1358,6 +1528,7 @@ const ENABLE_MULTI_MODE = false;
         `);
         document.getElementById("btnStartTutorialCombat").onclick = () => {
           modal.close();
+          pendingProgressCombat = "tutorial";
           openCombatScreen({ enemyPreset: { name: "Gobelin" } });
         };
         document.getElementById("btnLaterTutorialCombat").onclick = () => modal.close();
@@ -1370,7 +1541,7 @@ const ENABLE_MULTI_MODE = false;
 
     hud.render(userState);
     pins.render(getRuntimePins(), userState);
-    if (!playerState.get().campaign.tutorialDialogueDone) {
+    if (!hasHistoryMarker(PROGRESS_MARKERS.dialogue)) {
       openCampaignTutorDialogue();
     }
   }
