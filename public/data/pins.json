@@ -1,0 +1,45 @@
+{
+  "version": 1,
+  "pins": [
+    {
+      "id": "C",
+      "name": "C - Campagne 01",
+      "kind": "campaign",
+      "campaignId": "c-01",
+      "x": 0.5,
+      "y": 0.58,
+      "icon": "C",
+      "enabled": true
+    },
+    {
+      "id": "N",
+      "name": "N - Combat narratif",
+      "kind": "combat_narrative_music",
+      "scenarioId": "narrative_music_v1",
+      "x": 0.535,
+      "y": 0.585,
+      "icon": "N",
+      "enabled": true
+    },
+    {
+      "id": "P",
+      "name": "P - Combat PVP",
+      "kind": "combat_pvp",
+      "scenarioId": "pvp_classic_v1",
+      "x": 0.562,
+      "y": 0.585,
+      "icon": "P",
+      "enabled": true
+    },
+    {
+      "id": "U",
+      "name": "U - Combat PVE",
+      "kind": "combat_pve",
+      "scenarioId": "pve_classic_v1",
+      "x": 0.59,
+      "y": 0.585,
+      "icon": "U",
+      "enabled": true
+    }
+  ]
+}

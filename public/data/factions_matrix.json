@@ -1,0 +1,38 @@
+﻿{
+  "id": "factions_matrix",
+  "title": "Matrice factions",
+  "sections": [
+    {
+      "id": "FAC_001",
+      "title": "Bazeides",
+      "points": [
+        "Honneur, foi, duel moral.",
+        "Style: parade/garde/frontal."
+      ]
+    },
+    {
+      "id": "FAC_002",
+      "title": "Federation Mercenaire",
+      "points": [
+        "Contrat, profit, optimisation.",
+        "Style: adaptation, efficience energie."
+      ]
+    },
+    {
+      "id": "FAC_003",
+      "title": "Roor",
+      "points": [
+        "Force, survie, endurance.",
+        "Style: pression directe durable."
+      ]
+    },
+    {
+      "id": "FAC_004",
+      "title": "Royaume Gobelin",
+      "points": [
+        "Caste, coordination.",
+        "Style: rythme court, subjugation."
+      ]
+    }
+  ]
+}

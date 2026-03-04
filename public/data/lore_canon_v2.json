@@ -1,0 +1,49 @@
+﻿{
+  "id": "lore_canon_v2",
+  "title": "Lore canonique V2",
+  "sections": [
+    {
+      "id": "CANON_001",
+      "title": "Identite du monde",
+      "points": [
+        "Monde feodal, martial, politique, strategique.",
+        "Pas de poudre, pas de technologie moderne, pas de magie flashy.",
+        "Decision > hasard."
+      ]
+    },
+    {
+      "id": "CANON_002",
+      "title": "Aura",
+      "points": [
+        "L'Aura est une discipline superieure, pas un sort.",
+        "Maitrise de l'intention, du rythme et de l'energie interne.",
+        "Permet sequences plus complexes et meilleure gestion d'energie."
+      ]
+    },
+    {
+      "id": "CANON_003",
+      "title": "Races",
+      "points": [
+        "Humain: evolutif, polyvalent, fort potentiel technique.",
+        "Gobelin: coordination, pression courte, vie breve.",
+        "Orc: endurance, impact frontal, perseverance."
+      ]
+    },
+    {
+      "id": "CANON_004",
+      "title": "Puissances",
+      "points": [
+        "Bazeides (SO), Federation Mercenaire (SE), Roor (NO), Royaume Gobelin (NE)."
+      ]
+    },
+    {
+      "id": "CANON_005",
+      "title": "Philosophie combat",
+      "points": [
+        "Technique = choregraphie.",
+        "Chaque sequence laisse une trace.",
+        "Le log est une archive analytique."
+      ]
+    }
+  ]
+}

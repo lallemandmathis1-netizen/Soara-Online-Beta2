@@ -1,0 +1,68 @@
+﻿<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Soara Online</title>
+  <link rel="stylesheet" href="/style.css" />
+</head>
+<body data-auth="1" data-map-only="0">
+  <div id="betaBadge">SOARA ONLINE BETA 2</div>
+  <div id="screenFrame"></div>
+  <div id="canvasWrap"></div>
+  <div id="mapLegend" aria-hidden="true">
+    <span><b>X</b> Joueur</span>
+    <span><b>C</b> Campagne</span>
+    <span><b>M</b> Mentor</span>
+    <span><b>T</b> Tutoriel</span>
+  </div>
+
+  <div id="authGate" class="panel auth-gate" style="display:none;">
+    <div class="auth-title">Soara Online</div>
+    <div class="small">Acces au domaine de Soara.</div>
+    <div style="height:12px"></div>
+    <div class="row">
+      <div class="card" style="flex:1; min-width:260px;">
+        <div><b>Compte</b></div>
+        <input id="authUser" placeholder="Pseudo" />
+        <input id="authPass" type="password" placeholder="Mot de passe (>=6)" />
+        <div style="height:10px"></div>
+        <div class="row" style="gap:0;">
+          <button class="btn" id="btnLogin" style="flex:1;">Se connecter</button>
+          <button class="btn" id="btnRegister" style="flex:1;">Creer</button>
+        </div>
+        <div id="authMsg" class="small" style="margin-top:10px;"></div>
+      </div>
+    </div>
+  </div>
+
+  <div id="hudTop" style="display:none;">
+    <div class="hudBox" id="hudSettings">
+      <button class="btn" id="btnSettings" title="Conseil de campagne" aria-label="Conseil de campagne">&#9881;</button>
+    </div>
+    <div class="hudBox" id="hudMap">
+      <button class="btn" id="btnMap" title="Mode carte" aria-label="Mode carte">CARTE OFF</button>
+    </div>
+    <div class="hudBox" id="hudName">Nom</div>
+    <div class="hudBox" id="hudLocation">Emplacement</div>
+    <div class="hudBox" id="hudPlayer">JOUEUR</div>
+    <div class="hudBox" id="hudRace">Race</div>
+    <div class="hudBox" id="hudHP">PV</div>
+    <div class="hudBox" id="hudReputation">Reputation</div>
+    <div class="hudBox" id="hudTech">Bibliotheque tactique</div>
+    <div class="hudBox" id="hudHistory">Historique</div>
+    <button class="hudBox clickable" id="hudInventory" type="button">Inventaire</button>
+  </div>
+
+  <div id="modalBackdrop"></div>
+  <div id="modal" class="panel">
+    <div class="modalHead">
+      <div id="modalTitle" class="auth-title">Fenetre</div>
+      <button id="btnClose" class="btn danger">X</button>
+    </div>
+    <div id="modalBody"></div>
+  </div>
+
+  <script type="module" src="/js/app.js"></script>
+</body>
+</html>

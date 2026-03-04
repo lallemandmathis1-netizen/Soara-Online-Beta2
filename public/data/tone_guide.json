@@ -1,0 +1,24 @@
+﻿{
+  "id": "tone_guide",
+  "title": "Guide de ton",
+  "sections": [
+    {
+      "id": "TONE_001",
+      "title": "Style",
+      "points": [
+        "Clair, martial, concret.",
+        "Phrases courtes a moyennes.",
+        "Action -> consequence."
+      ]
+    },
+    {
+      "id": "TONE_002",
+      "title": "A eviter",
+      "points": [
+        "Grandiloquence fantasy.",
+        "Mystique flou.",
+        "Texte UI decoratif sans information."
+      ]
+    }
+  ]
+}

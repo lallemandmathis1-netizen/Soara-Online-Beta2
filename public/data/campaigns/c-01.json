@@ -1,0 +1,213 @@
+{
+  "id": "c-01",
+  "title": "C-01 - Interrogatoire (Taverne)",
+  "start": "n0",
+  "nodes": {
+    "n0": {
+      "text": [
+        { "id": "C01_INTRO_001", "text": "Deux soldats bazeides te bloquent: 'Ton nom ?'" },
+        { "id": "C01_INTRO_002", "text": "A Soara, une hesitation se paie vite." }
+      ],
+      "choices": [
+        { "id": "give_name", "label": "Donner un nom", "next": "name" },
+        { "id": "refuse", "label": "Refuser", "next": "attitude" }
+      ]
+    },
+    "name": {
+      "text": [
+        { "id": "C01_NAME_001", "text": "Entre ton nom." }
+      ],
+      "input": {
+        "field": "name",
+        "placeholder": "Ton nom..."
+      },
+      "choices": [
+        { "id": "next", "label": "Continuer", "next": "attitude" }
+      ]
+    },
+    "attitude": {
+      "text": [
+        { "id": "C01_ATT_001", "text": "Le garde te jauge: 'Quel ton prends-tu ici ?'" },
+        { "id": "C01_ATT_002", "text": "Ton attitude influence deja ton profil et la reaction locale." }
+      ],
+      "choices": [
+        {
+          "id": "att_prudent",
+          "label": "Prudent",
+          "effects": {
+            "tagsProfil": { "prudence": 2, "agressivite": 0, "tempo": 1 },
+            "reputationLocale": 1,
+            "historiqueC01": ["Interrogatoire: approche prudente."]
+          },
+          "next": "race"
+        },
+        {
+          "id": "att_frontal",
+          "label": "Frontal",
+          "effects": {
+            "tagsProfil": { "prudence": 0, "agressivite": 2, "tempo": 1 },
+            "reputationLocale": 0,
+            "historiqueC01": ["Interrogatoire: approche frontale."]
+          },
+          "next": "race"
+        },
+        {
+          "id": "att_manipulateur",
+          "label": "Manipulateur",
+          "effects": {
+            "tagsProfil": { "prudence": 1, "agressivite": 0, "tempo": 2 },
+            "reputationLocale": -1,
+            "historiqueC01": ["Interrogatoire: approche manipulatrice."]
+          },
+          "next": "race"
+        }
+      ]
+    },
+    "race": {
+      "text": [
+        { "id": "C01_RACE_001", "text": "'Espece ?'" },
+        { "id": "C01_RACE_002", "text": "Le choix de race influence ton rythme de combat." }
+      ],
+      "choices": [
+        {
+          "id": "human",
+          "label": "Humain",
+          "effects": { "race": "Humain" },
+          "next": "faction"
+        },
+        {
+          "id": "goblin",
+          "label": "Gobelin",
+          "effects": { "race": "Gobelin" },
+          "next": "faction"
+        },
+        {
+          "id": "orc",
+          "label": "Orc",
+          "effects": { "race": "Orc" },
+          "next": "faction"
+        }
+      ]
+    },
+    "faction": {
+      "text": [
+        { "id": "C01_FACTION_001", "text": "'D'ou viens-tu ?'" },
+        { "id": "C01_FACTION_002", "text": "A Soara, la politique suit toujours le combat." }
+      ],
+      "choices": [
+        {
+          "id": "bazeides",
+          "label": "Bazeides",
+          "effects": { "faction": "Bazeides" },
+          "next": "mentor"
+        },
+        {
+          "id": "federation",
+          "label": "Federation",
+          "effects": { "faction": "Federation" },
+          "next": "mentor"
+        },
+        {
+          "id": "roor",
+          "label": "Roor",
+          "effects": { "faction": "Roor" },
+          "next": "mentor"
+        },
+        {
+          "id": "gobelins",
+          "label": "Royaume Gobelin",
+          "effects": { "faction": "Gobelins" },
+          "next": "mentor"
+        }
+      ]
+    },
+    "mentor": {
+      "text": [
+        { "id": "C01_MENTOR_001", "text": "Un homme s'assoit: 'Je suis ton mentor.'" },
+        { "id": "C01_MENTOR_002", "text": "'Le monde ne pardonne pas l'indecision.'" },
+        { "id": "C01_MENTOR_003", "text": "'Ton rythme dit deja qui tu es.'" }
+      ],
+      "choices": [
+        {
+          "id": "accept",
+          "label": "Accepter",
+          "next": "loadout"
+        }
+      ]
+    },
+    "loadout": {
+      "text": [
+        { "id": "C01_LOADOUT_001", "text": "'Avant ton premier duel, choisis une discipline de base.'" },
+        { "id": "C01_LOADOUT_002", "text": "Chaque voie donne 3 techniques de base et 1 reflexe immediat." }
+      ],
+      "choices": [
+        {
+          "id": "path_bazeides",
+          "label": "Voie Bazeide (honneur et garde)",
+          "effects": {
+            "grantLoadout": {
+              "techniques": ["base_guard", "base_parry", "base_prudent"],
+              "reflex": "r_base_001"
+            }
+          },
+          "next": "tutorial"
+        },
+        {
+          "id": "path_federation",
+          "label": "Voie Mercenaire (lecture et contrat)",
+          "effects": {
+            "grantLoadout": {
+              "techniques": ["base_observe", "base_feint", "base_quick"],
+              "reflex": "r_base_002"
+            }
+          },
+          "next": "tutorial"
+        },
+        {
+          "id": "path_roor",
+          "label": "Voie Roor (ancrage et impact)",
+          "effects": {
+            "grantLoadout": {
+              "techniques": ["base_turtle", "base_heavy", "base_double"],
+              "reflex": "r_base_004"
+            }
+          },
+          "next": "tutorial"
+        }
+      ]
+    },
+    "tutorial": {
+      "text": [
+        { "id": "C01_TUTO_001", "text": "Tutoriel rapide: energie, technique, tempo, log." },
+        { "id": "C01_TUTO_002", "text": "Choisis une technique en attente puis valide ton intention." }
+      ],
+      "choices": [
+        { "id": "tuto_ok", "label": "J'ai compris", "next": "debrief" }
+      ]
+    },
+    "debrief": {
+      "text": [
+        { "id": "C01_DEBRIEF_001", "text": "Mentor: 'Je vois ton style. Ce n'est pas du hasard, c'est ta decision.'" },
+        { "id": "C01_DEBRIEF_002", "text": "Tu recois une recommandation de branche technique et une direction locale." }
+      ],
+      "choices": [
+        {
+          "id": "debrief_continue",
+          "label": "Continuer",
+          "effects": {
+            "historiqueC01": ["Debrief mentor: branche recommandee et destination locale suggeree."],
+            "complete": true
+          },
+          "next": "end"
+        }
+      ]
+    },
+    "end": {
+      "text": [
+        { "id": "C01_END_001", "text": "Fin C01. Ton style est fixe pour le premier combat." },
+        { "id": "C01_END_002", "text": "Carte locale debloquee. Destination suggeree: Quartier du Pont Bas." }
+      ],
+      "choices": []
+    }
+  }
+}

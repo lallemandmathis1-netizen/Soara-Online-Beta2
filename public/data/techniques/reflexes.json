@@ -1,0 +1,136 @@
+{
+  "version": 1,
+  "tier": "reflex",
+  "items": [
+    {
+      "id": "r_base_001",
+      "name": "Riposte Instinctive",
+      "category": "reflex",
+      "symbols": [
+        "PARRY",
+        "X"
+      ],
+      "costMultiplier": 2,
+      "description": "Parade suivie d'une frappe rapide.",
+      "utility": "Punit les attaques frontales.",
+      "drawback": "Inutile si l'attaque adverse est faible."
+    },
+    {
+      "id": "r_base_002",
+      "name": "Recul Protecteur",
+      "category": "reflex",
+      "symbols": [
+        "ROLL",
+        "GUARD"
+      ],
+      "costMultiplier": 2,
+      "description": "Esquive suivie d'un bloc.",
+      "utility": "Securise face a pression moyenne.",
+      "drawback": "Tres energivore."
+    },
+    {
+      "id": "r_base_003",
+      "name": "Frappe Reactive",
+      "category": "reflex",
+      "symbols": [
+        "X",
+        "<>"
+      ],
+      "costMultiplier": 2,
+      "description": "Explosion offensive en reponse immediate.",
+      "utility": "Met une pression brutale sur ouverture.",
+      "drawback": "Aucune protection."
+    },
+    {
+      "id": "r_base_004",
+      "name": "Contre Mesure",
+      "category": "reflex",
+      "symbols": [
+        "PARRY",
+        "GUARD"
+      ],
+      "costMultiplier": 2,
+      "description": "Parade suivie d'un maintien defensif.",
+      "utility": "Tient la ligne sur engagement frontal.",
+      "drawback": "Depend du timing adverse."
+    },
+    {
+      "id": "r_base_005",
+      "name": "Roulade d'Urgence",
+      "category": "reflex",
+      "symbols": [
+        "ROLL",
+        "O"
+      ],
+      "costMultiplier": 2,
+      "description": "Roulade rapide pour casser la pression.",
+      "utility": "Repositionne et absorbe le tempo.",
+      "drawback": "Ne protege pas contre attaques multiples."
+    },
+    {
+      "id": "r_base_006",
+      "name": "Protection Spontanee",
+      "category": "reflex",
+      "symbols": [
+        "BULWARK",
+        "GUARD"
+      ],
+      "costMultiplier": 2,
+      "description": "Blocage lourd instantane.",
+      "utility": "Tres fort contre burst direct.",
+      "drawback": "Pas de contre-pression."
+    },
+    {
+      "id": "r_base_007",
+      "name": "Lecture Soudaine",
+      "category": "reflex",
+      "symbols": [
+        "?",
+        "X"
+      ],
+      "costMultiplier": 2,
+      "description": "Observation rapide suivie d'une attaque ciblee.",
+      "utility": "Coupe les routines adverses.",
+      "drawback": "Fragile si mal anticipe."
+    },
+    {
+      "id": "r_base_008",
+      "name": "Riposte Orc",
+      "category": "reflex",
+      "symbols": [
+        "<>",
+        "X"
+      ],
+      "costMultiplier": 2,
+      "description": "Brutalite immediate.",
+      "utility": "Punition massive sur fenetre courte.",
+      "drawback": "Tres couteux."
+    },
+    {
+      "id": "r_base_009",
+      "name": "Discipline Bazeide",
+      "category": "reflex",
+      "symbols": [
+        "GUARD",
+        "X"
+      ],
+      "costMultiplier": 2,
+      "description": "Defense ordonnee suivie d'un coup precis.",
+      "utility": "Stable en duel technique.",
+      "drawback": "Puissance moderee."
+    },
+    {
+      "id": "r_base_010",
+      "name": "Esquive Gobeline",
+      "category": "reflex",
+      "symbols": [
+        "ROLL",
+        "X"
+      ],
+      "costMultiplier": 2,
+      "description": "Esquive laterale suivie d'une frappe rapide.",
+      "utility": "Excellent contre cible isolee.",
+      "drawback": "Inefficace en surnombre."
+    }
+  ]
+}

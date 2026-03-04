@@ -1,0 +1,114 @@
+{
+  "version": 2,
+  "tier": "expert",
+  "items": [
+    {
+      "id": "uniq_aura_script",
+      "name": "Ecriture d'Aura",
+      "seq": [
+        "?",
+        "PARRY",
+        "X",
+        "FINAL",
+        "?",
+        "PARRY",
+        "X"
+      ],
+      "lore": "Le combat devient texte vivant.",
+      "description": "Technique signature Aura.",
+      "rarity": "epic",
+      "category": "offense",
+      "tier": "expert"
+    },
+    {
+      "id": "uniq_rewriter_hint",
+      "name": "Indice Reecrivain",
+      "seq": [
+        "O",
+        "!",
+        "PARRY",
+        "FINAL",
+        "O",
+        "!",
+        "PARRY"
+      ],
+      "lore": "Briser puis reimposer le tempo.",
+      "description": "Rare et exigeante.",
+      "rarity": "epic",
+      "category": "offense",
+      "tier": "expert"
+    },
+    {
+      "id": "uniq_bazeide_ordo",
+      "name": "Ordalie bazeide",
+      "seq": [
+        "GUARD",
+        "PARRY",
+        "FINAL",
+        "GUARD",
+        "PARRY",
+        "FINAL",
+        "BULWARK"
+      ],
+      "lore": "Jugement par duel moral.",
+      "description": "Execution d'honneur.",
+      "rarity": "epic",
+      "category": "defense",
+      "tier": "expert"
+    },
+    {
+      "id": "uniq_contract_black",
+      "name": "Contrat noir",
+      "seq": [
+        "?",
+        "ROLL",
+        "!",
+        "FINAL",
+        "?",
+        "ROLL",
+        "!"
+      ],
+      "lore": "Un seul echange, zero hesitation.",
+      "description": "Assassinat technique.",
+      "rarity": "legendary",
+      "category": "offense",
+      "tier": "expert"
+    },
+    {
+      "id": "uniq_roor_ten",
+      "name": "Dixieme tournoi",
+      "seq": [
+        "BULWARK",
+        "<>",
+        "PARRY",
+        "X",
+        "BULWARK",
+        "<>",
+        "PARRY"
+      ],
+      "lore": "Legitimite par endurance.",
+      "description": "Impact de roi orc.",
+      "rarity": "legendary",
+      "category": "defense",
+      "tier": "expert"
+    },
+    {
+      "id": "uniq_uruntal_grand",
+      "name": "Grand Marais",
+      "seq": [
+        "FEINT",
+        "~",
+        "VULN",
+        "X",
+        "FEINT",
+        "~",
+        "VULN"
+      ],
+      "lore": "Saturer puis punir.",
+      "description": "Style collectif gobelin.",
+      "rarity": "rare",
+      "category": "offense",
+      "tier": "expert"
+    }
+  ]
+}

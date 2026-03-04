@@ -1,0 +1,186 @@
+{
+  "version": 2,
+  "tier": "advanced",
+  "items": [
+    {
+      "id": "adv_human_lecture",
+      "name": "Lecture d'intention",
+      "seq": [
+        "?",
+        "FEINT",
+        "PARRY",
+        "X"
+      ],
+      "lore": "Maitrise humaine de la decision.",
+      "description": "Controle de tempo avance.",
+      "rarity": "uncommon",
+      "category": "offense",
+      "tier": "advanced"
+    },
+    {
+      "id": "adv_human_ascent",
+      "name": "Trame d'ascension",
+      "seq": [
+        "O",
+        "^",
+        "v",
+        "X"
+      ],
+      "lore": "Premiere marche vers l'Aura.",
+      "description": "Mobilite puis impact.",
+      "rarity": "common",
+      "category": "evasion",
+      "tier": "advanced"
+    },
+    {
+      "id": "adv_goblin_subjug",
+      "name": "Subjugation rapide",
+      "seq": [
+        "!",
+        "X",
+        "VULN",
+        "!"
+      ],
+      "lore": "Forcer la faiblesse adverse.",
+      "description": "Pression punitive.",
+      "rarity": "uncommon",
+      "category": "offense",
+      "tier": "advanced"
+    },
+    {
+      "id": "adv_goblin_swarm",
+      "name": "Nuee coordonnee",
+      "seq": [
+        "X",
+        "ROLL",
+        "X",
+        "FEINT"
+      ],
+      "lore": "Coordination en chaine.",
+      "description": "Attaque mobile.",
+      "rarity": "common",
+      "category": "offense",
+      "tier": "advanced"
+    },
+    {
+      "id": "adv_orc_royal",
+      "name": "Defi royal",
+      "seq": [
+        "BULWARK",
+        "PARRY",
+        "<>",
+        "BULWARK"
+      ],
+      "lore": "Style des tournois de Roor.",
+      "description": "Duel lourd.",
+      "rarity": "epic",
+      "category": "defense",
+      "tier": "advanced"
+    },
+    {
+      "id": "adv_orc_breaker",
+      "name": "Briseur de ligne",
+      "seq": [
+        "GUARD",
+        "X",
+        "FINAL",
+        "GUARD"
+      ],
+      "lore": "Percer en restant stable.",
+      "description": "Finish frontal.",
+      "rarity": "uncommon",
+      "category": "offense",
+      "tier": "advanced"
+    },
+    {
+      "id": "adv_bazeide_vow",
+      "name": "Serment de lame",
+      "seq": [
+        "PARRY",
+        "X",
+        "GUARD",
+        "FINAL"
+      ],
+      "lore": "Honneur, lecture, execution.",
+      "description": "Cycle duel.",
+      "rarity": "uncommon",
+      "category": "offense",
+      "tier": "advanced"
+    },
+    {
+      "id": "adv_bazeide_wall",
+      "name": "Rempart de foi",
+      "seq": [
+        "GUARD",
+        "GUARD",
+        "PARRY",
+        "X"
+      ],
+      "lore": "Tenir avant de riposter.",
+      "description": "Defense progressive.",
+      "rarity": "common",
+      "category": "defense",
+      "tier": "advanced"
+    },
+    {
+      "id": "adv_fed_opt",
+      "name": "Optimisation froide",
+      "seq": [
+        "?",
+        "O",
+        "ROLL",
+        "X"
+      ],
+      "lore": "Pragmatisme mercenaire.",
+      "description": "Efficience energie.",
+      "rarity": "uncommon",
+      "category": "economy",
+      "tier": "advanced"
+    },
+    {
+      "id": "adv_fed_clause",
+      "name": "Clause punitive",
+      "seq": [
+        "?",
+        "PARRY",
+        "X",
+        "!"
+      ],
+      "lore": "Contrat execute sans hesitation.",
+      "description": "Contre calculateur.",
+      "rarity": "uncommon",
+      "category": "offense",
+      "tier": "advanced"
+    },
+    {
+      "id": "adv_uruntal_tide",
+      "name": "Maree d'Uruntal",
+      "seq": [
+        "ROLL",
+        "~",
+        "X",
+        "O"
+      ],
+      "lore": "Pression humide et continue.",
+      "description": "Degats avec tempo.",
+      "rarity": "uncommon",
+      "category": "offense",
+      "tier": "advanced"
+    },
+    {
+      "id": "adv_uruntal_queen",
+      "name": "Ordre de Reine",
+      "seq": [
+        "?",
+        "FEINT",
+        "X",
+        "VULN"
+      ],
+      "lore": "Coordination de caste.",
+      "description": "Controle et punition.",
+      "rarity": "uncommon",
+      "category": "offense",
+      "tier": "advanced"
+    }
+  ]
+}

@@ -1,0 +1,32 @@
+﻿{
+  "id": "lore_to_gameplay",
+  "title": "Lore vers gameplay",
+  "sections": [
+    {
+      "id": "L2G_001",
+      "title": "Principes",
+      "points": [
+        "Decision produit consequence.",
+        "Energie est une contrainte centrale.",
+        "Tempo est une arme."
+      ]
+    },
+    {
+      "id": "L2G_002",
+      "title": "Traduction races",
+      "points": [
+        "Humain: flexibilite technique.",
+        "Gobelin: pression rapide, adaptabilite.",
+        "Orc: mitigation, endurance, frontal."
+      ]
+    },
+    {
+      "id": "L2G_003",
+      "title": "Combat",
+      "points": [
+        "Intention -> validation -> resolution deterministe -> log.",
+        "Le joueur doit pouvoir expliquer sa victoire ou sa defaite."
+      ]
+    }
+  ]
+}

@@ -1,0 +1,26 @@
+﻿{
+  "id": "campaign_c01_flow",
+  "title": "Campagne C01",
+  "sections": [
+    {
+      "id": "C01F_001",
+      "title": "Boucle",
+      "points": [
+        "Interrogatoire.",
+        "Mentor.",
+        "Premier combat gobelin.",
+        "Debrief consequence."
+      ]
+    },
+    {
+      "id": "C01F_002",
+      "title": "Variables persistantes",
+      "points": [
+        "tags_profil",
+        "reputation_locale",
+        "historique_c01",
+        "loadout_technique"
+      ]
+    }
+  ]
+}

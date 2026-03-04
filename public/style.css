@@ -1,0 +1,1215 @@
+﻿:root{
+  --paper:#f6f2e8;
+  --ink:#374151;      /* gris fonce */
+  --inkLight:#9ca3af; /* gris clair */
+  --mapUiBg:#e5e7eb;
+  --blue:#2563eb;
+  --danger:#ef4444;
+  --yellow:#eab308;
+  --u: 14px;
+}
+*{ box-sizing:border-box; }
+html,body{ height:100%; margin:0; font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial; }
+body{
+  background-color: var(--paper);
+  background-image:
+    linear-gradient(to right, rgba(156,163,175,0.22) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(156,163,175,0.22) 1px, transparent 1px);
+  background-size: 40px 40px;
+  overflow:hidden;
+  cursor: default;
+}
+
+#betaBadge{
+  position: fixed;
+  top: 10px;
+  right: 12px;
+  z-index: 80;
+  border: 1px solid var(--inkLight);
+  background: rgba(255,255,255,0.9);
+  color: var(--ink);
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  padding: 4px 8px;
+  pointer-events: none;
+}
+
+#screenFrame{
+  position: fixed;
+  inset: 0;
+  border: none;
+  pointer-events: none;
+  z-index: 40;
+}
+
+#canvasWrap{
+  position: fixed;
+  inset: 0;
+  z-index: 1;
+}
+
+#mapLegend{
+  position: fixed;
+  left: 14px;
+  bottom: 14px;
+  z-index: 35;
+  display: flex;
+  gap: 10px;
+  padding: 6px 10px;
+  border: 1px solid var(--inkLight);
+  background: rgba(255,255,255,0.82);
+  font-size: 12px;
+  line-height: 1;
+}
+
+#mapLegend span{
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+#mapLegend b{
+  min-width: 16px;
+  text-align: center;
+}
+
+.panel{
+  border:1px solid var(--inkLight);
+  background: rgba(255,255,255,0.72);
+  padding:12px;
+}
+
+.small{ font-size: 13px; opacity: 0.82; }
+.row{ display:flex; gap:12px; flex-wrap:wrap; }
+.card{ border:1px solid var(--inkLight); background: rgba(255,255,255,0.72); padding:10px; }
+
+input, textarea{
+  width:100%;
+  border:2px solid var(--ink);
+  padding:10px;
+  background: rgba(255,255,255,0.95);
+  font-size:16px;
+  margin-top:8px;
+}
+
+.btn{
+  border:1px solid var(--inkLight);
+  background: transparent;
+  padding:12px 10px;
+  min-height:48px;
+  font-size:15px;
+  border-radius:0;
+}
+.btn:enabled{
+  border-color: var(--blue);
+  cursor:pointer;
+}
+.btn:disabled{
+  border-color: var(--inkLight);
+  color: rgba(55,65,81,0.55);
+  background-image: repeating-linear-gradient(
+    135deg,
+    rgba(156,163,175,0.35) 0px,
+    rgba(156,163,175,0.35) 6px,
+    rgba(255,255,255,0.00) 6px,
+    rgba(255,255,255,0.00) 12px
+  );
+  cursor: default;
+}
+
+.btn.danger{ background: var(--danger); color: white; border-color: var(--danger); }
+
+.auth-gate{
+  position: fixed;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: min(720px, calc(100vw - 60px));
+  z-index: 50;
+}
+.auth-title{ font-size: 20px; font-weight: 900; }
+
+#hudTop{
+  position: fixed;
+  top: 10px;
+  left: 10px;
+  right: 10px;
+  z-index: 30;
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: 1fr;
+  gap: 1px;
+}
+.hudBox{
+  border:3px solid var(--inkLight);
+  background: var(--mapUiBg);
+  padding:8px 10px;
+  min-height:54px;
+}
+#hudActions{
+  display:flex;
+  gap:1px;
+  justify-content:flex-end;
+  align-items:stretch;
+}
+#hudActions .btn{ min-width: 160px; }
+#hudActions .btn + .btn{ margin-left:0; }
+
+#modalBackdrop{
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.25);
+  z-index: 60;
+  display:none;
+}
+#modal{
+  position: fixed;
+  left: 50%;
+  top: 52%;
+  transform: translate(-50%, -50%);
+  width: min(980px, calc(100vw - 60px));
+  max-height: min(820px, calc(100vh - 90px));
+  overflow-y: hidden;
+  overflow-x: auto;
+  z-index: 70;
+  display:none;
+}
+.modalHead{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+  border-bottom:2px solid var(--ink);
+  padding-bottom:8px;
+  margin-bottom:10px;
+}
+
+/* UI: tout dans les cadres */
+#hudTop{ grid-auto-columns: 1fr; }
+#hudTop .hudBox{ display:flex; align-items:center; }
+#hudRaceFaction, #hudMoney{ font-size: 14px; opacity: 0.9; }
+
+
+/* === HUD v2 (croquis) === */
+#hudTop{
+  position: fixed;
+  top: 10px;
+  left: 10px;
+  right: 10px;
+  z-index: 30;
+  display: grid;
+  grid-template-columns: 54px 96px repeat(9, minmax(120px, 1fr));
+  gap: 1px;
+  padding-left: 0;
+}
+
+#hudTop .hudBox{
+  border: 3px solid var(--inkLight);
+  background: #ffffff;
+  padding: 8px 10px;
+  min-height: 54px;
+  display:flex;
+  align-items:center;
+  justify-content: space-between;
+  overflow:hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+#hudTop .hudBox.clickable{
+  cursor:pointer;
+  border-color: var(--blue);
+  background: #ffffff;
+}
+
+#hudTop .hudBox .label{
+  font-weight: 800;
+  margin-right: 10px;
+}
+#hudTop .hudBox .value{
+  opacity: 0.92;
+  font-size: 14px;
+}
+
+#hudInventory{
+  padding: 6px 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+}
+
+.hudInvCard{
+  width: 100%;
+  display: grid;
+  grid-template-rows: auto auto auto;
+  gap: 4px;
+}
+
+.hudInvTitle{
+  font-weight: 900;
+  font-size: 12px;
+  letter-spacing: 0.06em;
+}
+
+.hudInvSectionTitle{
+  font-size: 11px;
+  opacity: 0.9;
+  font-weight: 700;
+}
+
+.hudInvEquipGrid{
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  grid-template-rows: repeat(2, 26px);
+  gap: 4px;
+}
+
+.hudInvBagGrid{
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: repeat(3, 26px);
+  gap: 4px;
+}
+
+.invPanelSection{
+  border: 1px solid var(--inkLight);
+  padding: 8px;
+  background: rgba(255,255,255,0.6);
+}
+
+.invPanelLabel{
+  font-size: 12px;
+  font-weight: 700;
+  margin-bottom: 6px;
+}
+
+.invGrid{
+  display:grid;
+  grid-template-columns: 26px 26px;
+  grid-template-rows: 26px 26px;
+  gap: 4px;
+}
+
+.invSlot{
+  width:26px; height:26px;
+  border:2px solid var(--ink);
+  background: rgba(255,255,255,0.35);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size: 14px;
+}
+
+.soaraSymbol{
+  font-family: "Segoe UI Symbol", "Noto Sans Symbols 2", "Noto Sans Symbols", "Arial Unicode MS", system-ui, sans-serif;
+  font-weight: 300;
+  text-rendering: geometricPrecision;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+#hudSettings,
+#hudMap{
+  width: 54px;
+  min-width: 54px;
+  min-height: 54px;
+  height: 54px;
+  padding: 0;
+  display: grid;
+  place-items: center;
+}
+#hudSettings .btn{
+  width: 100%;
+  height: 100%;
+  min-width: 0;
+  min-height: 0;
+  padding: 0;
+  border: none;
+  background: transparent;
+  font-size: 28px;
+  line-height: 1;
+}
+#hudMap{
+  width: 96px;
+  min-width: 96px;
+}
+#hudMap .btn{
+  width: 100%;
+  height: 100%;
+  min-width: 0;
+  min-height: 0;
+  padding: 0;
+  border: none;
+  background: transparent;
+  font-size: 16px;
+  font-weight: 900;
+  line-height: 1;
+}
+
+/* Smaller screens: wrap to two rows */
+@media (max-width: 1250px){
+  #hudTop{
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+    grid-auto-rows: minmax(54px, auto);
+  }
+  #hudSettings .btn{ min-width: 100%; }
+  #hudInventory{ justify-content:flex-start; }
+}
+
+#hudPlayer{ justify-content:center; font-weight:900; }
+
+.btn:active{ border-color: var(--danger) !important; }
+.hudBox.clickable{ cursor:pointer; border-color: var(--blue); }
+.hudBox.clickable:active{ border-color: var(--danger); }
+
+.infoCard{ border:2px solid var(--yellow); background: rgba(255,255,255,0.62); padding:10px; }
+.pinCard{ border:2px solid var(--ink); background: rgba(255,255,255,0.72); padding:10px; }
+
+body[data-auth="1"] #canvasWrap{ display:none; }
+body[data-auth="1"] #mapLegend{ display:none; }
+
+/* MAP ON: keep only the map + MAP button visible. */
+body[data-map-only="1"] #hudTop .hudBox{
+  display:none !important;
+}
+body[data-map-only="1"] #hudTop #hudMap{
+  display:grid !important;
+}
+body[data-map-only="1"] #mapLegend,
+body[data-map-only="1"] #screenFrame,
+body[data-map-only="1"] #modalBackdrop,
+body[data-map-only="1"] #modal{
+  display:none !important;
+}
+
+/* Combat Overlay: grille unitaire */
+.combatOverlayGrid{
+  position: absolute;
+  inset: 0;
+  z-index: 160;
+  pointer-events: auto;
+  color: var(--ink);
+  background: rgba(229, 231, 235, 0.92);
+}
+
+.box{
+  border: 3px solid var(--inkLight);
+  background: #ffffff;
+}
+
+.box--info{
+  border-color: var(--yellow);
+}
+
+.box--action{
+  border-color: var(--blue);
+  background: #ffffff;
+}
+
+.box--danger{
+  border-color: var(--danger);
+  background: #ffffff;
+}
+
+.box--enemy{
+  border-color: var(--danger);
+  background: #ffffff;
+}
+
+.combatCloseBtn{
+  position: absolute;
+  top: calc(var(--u) * 1);
+  right: calc(var(--u) * 1);
+  width: calc(var(--u) * 4);
+  height: calc(var(--u) * 4);
+  min-height: 0;
+  padding: 0;
+  z-index: 2;
+}
+
+.combatSettingsBtn{
+  position: absolute;
+  top: calc(var(--u) * 6);
+  right: calc(var(--u) * 1);
+  width: calc(var(--u) * 8);
+  height: calc(var(--u) * 4);
+  min-height: 0;
+  padding: 0 calc(var(--u) * 1);
+  z-index: 2;
+}
+
+.combatAscii{
+  height: 100%;
+  width: 100%;
+  padding: calc(var(--u) * 1);
+  display: grid;
+  grid-template-columns: calc(var(--u) * 42) minmax(0, 1fr);
+  grid-template-rows: minmax(0, 1fr);
+  gap: 1px;
+  align-items: stretch;
+}
+
+.combatRect,
+.combatSquare,
+.combatTechBtn,
+.combatArrow{
+  border: 3px solid var(--inkLight);
+  background: #ffffff;
+}
+
+.combatSquare{
+  display: grid;
+  place-items: center;
+  text-align: center;
+  white-space: pre-line;
+}
+
+.combatSquareLarge{
+  width: calc(var(--u) * 10);
+  aspect-ratio: 1 / 1;
+  padding: calc(var(--u) * 0.5);
+  align-content: center;
+  gap: calc(var(--u) * 0.35);
+}
+
+.combatSquareInfo{
+  width: calc(var(--u) * 8);
+  aspect-ratio: 1 / 1;
+  font-size: calc(var(--u) * 0.9);
+  font-weight: 700;
+}
+
+.combatMainSymbol{
+  font-size: inherit;
+  font-weight: inherit;
+  line-height: inherit;
+}
+
+.combatAsciiLeft{
+  --leftColW: 100%;
+  --leftRectH: calc(var(--u) * 6.2);
+  min-width: 0;
+  width: var(--leftColW);
+  max-width: none;
+  display: grid;
+  grid-template-rows: auto auto auto minmax(0, 1fr);
+  gap: 1px;
+  position: relative;
+  min-height: 0;
+  height: 100%;
+  align-self: stretch;
+  transition: opacity 0.38s ease;
+}
+
+.combatActionRow{
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1px;
+  width: var(--leftColW);
+}
+
+#c20_special,
+#c21_energy{
+  width: 100%;
+  height: var(--leftRectH);
+  min-height: 0;
+  padding: 0 calc(var(--u) * 0.45);
+  font-size: calc(var(--u) * 2.1);
+  line-height: 1.1;
+  text-align: center;
+  justify-content: center;
+  align-items: center;
+}
+
+#c21_energy{
+  display: grid;
+  align-items: center;
+  justify-items: center;
+  text-align: center;
+  background: rgba(255,255,255,0.72);
+  border-color: var(--yellow);
+}
+
+#c21_energy .small{
+  font-size: calc(var(--u) * 1.6);
+  line-height: 1.1;
+}
+
+.combatEnergyTrack{
+  width: 100%;
+  height: calc(var(--u) * 1.1);
+  border: 1px solid rgba(208, 217, 230, 0.88);
+  background: rgba(3, 8, 15, 0.72);
+  overflow: hidden;
+}
+
+.combatEnergyTrack > span{
+  display: block;
+  height: 100%;
+  width: 0;
+  background: linear-gradient(90deg, rgba(57, 181, 74, 0.8), rgba(86, 222, 115, 0.95));
+}
+
+.combatSpecialPanel{
+  width: var(--leftColW);
+  min-height: var(--leftRectH);
+  padding: calc(var(--u) * 0.35);
+}
+
+.combatTechGrid{
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-rows: repeat(5, var(--leftRectH));
+  gap: 1px;
+  width: var(--leftColW);
+}
+
+.combatTechBtn{
+  width: 100%;
+  height: var(--leftRectH);
+  min-height: 0;
+  padding: calc(var(--u) * 0.2) calc(var(--u) * 0.45);
+  display: grid;
+  align-content: center;
+  justify-items: center;
+  text-align: center;
+  border-width: 4px !important;
+  border-color: var(--blue) !important;
+  background: #ffffff !important;
+  background-image: none !important;
+}
+
+.combatTechBtn .combatTechName{
+  font-size: calc(var(--u) * 1.96);
+  font-weight: 800;
+}
+
+.combatTechBtn small{
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
+  font-size: calc(var(--u) * 1.64);
+}
+
+.combatTechBtn.isCurrent{
+  border-color: var(--blue);
+  background: #ffffff;
+}
+
+.combatTechBtn.isPending{
+  border-color: var(--danger) !important;
+  border-width: 4px !important;
+  background: #ffffff !important;
+  background-image: none !important;
+  box-shadow: inset 0 0 0 1px rgba(239,68,68,0.45);
+}
+
+.combatTechBtn:disabled{
+  opacity: 1;
+  cursor: pointer;
+}
+
+.combatTechBtn:disabled:not(.slot--empty){
+  border-color: var(--blue) !important;
+  background: #ffffff !important;
+  color: inherit !important;
+}
+
+.combatTechBtn.slot--empty:disabled{
+  cursor: not-allowed;
+}
+
+#c11_log{
+  width: var(--leftColW);
+  grid-row: 4;
+  min-height: 0;
+  max-height: 100%;
+  height: 100%;
+  align-self: stretch;
+  justify-self: stretch;
+  padding: calc(var(--u) * 0.55);
+  overflow-y: auto;
+  overflow-x: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.combatAsciiRight{
+  min-width: 0;
+  min-height: 0;
+  display: grid;
+  grid-template-rows: 1fr auto calc(var(--u) * 16);
+  gap: 1px;
+  position: relative;
+}
+
+.combatRightTop{
+  min-height: 0;
+  display: grid;
+  grid-template-columns: auto auto 1fr;
+  grid-template-rows: calc(var(--u) * 10) auto auto;
+  gap: 1px;
+  align-content: start;
+  transition: opacity 0.38s ease;
+}
+
+#c6_timer{ grid-column: 1; grid-row: 1; }
+#c7_initiative{
+  position: static;
+  grid-column: 2;
+  grid-row: 1;
+  width: calc(var(--u) * 8);
+  aspect-ratio: 1 / 1;
+  height: auto;
+  min-height: 0;
+  z-index: 5;
+  display: grid;
+  place-items: center;
+  font-size: calc(var(--u) * 4.4);
+  line-height: 1;
+  font-weight: 900;
+  overflow: hidden;
+}
+#c7_initiative.combatInitAlert{
+  border-color: #dc2626 !important;
+  border-width: 6px !important;
+}
+#c7_initiative.combatInitMasked{
+  background: #000000 !important;
+  color: transparent !important;
+}
+#c7_initiative.combatInitRolling{
+  background: #ffffff !important;
+  color: var(--ink) !important;
+}
+#c7_initiative.combatInitFlashRed{
+  background: #dc2626 !important;
+  color: #ffffff !important;
+}
+#c6_timer.combatTimerFlashGreen{
+  background: #16a34a !important;
+  color: #ffffff !important;
+}
+#c6_timer{
+  font-size: calc(var(--u) * 4.4);
+  line-height: 1;
+  font-weight: 900;
+}
+#c2_enemy{ grid-column: 3; grid-row: 1; justify-self: center; position: relative; }
+#c4_hp_enemy{
+  grid-column: 3;
+  grid-row: 2;
+  justify-self: center;
+  margin-top: 0;
+  width: calc(var(--u) * 10);
+  align-self: start;
+}
+
+/* Enemy center aligned on the same horizontal axis as the player card center */
+#c2_enemy,
+#c4_hp_enemy{
+  grid-column: 1 / -1;
+  justify-self: center;
+}
+/* Align enemy card and HP on same center axis as player */
+#c2_enemy,
+#c4_hp_enemy{
+  justify-self: center;
+}
+#c5_arrow{
+  position: absolute;
+  pointer-events: none;
+  background: transparent;
+  border: none;
+  z-index: 6;
+}
+
+.combatCenterLine{
+  display: grid;
+  grid-template-columns: auto;
+  gap: 1px;
+  align-items: center;
+  justify-content: center;
+  transition: opacity 0.38s ease;
+}
+
+.combatPlayerCluster{
+  display: grid;
+  grid-template-rows: calc(var(--u) * 2) calc(var(--u) * 10);
+  gap: 1px;
+  align-items: stretch;
+  justify-items: center;
+}
+
+.combatPlayerTopRow{
+  width: 100%;
+  display: grid;
+  grid-template-columns: calc(var(--u) * 32) calc(var(--u) * 10) calc(var(--u) * 32);
+  gap: 1px;
+  align-items: end;
+}
+
+.combatPlayerMainRow{
+  width: 100%;
+  display: grid;
+  grid-template-columns: calc(var(--u) * 32) calc(var(--u) * 10) calc(var(--u) * 32);
+  grid-template-rows: calc(var(--u) * 10);
+  gap: 1px;
+  align-items: stretch;
+}
+
+.combatHpInfo{
+  width: calc(var(--u) * 10);
+  height: calc(var(--u) * 2);
+  min-height: 0;
+  position: relative;
+  display: grid;
+  grid-template-columns: 1fr calc(var(--u) * 2);
+  align-items: center;
+  font-size: calc(var(--u) * 0.95);
+  font-weight: 700;
+  white-space: nowrap;
+  padding: 0 calc(var(--u) * 0.15);
+}
+
+.combatTurnRank{
+  width: calc(var(--u) * 2);
+  height: calc(var(--u) * 2);
+  min-height: 0;
+  display: grid;
+  place-items: center;
+  font-weight: 900;
+  font-size: calc(var(--u) * 0.95);
+  line-height: 1;
+}
+
+#c3_hp_player .combatTurnRank{
+  position: static;
+}
+
+#c2_enemy .combatEnemyOrderBadge{
+  position: absolute;
+  top: calc(var(--u) * 0.2);
+  left: calc(var(--u) * 0.2);
+  transform: none;
+  z-index: 3;
+}
+
+.isHiddenVision{
+  visibility: hidden;
+}
+
+.combatSymbolsPanel{
+  width: calc(var(--u) * 32);
+  min-height: calc(var(--u) * 10);
+  height: calc(var(--u) * 10);
+  padding: calc(var(--u) * 0.45);
+  overflow-x: auto;
+  overflow-y: visible;
+  align-self: stretch;
+}
+
+#c9_last_symbols{ grid-column: 1; grid-row: 1; }
+#c1_player{ grid-column: 2; grid-row: 1; position: relative; }
+#c8_next_symbols{ grid-column: 3; grid-row: 1; }
+#c3_hp_player{
+  grid-column: 2;
+  grid-row: 1;
+  justify-self: stretch;
+  align-self: end;
+}
+
+#c4_hp_enemy{
+  width: calc(var(--u) * 10);
+  align-self: start;
+}
+
+.targetAnchor{
+  position: absolute;
+  width: 0;
+  height: 0;
+  opacity: 0;
+  pointer-events: none;
+}
+
+#p_anchor{
+  left: 50%;
+  top: 0;
+  transform: translateX(-50%);
+}
+
+#e_anchor{
+  left: 50%;
+  bottom: 0;
+  transform: translateX(-50%);
+}
+
+.targetArrowSvg{
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+.targetArrowSvg line{
+  stroke: rgba(55, 65, 81, 0.9);
+  stroke-width: 1;
+}
+
+.targetArrowSvg polygon{
+  fill: rgba(55, 65, 81, 0.9);
+}
+
+#c5_arrow.isHidden{
+  display: none;
+}
+
+#c10_narrative{
+  width: 100%;
+  height: calc(var(--u) * 16);
+  padding: calc(var(--u) * 0.35);
+  overflow: hidden;
+  display: grid;
+  grid-template-rows: 1fr auto;
+  gap: 1px;
+  transition: min-height 0.38s ease, height 0.38s ease, opacity 0.38s ease;
+}
+
+#c10_narrative [data-bind="narrativeBody"]{
+  overflow: auto;
+  font-size: calc(var(--u) * 1.2);
+  line-height: 1.5;
+}
+
+.combatNarrativeHint{
+  font-size: calc(var(--u) * 0.72);
+  opacity: 0.9;
+}
+
+.combatMonoLog{
+  height: calc(100% - var(--u) * 2);
+  overflow-y: auto;
+  overflow-x: auto;
+  white-space: pre-line;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
+  font-size: calc(var(--u) * 1.15);
+  line-height: 1.45;
+}
+
+.combatTitleLine{
+  font-weight: 800;
+  font-size: calc(var(--u) * 0.78);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin-bottom: calc(var(--u) * 0.3);
+}
+
+#c5_arrow::before,
+#c5_arrow::after{
+  content: none;
+}
+
+.combatSeqBlock{
+  height: calc(100% - var(--u) * 2.2);
+  overflow-x: auto;
+  overflow-y: visible;
+  font-size: calc(var(--u) * 0.75);
+  line-height: 1.2;
+  white-space: nowrap;
+}
+
+@media (max-width: 1680px){
+  .combatAscii{
+    grid-template-columns: calc(var(--u) * 36) minmax(0, 1fr);
+  }
+}
+
+@media (max-width: 1100px){
+  .combatAscii{
+    grid-template-columns: 1fr;
+    grid-template-rows: auto auto;
+    overflow: auto;
+  }
+}
+
+.combatSeqInline{
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  align-items: center;
+  gap: calc(var(--u) * 0.3);
+  white-space: nowrap;
+  width: 100%;
+}
+
+.combatSeqRightFill{
+  justify-content: flex-end;
+  width: 100%;
+  text-align: right;
+}
+
+.combatTokenCell{
+  min-width: 0;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  text-overflow: clip;
+  white-space: nowrap;
+}
+
+.symbolUnified{
+  font-size: calc(var(--u) * 5);
+  line-height: 1;
+  letter-spacing: calc(var(--u) * 0.12);
+  font-weight: inherit;
+  white-space: nowrap;
+}
+
+.lastRtl{
+  direction: ltr;
+  text-align: left;
+}
+
+#c1_player .combatMainSymbol,
+#c2_enemy .combatMainSymbol{
+  font-size: calc(var(--u) * 5);
+  line-height: 1;
+  letter-spacing: calc(var(--u) * 0.12);
+  font-weight: 900;
+  white-space: nowrap;
+  display: block;
+  margin: 0 auto;
+  text-align: center;
+}
+
+#c1_player .combatMainSymbol.combatSymbolHidden,
+#c2_enemy .combatMainSymbol.combatSymbolHidden{
+  font-size: calc(var(--u) * 2.2);
+  font-weight: 700;
+  opacity: 0.75;
+  letter-spacing: 0;
+}
+
+#c1_player,
+#c2_enemy{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.entityState--thinking{
+  border-color: var(--danger) !important;
+  border-width: 3px !important;
+  box-shadow: inset 0 0 0 1px rgba(239, 68, 68, 0.35);
+}
+
+.entityState--played{
+  border-color: #16a34a !important;
+  border-width: 2px !important;
+  box-shadow: inset 0 0 0 1px rgba(22, 163, 74, 0.25);
+}
+
+.entityState--initiativePulse{
+  border-width: 5px !important;
+}
+
+.entityState--hidden .combatMainSymbol{
+  background:
+    repeating-linear-gradient(
+      135deg,
+      rgba(156,163,175,0.35) 0px,
+      rgba(156,163,175,0.35) 6px,
+      rgba(255,255,255,0.08) 6px,
+      rgba(255,255,255,0.08) 12px
+    );
+  border: 1px dashed rgba(156,163,175,0.75);
+  border-radius: 2px;
+  padding: calc(var(--u) * 0.12) calc(var(--u) * 0.35);
+}
+
+.techLibraryGrid{
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 320px;
+  gap: 12px;
+}
+
+.techLibraryLeft{
+  min-width: 0;
+}
+
+.techLibraryLeft .techReplaceSlotBtn{
+  text-align: left;
+}
+
+.techSlotsList{
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0;
+}
+
+.techReplaceSlotBtn{
+  width: 100%;
+  min-height: 44px;
+  height: 44px;
+  padding: 4px 8px;
+  border-radius: 0;
+  margin: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.techLibraryRight{
+  align-self: start;
+}
+
+.techLearnItem{
+  margin-bottom: 0;
+  min-height: 120px;
+  height: 120px;
+  padding: 6px 8px;
+  overflow: hidden;
+}
+
+.techLibraryRight .card + .card{
+  margin-top: 0;
+}
+
+.playerSheetGrid{
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+  max-height: 72vh;
+  overflow-y: auto;
+}
+
+.playerSheetCard{
+  min-height: 132px;
+  height: 132px;
+  padding: 8px 10px;
+  overflow: hidden;
+}
+
+.playerSheetTitle{
+  font-weight: 800;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin-bottom: 6px;
+}
+
+.playerSheetList{
+  max-height: 92px;
+  overflow-y: auto;
+}
+
+@media (max-width: 1000px){
+  .playerSheetGrid{
+    grid-template-columns: 1fr;
+  }
+}
+
+.combatTechBtn.slot--empty,
+.techReplaceSlotBtn.slot--empty{
+  border-color: var(--blue);
+  color: rgba(55, 65, 81, 0.75);
+  background:
+    repeating-linear-gradient(
+      135deg,
+      rgba(156,163,175,0.35) 0px,
+      rgba(156,163,175,0.35) 6px,
+      rgba(255,255,255,0.08) 6px,
+      rgba(255,255,255,0.08) 12px
+    );
+}
+
+.combatTechBtn.slot--locked-init{
+  border-color: var(--blue) !important;
+  color: rgba(55, 65, 81, 0.75);
+  background:
+    repeating-linear-gradient(
+      135deg,
+      rgba(156,163,175,0.35) 0px,
+      rgba(156,163,175,0.35) 6px,
+      rgba(255,255,255,0.08) 6px,
+      rgba(255,255,255,0.08) 12px
+    ) !important;
+}
+
+.btnAction{
+  border-color: var(--blue) !important;
+}
+
+.btnDisabled{
+  border-color: var(--inkLight) !important;
+  color: rgba(55,65,81,0.6);
+  cursor: not-allowed !important;
+  background:
+    repeating-linear-gradient(
+      135deg,
+      rgba(156,163,175,0.35) 0px,
+      rgba(156,163,175,0.35) 6px,
+      rgba(255,255,255,0.08) 6px,
+      rgba(255,255,255,0.08) 12px
+    );
+}
+
+/* Prevent "stuck hatched" look on usable technique buttons */
+.combatTechBtn.btnDisabled:not(:disabled){
+  border-color: var(--blue) !important;
+  color: inherit;
+  cursor: pointer !important;
+  background: #ffffff !important;
+}
+
+.btnPressed{
+  border-color: var(--danger) !important;
+  box-shadow: inset 0 0 0 1px rgba(239,68,68,0.45);
+}
+
+.btnActive{
+  border-color: var(--blue) !important;
+  background: rgba(37,99,235,0.18) !important;
+}
+
+.techLibraryGrid {
+  display: grid;
+  grid-template-columns: 1fr 360px;
+  gap: 8px;
+}
+
+.techLibraryLeft,
+.techLibraryRight {
+  max-height: 72vh;
+  overflow-y: auto;
+}
+
+.techReplaceSlotBtn.btnPressed {
+  border-color: #d64b4b !important;
+  box-shadow: inset 0 0 0 1px rgba(214, 75, 75, 0.65);
+}
+
+.combatSeqBlock,
+.combatMainSymbol,
+.techLibraryRight .small,
+.techLibraryLeft .small {
+  letter-spacing: 0.02em;
+}
+
+.combatUiHidden{
+  opacity: 0;
+  pointer-events: none;
+}
+
+.combatUiHiddenNoFade{
+  transition: none !important;
+}
+
+#c10_narrative.combatNarrativeFocus{
+  height: calc(var(--u) * 26);
+}
+
+#c10_narrative.combatNarrativeFocusNoFade{
+  transition: none !important;
+}

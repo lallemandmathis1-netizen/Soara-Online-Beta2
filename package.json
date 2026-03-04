@@ -1,0 +1,20 @@
+{
+  "name": "soara-modular",
+  "version": "0.2.0",
+  "private": true,
+  "type": "commonjs",
+  "scripts": {
+    "dev": "node server.js",
+    "start": "node server.js",
+    "reset-db": "node scripts/reset-db.js",
+    "check-runtime": "node scripts/check-runtime.js",
+    "check-doc-sync": "node scripts/check-doc-sync.js",
+    "check-symbol-doc-sync": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/check-symbol-doc-sync.ps1"
+  },
+  "dependencies": {
+    "bcrypt": "^5.1.1",
+    "codex": "^0.2.3",
+    "express": "^4.18.2",
+    "jsonwebtoken": "^9.0.2"
+  }
+}

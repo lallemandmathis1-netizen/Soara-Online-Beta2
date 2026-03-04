@@ -1,0 +1,20 @@
+﻿Zone,Selecteur,Taille/Structure,Role visuel
+Overlay combat,.combatOverlayGrid,"position:absolute; inset:0",Calque combat complet avec fond quadrille
+Grille principale,.combatAscii,"grid: colonne gauche 42u + colonne droite 1fr",Structure globale combat
+Colonne gauche,.combatAsciiLeft,"rows: auto auto auto auto 1fr",Boutons action slots et log
+Boutons action,.combatActionRow,"grid 2 colonnes",Action speciale et Revele
+Boutons action taille,"#c20_special, #c21_validate","height: 5u",Boutons compacts
+Energie,#c22_energy,"height: 3u",Bloc info energie texte
+Grille techniques,.combatTechGrid,"2 colonnes x 5 lignes",10 slots techniques
+Slot technique,.combatTechBtn,"height: 5.2u",Affiche nom et sequence
+Slot vide,.slot--empty,"fond hachure",Slot non equipe
+LOG,#c11_log,"height fixe: 16u; overflow-y:auto",Log scrollable sans agrandir layout
+Colonne droite,.combatAsciiRight,"rows: 1fr auto 16u",Zone entites et narrative
+Haut droite,.combatRightTop,"grid 3 colonnes",Timer entites et fleche
+Timer,#c6_timer,"font-size: 2.1u",Valeur timer grande
+Initiative,#c7_initiative,"carre absolu",Resultat initiative 3 blocs symboles
+Derniers symboles,#c9_last_symbols,"panel 32u x 10u",Affiche les 4 derniers
+Symbole actuel,#c1_player,"carre 10u",Token actuel joueur
+Prochains symboles,#c8_next_symbols,"panel 32u x 10u",Affiche les 4 prochains
+PV joueur ennemi,.combatHpInfo,"10u x 2u",Texte PV et rang de passage
+Etat entite,.entityState--thinking / .entityState--played,"bordure rouge / verte",Non valide / valide
