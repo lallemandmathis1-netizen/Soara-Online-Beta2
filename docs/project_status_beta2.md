@@ -1,4 +1,4 @@
-﻿# SOARA ONLINE - Etat Projet Beta 2 Stable
+# SOARA ONLINE - Etat Projet Beta 2 Stable
 
 ## Positionnement
 Soara Online est un jeu strategique symbolique en ligne.
@@ -12,7 +12,7 @@ Le coeur de jeu vise un systeme:
 
 ## Regles runtime de resolution
 - Aucun de en resolution de degats/defense/esquive.
-- Seule l'initiative utilise un tirage.
+- Seul le tempo utilise un tirage.
 - Parade runtime: `renvoi = min(attaque entrante, 2xATK du pareur)`.
 
 ## Systeme techniques (runtime)

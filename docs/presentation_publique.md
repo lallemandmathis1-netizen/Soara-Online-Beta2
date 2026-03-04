@@ -1,4 +1,4 @@
-﻿# SOARA ONLINE - Presentation Publique
+# SOARA ONLINE - Presentation Publique
 
 ## Pitch
 Soara Online est un RPG de combat strategique en ligne.
@@ -22,7 +22,7 @@ La victoire ne vient pas du hasard, mais de la lecture et du tempo.
 
 ## Ce qui rend Soara different
 - Determinisme: pas de hasard en resolution.
-- Initiative: tirage conserve pour le tempo d'ouverture.
+- Tempo: tirage conserve pour le tempo d'ouverture.
 - Relecture: un combat peut etre relu et analyse.
 - Energie: la ressource impose une architecture des choix.
 

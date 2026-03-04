@@ -1,4 +1,4 @@
-﻿# Soara - version modulaire (C-01 + Tutoriel combat)
+# Soara - version modulaire (C-01 + Tutoriel combat)
 
 ## Lancer
 ```powershell
@@ -15,7 +15,7 @@ Puis http://localhost:3000
 ## Etat actuel (Beta 2 stable)
 - Combat cible: deterministe, energetique, sequentiel.
 - Aucun de en resolution (attaque, defense, esquive, mitigation).
-- Seule l'initiative conserve un tirage.
+- Seul le tempo conserve un tirage.
 - C-01 actif avec dialogue initial, choix narratifs, et attribution de loadout.
 - Premier choix de voie de combat: 3 techniques de base + 1 reflexe.
 - UI combat solo stable, slots techniques et bibliotheque synchronises.

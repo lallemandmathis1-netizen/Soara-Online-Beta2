@@ -206,7 +206,7 @@ const REWARD_TECHNIQUES = {
     onOpen: () => {
       musicStartedForCurrentCombat = false;
     },
-    onInitiativeReveal: ({ turn, combatType }) => {
+    onTempoReveal: ({ turn, combatType }) => {
       if (!musicRequestedByCombatOpen) return;
       if (combatType !== "narrative") return;
       if (turn !== 0) return;
@@ -1012,7 +1012,7 @@ const REWARD_TECHNIQUES = {
       const symbolCostByKey = new Map(SYMBOLS_V6_UI.map((s) => [String(s.key), Number(s.cost) || 0]));
       modal.open("Banc de resolution", `
         <div class="card" style="max-height:72vh; overflow-y:auto;">
-          <div class="small">Simulation de resolution deterministe (sans des, sauf initiative).</div>
+          <div class="small">Simulation de resolution deterministe (sans des, sauf tempo).</div>
           <div style="height:8px"></div>
           <div class="row" style="gap:8px; align-items:stretch;">
             <div class="card" style="flex:1 1 320px;">
@@ -1096,7 +1096,7 @@ const REWARD_TECHNIQUES = {
           <div>ATK E: ${result.eAtkPower} | MIT E: ${result.eMit} | ESQ E: ${result.eEsqPower} | Cout E: ${result.eCost} | Depense E: ${result.eSpentEnergy}</div>
           <div>Degats -> Ennemi: <b>${result.dmgToEnemy}</b> | Joueur: <b>${result.dmgToPlayer}</b></div>
           <div>Parade retour -> Ennemi: ${result.parryReturnToEnemy} | Joueur: ${result.parryReturnToPlayer}</div>
-          <div class="small">Rappel: l'initiative reste le seul tirage aleatoire.</div>
+          <div class="small">Rappel: le tempo reste le seul tirage aleatoire.</div>
         `;
       };
 

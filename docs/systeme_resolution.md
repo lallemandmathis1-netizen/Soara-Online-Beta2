@@ -1,11 +1,11 @@
-﻿# Systeme de Resolution (Beta2)
+# Systeme de Resolution (Beta2)
 
 Ce document decrit les regles de resolution implementees dans le runtime actuel.
 
 ## 1) Principe general
 
 - Systeme deterministe: aucun de en resolution.
-- Seule l'initiative utilise un tirage.
+- Seul le tempo utilise un tirage.
 - Chaque entite valide un symbole puis le moteur applique:
   - cout energie
   - attaque/mitigation

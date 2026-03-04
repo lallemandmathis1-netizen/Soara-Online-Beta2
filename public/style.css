@@ -1,4 +1,4 @@
-﻿:root{
+:root{
   --paper:#f6f2e8;
   --ink:#374151;      /* gris fonce */
   --inkLight:#9ca3af; /* gris clair */
@@ -654,7 +654,7 @@ body[data-map-only="1"] #modal{
 }
 
 #c6_timer{ grid-column: 1; grid-row: 1; }
-#c7_initiative{
+#c7_tempo{
   position: static;
   grid-column: 2;
   grid-row: 1;
@@ -670,19 +670,19 @@ body[data-map-only="1"] #modal{
   font-weight: 900;
   overflow: hidden;
 }
-#c7_initiative.combatInitAlert{
+#c7_tempo.combatInitAlert{
   border-color: #dc2626 !important;
   border-width: 6px !important;
 }
-#c7_initiative.combatInitMasked{
+#c7_tempo.combatInitMasked{
   background: #000000 !important;
   color: transparent !important;
 }
-#c7_initiative.combatInitRolling{
+#c7_tempo.combatInitRolling{
   background: #ffffff !important;
   color: var(--ink) !important;
 }
-#c7_initiative.combatInitFlashRed{
+#c7_tempo.combatInitFlashRed{
   background: #dc2626 !important;
   color: #ffffff !important;
 }
@@ -1010,7 +1010,7 @@ body[data-map-only="1"] #modal{
   box-shadow: inset 0 0 0 1px rgba(22, 163, 74, 0.25);
 }
 
-.entityState--initiativePulse{
+.entityState--tempoPulse{
   border-width: 5px !important;
 }
 

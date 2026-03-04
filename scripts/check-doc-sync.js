@@ -30,10 +30,10 @@ const resolutionSandbox = readText("public/js/features/resolutionSandbox.js");
 
 // 1) Docs truth markers.
 addCheck(
-  "docs/runtime_reference contains no-dice and initiative-only markers",
+  "docs/runtime_reference contains no-dice and tempo-only markers",
   includesAll(runtimeRef, [
     "Aucun de",
-    "Seule l'initiative utilise un tirage",
+    "Seul le tempo utilise un tirage",
     "min(attaque entrante, 2xATK du pareur)",
     "SOARA_V6_Table_Symboles.docx"
   ]),
@@ -41,29 +41,29 @@ addCheck(
 );
 
 addCheck(
-  "docs/systeme_resolution contains no-dice and initiative-only markers",
+  "docs/systeme_resolution contains no-dice and tempo-only markers",
   includesAll(sysRef, [
     "aucun de en resolution",
-    "Seule l'initiative utilise un tirage",
+    "Seul le tempo utilise un tirage",
     "min(attaque entrante, 2xATK du pareur)"
   ]),
   "Expected rules are missing in docs/systeme_resolution.md"
 );
 
 addCheck(
-  "README contains no-dice and initiative-only markers",
+  "README contains no-dice and tempo-only markers",
   includesAll(readme, [
     "Aucun de en resolution",
-    "Seule l'initiative conserve un tirage"
+    "Seul le tempo conserve un tirage"
   ]),
   "README must state the same runtime rule set"
 );
 
 // 2) Runtime/code truth markers.
 addCheck(
-  "combatEngine initiative uses random roll",
-  includesAll(combatEngine, ["Math.random()", "function nextInitiative()"]),
-  "combatEngine initiative should use random roll"
+  "combatEngine tempo uses random roll",
+  includesAll(combatEngine, ["Math.random()", "function nextTempo()"]),
+  "combatEngine tempo should use random roll"
 );
 
 addCheck(
@@ -87,7 +87,7 @@ addCheck(
     "function randomRollInRange(min, max)",
     "return randomRollInRange(1, 20);"
   ]),
-  "combatScreen initiative random helper mismatch"
+  "combatScreen tempo random helper mismatch"
 );
 
 // 3) In-app docs alignment (prevent old formula drift).

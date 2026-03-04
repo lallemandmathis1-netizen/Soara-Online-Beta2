@@ -1,4 +1,4 @@
-﻿# Prompt Codex - Beta 2 Audit & Consolidation
+# Prompt Codex - Beta 2 Audit & Consolidation
 
 ## Contexte
 Projet: Soara Online (solo stable, multi plus tard).
@@ -14,7 +14,7 @@ Contraintes:
 ## Regles metier a respecter
 - Combat deterministe, energetique, sequentiel
 - Aucun de en resolution (attaque/defense/esquive)
-- Initiative uniquement via tirage
+- Tempo uniquement via tirage
 - Reflexes: `[ ]` 2 symboles, cout x2
 - Aerien: `{ }` cout x3
 - 10 slots techniques

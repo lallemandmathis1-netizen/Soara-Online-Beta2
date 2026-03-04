@@ -57,7 +57,7 @@
   - hasStarterKitV2
 
 ## Documentation unifiee (runtime)
-- Clarification: plus de des en resolution, sauf initiative.
+- Clarification: plus de des en resolution, sauf Tempo.
 - Clarification: parade runtime = `min(attaque entrante, 2xATK du pareur)`.
 - Clarification: reference catalogue runtime (base 100, advanced 12, expert 6, reflexes 10).
 - Ajout de `docs/runtime_reference_beta2.md` comme source de verite docs/moteur/donnees.

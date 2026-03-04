@@ -18,7 +18,7 @@ const NARRATIVE_SYMBOL_SEQUENCE = (SYMBOLS_V6_UI || [])
   const MAX_ROLL_DELAY_MS = 260;
   const COMBAT_DURATION_MS = 180000;
 
-export function createCombatScreen({ hostEl, getPlayerName, getTechniques, getPlayerMeta, onOpen, onClose, onInitiativeReveal, onSpacePress, onNarrativeIntroStart, onOpenSettings, onCombatSyncPayload }) {
+export function createCombatScreen({ hostEl, getPlayerName, getTechniques, getPlayerMeta, onOpen, onClose, onTempoReveal, onSpacePress, onNarrativeIntroStart, onOpenSettings, onCombatSyncPayload }) {
   if (!hostEl) throw new Error("combat_screen_missing_host");
 
   let rootEl = null;
@@ -52,24 +52,24 @@ export function createCombatScreen({ hostEl, getPlayerName, getTechniques, getPl
   let awaitingCombatStart = true;
   let pendingLockedForOpeningInit = true;
   let playerWindowCache = null;
-  let initiativePulseUntilTick = 0;
-  let initiativeTextHidden = false;
+  let tempoPulseUntilTick = 0;
+  let tempoTextHidden = false;
   let currentCycleInit = { player: null, enemy: null };
   let pendingNextInit = null;
-  let initiativeMaskUntilTick = null;
-  let initiativeAnimUntilTick = null;
-  let initiativeRollingValue = null;
-  let initiativeRollingPending = false;
-  let initiativeRollDirection = null;
-  let initiativeRollStopValue = null;
+  let tempoMaskUntilTick = null;
+  let tempoAnimUntilTick = null;
+  let tempoRollingValue = null;
+  let tempoRollingPending = false;
+  let tempoRollDirection = null;
+  let tempoRollStopValue = null;
   let timerFlashGreenTicks = 0;
-  let initiativeFlashRedTicks = 0;
+  let tempoFlashRedTicks = 0;
   let lastRunTimerTick = null;
   let lastRunTimerValue = null;
-  let initiativeSpinTimer = null;
-  let initiativeSpinDelays = [];
-  let initiativeSpinDelayIndex = 0;
-  let initiativeRollLengthUnits = 6;
+  let tempoSpinTimer = null;
+  let tempoSpinDelays = [];
+  let tempoSpinDelayIndex = 0;
+  let tempoRollLengthUnits = 6;
   let skipNextFlowResolve = false;
   let narrativeIntroInitialInit = null;
   let pvpInitialInit = null;
@@ -256,17 +256,17 @@ export function createCombatScreen({ hostEl, getPlayerName, getTechniques, getPl
     revealedInit = { player: null, enemy: null };
     currentCycleInit = { player: null, enemy: null };
     lastCombatSyncSignature = "";
-    initiativeTextHidden = false;
+    tempoTextHidden = false;
     pendingNextInit = null;
-    initiativeMaskUntilTick = null;
-    initiativeAnimUntilTick = null;
-    initiativeRollingValue = null;
-    initiativeRollingPending = false;
-    initiativeRollDirection = null;
-    initiativeRollStopValue = null;
+    tempoMaskUntilTick = null;
+    tempoAnimUntilTick = null;
+    tempoRollingValue = null;
+    tempoRollingPending = false;
+    tempoRollDirection = null;
+    tempoRollStopValue = null;
     timerFlashGreenTicks = 0;
-    initiativeFlashRedTicks = 0;
-    stopInitiativeSpin();
+    tempoFlashRedTicks = 0;
+    stopTempoSpin();
     stopTutorialInitRollAnimation();
     skipNextFlowResolve = false;
     tutorialStep = "idle";
@@ -304,12 +304,12 @@ export function createCombatScreen({ hostEl, getPlayerName, getTechniques, getPl
   function startCombatFlow() {
     awaitingCombatStart = false;
     if (activeCombatType === "tutorial") {
-      startTutorialInitiativePrompt();
+      startTutorialTempoPrompt();
       return;
     }
     setNarration([
       "Le duel s'ouvre. Lis l'intention adverse.",
-      "Appuie sur ESPACE pour engager l'initiative."
+      "Appuie sur ESPACE pour engager le tempo."
     ]);
     setupTurnFlow();
     render();
@@ -358,7 +358,7 @@ export function createCombatScreen({ hostEl, getPlayerName, getTechniques, getPl
       window.clearTimeout(id);
     }
     tutorialInitRollTimers = [];
-    refs?.initiative?.classList.remove("combatInitRolling");
+    refs?.tempo?.classList.remove("combatInitRolling");
   }
 
   function buildTutorialRollDelays(totalMs = 2000, steps = 26) {
@@ -379,8 +379,8 @@ export function createCombatScreen({ hostEl, getPlayerName, getTechniques, getPl
     stopTutorialInitRollAnimation();
     tutorialStep = "rolling_init";
     currentPhase = "revealRoll";
-    initiativeTextHidden = false;
-    refs?.initiative?.classList.add("combatInitRolling");
+    tempoTextHidden = false;
+    refs?.tempo?.classList.add("combatInitRolling");
 
     const finalPlayer = rollD20();
     const finalEnemy = rollD20();
@@ -390,7 +390,7 @@ export function createCombatScreen({ hostEl, getPlayerName, getTechniques, getPl
     const step = () => {
       if (tutorialStep !== "rolling_init") return;
       if (idx < delays.length) {
-        initiativeRollingValue = rollD20();
+        tempoRollingValue = rollD20();
         renderTimerOnly();
         render();
         const id = window.setTimeout(step, delays[idx]);
@@ -400,11 +400,11 @@ export function createCombatScreen({ hostEl, getPlayerName, getTechniques, getPl
       }
 
       stopTutorialInitRollAnimation();
-      initiativeRollingValue = null;
+      tempoRollingValue = null;
       revealedInit.player = finalPlayer;
       revealedInit.enemy = finalEnemy;
       currentCycleInit = { player: revealedInit.player, enemy: revealedInit.enemy };
-      onInitiativeReveal?.({
+      onTempoReveal?.({
         turn: Number(session?.getSnapshot?.()?.turn || 1),
         player: revealedInit.player,
         enemy: revealedInit.enemy,
@@ -413,7 +413,7 @@ export function createCombatScreen({ hostEl, getPlayerName, getTechniques, getPl
       tutorialStep = "show_init_result";
       setNarration([
         `Tour ${Number(session?.getSnapshot?.()?.turn || 1)}`,
-        `Resultat d'initiative: J ${revealedInit.player} / E ${revealedInit.enemy}.`,
+        `Resultat de tempo: J ${revealedInit.player} / E ${revealedInit.enemy}.`,
         "Suivant -> ESPACE."
       ]);
       render();
@@ -425,13 +425,13 @@ export function createCombatScreen({ hostEl, getPlayerName, getTechniques, getPl
   function computeTutorialRankOrder() {
     const p = Number(revealedInit.player ?? 0);
     const e = Number(revealedInit.enemy ?? 0);
-    // Tutorial pacing: lower initiative acts first (rank 1).
+    // Tutorial pacing: lower tempo acts first (rank 1).
     if (!Number.isFinite(p) || !Number.isFinite(e)) return ["enemy", "player"];
     if (p === e) return ["enemy", "player"];
     return p < e ? ["player", "enemy"] : ["enemy", "player"];
   }
 
-  function startTutorialInitiativePrompt() {
+  function startTutorialTempoPrompt() {
     currentPhase = "askRoll";
     timerRemaining = 0;
     awaitingCombatStart = false;
@@ -447,7 +447,7 @@ export function createCombatScreen({ hostEl, getPlayerName, getTechniques, getPl
     setNarration([
       `Tour ${Number(session?.getSnapshot?.()?.turn || 1)}`,
       "Tutoriel: lis le tempo avant d'agir.",
-      "Appuie sur ESPACE pour lancer l'initiative."
+      "Appuie sur ESPACE pour lancer le tempo."
     ]);
     slotsDirty = true;
     render();
@@ -463,16 +463,16 @@ export function createCombatScreen({ hostEl, getPlayerName, getTechniques, getPl
     tutorialRankOrder = computeTutorialRankOrder();
     tutorialRankIndex = 0;
     tutorialStep = "rank_phase";
-    setInitiativePulseActive(false);
-    setInitiativeAlertActive(false);
+    setTempoPulseActive(false);
+    setTempoAlertActive(false);
     ensureAutoTargets();
     markEntityState("player", false);
     markEntityState("enemy", false);
     const first = tutorialRankOrder[0] === "player" ? "Joueur" : "Ennemi";
     setNarration([
       `Tour ${Number(session?.getSnapshot?.()?.turn || 1)}`,
-      `Initiative: J ${revealedInit.player} / E ${revealedInit.enemy}.`,
-      `Rang 1: ${first} prend l'initiative.`,
+      `tempo: J ${revealedInit.player} / E ${revealedInit.enemy}.`,
+      `Rang 1: ${first} prend le tempo.`,
       "Suivant -> ESPACE."
     ]);
     slotsDirty = true;
@@ -498,7 +498,7 @@ export function createCombatScreen({ hostEl, getPlayerName, getTechniques, getPl
       const actor = tutorialRankOrder[tutorialRankIndex] || null;
       if (actor === "player") {
         ensureAutoTargets();
-        if (!actionValidated.player && selectedTargets.player) validatePlayerAtInitiativeTick();
+        if (!actionValidated.player && selectedTargets.player) validatePlayerAtTempoTick();
       } else if (actor === "enemy") {
         ensureAutoTargets();
         if (!actionValidated.enemy && selectedTargets.enemy) validateEntityAtTick("enemy");
@@ -542,18 +542,18 @@ export function createCombatScreen({ hostEl, getPlayerName, getTechniques, getPl
     }
 
     if (tutorialStep === "post_resolution") {
-      startTutorialInitiativePrompt();
+      startTutorialTempoPrompt();
     }
   }
 
   function setPendingTechnique(techId) {
     if (pendingLockedForOpeningInit) {
-      pushNarration("Choix verrouille tant que l'initiative n'est pas engagee.");
+      pushNarration("Choix verrouille tant que le tempo n'est pas engagee.");
       render();
       return false;
     }
     if (!session?.setPendingTechniqueForPlayer) return false;
-    // Pending selection is allowed during all phases (initiative included).
+    // Pending selection is allowed during all phases (tempo included).
     let ok = session.setPendingTechniqueForPlayer(techId);
     if (!ok) {
       const source = (ui?.techniques || []).find((t) => t?.id === techId) || null;
@@ -644,18 +644,18 @@ export function createCombatScreen({ hostEl, getPlayerName, getTechniques, getPl
     applyTurnResult(result);
     actionValidated = { player: false, enemy: false };
     paidThisTurn = { player: false, enemy: false };
-    initiativeTextHidden = false;
-    initiativeMaskUntilTick = null;
-    initiativeAnimUntilTick = null;
-    initiativeRollingValue = null;
-    initiativeRollingPending = false;
+    tempoTextHidden = false;
+    tempoMaskUntilTick = null;
+    tempoAnimUntilTick = null;
+    tempoRollingValue = null;
+    tempoRollingPending = false;
     timerFlashGreenTicks = 0;
-    initiativeFlashRedTicks = 0;
-    stopInitiativeSpin();
-    setInitiativeAlertActive(false);
-    refs?.initiative?.classList.remove("combatInitMasked");
-    refs?.initiative?.classList.remove("combatInitRolling");
-    refs?.initiative?.classList.remove("combatInitFlashRed");
+    tempoFlashRedTicks = 0;
+    stopTempoSpin();
+    setTempoAlertActive(false);
+    refs?.tempo?.classList.remove("combatInitMasked");
+    refs?.tempo?.classList.remove("combatInitRolling");
+    refs?.tempo?.classList.remove("combatInitFlashRed");
     refs?.timer?.classList.remove("combatTimerFlashGreen");
   }
 
@@ -880,21 +880,21 @@ export function createCombatScreen({ hostEl, getPlayerName, getTechniques, getPl
     el.classList.toggle("entityState--played", played);
   }
 
-  function setInitiativePulseActive(active) {
-    refs?.playerCard?.classList.toggle("entityState--initiativePulse", !!active);
-    refs?.enemyCard?.classList.toggle("entityState--initiativePulse", !!active);
+  function setTempoPulseActive(active) {
+    refs?.playerCard?.classList.toggle("entityState--tempoPulse", !!active);
+    refs?.enemyCard?.classList.toggle("entityState--tempoPulse", !!active);
   }
 
-  function syncInitiativePulse(timerTick) {
+  function syncTempoPulse(timerTick) {
     const active = currentPhase === "runTimer"
       && Number.isFinite(Number(timerTick))
       && Number(timerTick) > 0
-      && Number(timerTick) <= initiativePulseUntilTick;
-    setInitiativePulseActive(active);
+      && Number(timerTick) <= tempoPulseUntilTick;
+    setTempoPulseActive(active);
   }
 
-  function setInitiativeAlertActive(active) {
-    refs?.initiative?.classList.toggle("combatInitAlert", !!active);
+  function setTempoAlertActive(active) {
+    refs?.tempo?.classList.toggle("combatInitAlert", !!active);
   }
 
   function setNarrativeOnlyMode(active) {
@@ -926,7 +926,7 @@ export function createCombatScreen({ hostEl, getPlayerName, getTechniques, getPl
   function setNarrativeSymbolsOnly(active) {
     const vis = active ? "hidden" : "";
     if (refs?.timer) refs.timer.style.visibility = vis;
-    if (refs?.initiative) refs.initiative.style.visibility = vis;
+    if (refs?.tempo) refs.tempo.style.visibility = vis;
     if (refs?.arrow) refs.arrow.style.visibility = vis;
     if (refs?.playerName) refs.playerName.style.visibility = vis;
     if (refs?.enemyName) refs.enemyName.style.visibility = vis;
@@ -960,7 +960,7 @@ export function createCombatScreen({ hostEl, getPlayerName, getTechniques, getPl
 
     // Timer is hidden for the whole intro (0..63u), appears only once intro ends.
     if (refs?.timer) refs.timer.style.visibility = "hidden";
-    if (refs?.initiative) refs.initiative.style.visibility = showTop ? "visible" : "hidden";
+    if (refs?.tempo) refs.tempo.style.visibility = showTop ? "visible" : "hidden";
 
     // Top enemy cluster.
     if (refs?.enemyCard) refs.enemyCard.style.visibility = phaseUiNoTimer ? "visible" : "hidden";
@@ -989,7 +989,7 @@ export function createCombatScreen({ hostEl, getPlayerName, getTechniques, getPl
     refs?.narrativeBox?.classList.remove("combatNarrativeFocus");
 
     if (refs?.timer) refs.timer.style.visibility = "";
-    if (refs?.initiative) refs.initiative.style.visibility = "";
+    if (refs?.tempo) refs.tempo.style.visibility = "";
     if (refs?.enemyCard) refs.enemyCard.style.visibility = "";
     if (refs?.arrow) refs.arrow.style.visibility = "";
     if (refs?.enemyHp?.parentElement) refs.enemyHp.parentElement.style.visibility = "";
@@ -1044,7 +1044,7 @@ export function createCombatScreen({ hostEl, getPlayerName, getTechniques, getPl
       revealRollSpinTimer = null;
       if (currentPhase !== "revealRoll") return;
       if (!(activeCombatType === "pve" || activeCombatType === "pvp")) return;
-      initiativeRollingValue = rollD20();
+      tempoRollingValue = rollD20();
       renderTimerOnly();
       render();
       if (idx >= delays.length - 1) return;
@@ -1061,7 +1061,7 @@ export function createCombatScreen({ hostEl, getPlayerName, getTechniques, getPl
     setNarrativeOnlyMode(false);
     startCombatFlow();
     if (!useNarrativeLoopTimer && flow?.handleSpace?.()) {
-      setNarration(["Initialisation terminee.", "Affichage des resultats d'initiative..."]);
+      setNarration(["Initialisation terminee.", "Affichage des resultats de tempo..."]);
       render();
     } else if (useNarrativeLoopTimer) {
       setNarration([
@@ -1079,7 +1079,7 @@ export function createCombatScreen({ hostEl, getPlayerName, getTechniques, getPl
     narrativeIntroSymbolIndex = 0;
     narrativeIntroSymbolValue = NARRATIVE_SYMBOL_SEQUENCE[0] || "X";
     onNarrativeIntroStart?.({ combatType: activeCombatType, tick: 0 });
-    const introRollFinal = useNarrativeLoopTimer ? rollPlayerInitiativeNarrative() : rollD20();
+    const introRollFinal = useNarrativeLoopTimer ? rollPlayerTempoNarrative() : rollD20();
     let introRollDisplay = useNarrativeLoopTimer ? rollD32() : rollD20();
     const initRollFinal = {
       player: introRollFinal,
@@ -1120,7 +1120,7 @@ export function createCombatScreen({ hostEl, getPlayerName, getTechniques, getPl
           if (narrativeIntroFastRollTimer) window.clearTimeout(narrativeIntroFastRollTimer);
           narrativeIntroFastRollTimer = null;
           introRollDisplay = introRollFinal;
-          // The very first intro result becomes the first player initiative shown in the square.
+          // The very first intro result becomes the first player tempo shown in the square.
           revealedInit.player = introRollFinal;
           revealedInit.enemy = initRollFinal.enemy;
           currentCycleInit = { player: revealedInit.player, enemy: revealedInit.enemy };
@@ -1156,7 +1156,7 @@ export function createCombatScreen({ hostEl, getPlayerName, getTechniques, getPl
         }
         setNarration([
           `Intro (${narrativeIntroTick}/64u)`,
-          "Resultat d'initiative:",
+          "Resultat de tempo:",
           `J=${initRollDisplay.player} / E=${initRollDisplay.enemy}`
         ]);
       }
@@ -1187,33 +1187,33 @@ export function createCombatScreen({ hostEl, getPlayerName, getTechniques, getPl
     return randomRollInRange(1, 32);
   }
 
-  function stopInitiativeSpin() {
-    if (initiativeSpinTimer) window.clearTimeout(initiativeSpinTimer);
-    initiativeSpinTimer = null;
-    initiativeSpinDelays = [];
-    initiativeSpinDelayIndex = 0;
+  function stopTempoSpin() {
+    if (tempoSpinTimer) window.clearTimeout(tempoSpinTimer);
+    tempoSpinTimer = null;
+    tempoSpinDelays = [];
+    tempoSpinDelayIndex = 0;
   }
 
-  function startInitiativeSpin(lengthUnits = initiativeRollLengthUnits) {
-    if (initiativeSpinTimer) return;
-    initiativeSpinDelays = buildProgressiveRollDelays(lengthUnits, { stepsPerUnit: 5 });
-    initiativeSpinDelayIndex = 0;
+  function startTempoSpin(lengthUnits = tempoRollLengthUnits) {
+    if (tempoSpinTimer) return;
+    tempoSpinDelays = buildProgressiveRollDelays(lengthUnits, { stepsPerUnit: 5 });
+    tempoSpinDelayIndex = 0;
     const spinStep = () => {
-      initiativeSpinTimer = null;
+      tempoSpinTimer = null;
       if (!pendingNextInit) return;
-      if (!refs?.initiative?.classList.contains("combatInitRolling")) return;
-      initiativeRollingValue = rollD32();
+      if (!refs?.tempo?.classList.contains("combatInitRolling")) return;
+      tempoRollingValue = rollD32();
       renderTimerOnly();
       render();
-      const lastIdx = Math.max(0, initiativeSpinDelays.length - 1);
-      const delay = initiativeSpinDelays[Math.min(initiativeSpinDelayIndex, lastIdx)] || ROLL_SPEED_MS;
-      initiativeSpinDelayIndex = Math.min(lastIdx, initiativeSpinDelayIndex + 1);
-      initiativeSpinTimer = window.setTimeout(spinStep, delay);
+      const lastIdx = Math.max(0, tempoSpinDelays.length - 1);
+      const delay = tempoSpinDelays[Math.min(tempoSpinDelayIndex, lastIdx)] || ROLL_SPEED_MS;
+      tempoSpinDelayIndex = Math.min(lastIdx, tempoSpinDelayIndex + 1);
+      tempoSpinTimer = window.setTimeout(spinStep, delay);
     };
     spinStep();
   }
 
-  function rollPlayerInitiativeNarrative() {
+  function rollPlayerTempoNarrative() {
     return randomRollInRange(8, 24);
   }
 
@@ -1225,55 +1225,55 @@ export function createCombatScreen({ hostEl, getPlayerName, getTechniques, getPl
     return Math.max(0, 64 - t);
   }
 
-  function triggerInitiativeAlert({ timerTick, timerValue } = {}) {
+  function triggerTempoAlert({ timerTick, timerValue } = {}) {
     if (pendingNextInit) return;
-    pendingNextInit = { player: rollPlayerInitiativeNarrative(), enemy: rollD32() };
+    pendingNextInit = { player: rollPlayerTempoNarrative(), enemy: rollD32() };
     timerFlashGreenTicks = 1;
-    initiativeFlashRedTicks = 1;
-    initiativeMaskUntilTick = null;
-    initiativeAnimUntilTick = null;
-    initiativeRollingPending = true;
+    tempoFlashRedTicks = 1;
+    tempoMaskUntilTick = null;
+    tempoAnimUntilTick = null;
+    tempoRollingPending = true;
     if (useNarrativeLoopTimer) {
       const rawTick = Number(timerTick);
       const rawValue = Number(timerValue);
-      if (Number.isFinite(rawTick)) initiativeRollDirection = rawTick <= 32 ? "up" : "down";
-      else if (Number.isFinite(rawValue)) initiativeRollDirection = rawValue >= 16 ? "up" : "down";
-      else initiativeRollDirection = "up";
-      initiativeRollStopValue = initiativeRollDirection === "up" ? 32 : 0;
+      if (Number.isFinite(rawTick)) tempoRollDirection = rawTick <= 32 ? "up" : "down";
+      else if (Number.isFinite(rawValue)) tempoRollDirection = rawValue >= 16 ? "up" : "down";
+      else tempoRollDirection = "up";
+      tempoRollStopValue = tempoRollDirection === "up" ? 32 : 0;
       const currentValue = Number.isFinite(rawValue) ? rawValue : (Number.isFinite(rawTick) ? resolveTimerValue(rawTick) : 0);
-      initiativeRollLengthUnits = Math.max(1, Math.abs(Number(initiativeRollStopValue) - Number(currentValue)));
+      tempoRollLengthUnits = Math.max(1, Math.abs(Number(tempoRollStopValue) - Number(currentValue)));
     } else {
-      initiativeRollDirection = null;
-      initiativeRollStopValue = null;
-      initiativeRollLengthUnits = Math.max(1, Number(combatTimeConfig?.phaseDurations?.revealRoll || 5));
+      tempoRollDirection = null;
+      tempoRollStopValue = null;
+      tempoRollLengthUnits = Math.max(1, Number(combatTimeConfig?.phaseDurations?.revealRoll || 5));
     }
-    initiativeTextHidden = true;
-    initiativeRollingValue = null;
-    stopInitiativeSpin();
-    setInitiativeAlertActive(true);
-    refs?.initiative?.classList.add("combatInitMasked");
-    refs?.initiative?.classList.remove("combatInitRolling");
+    tempoTextHidden = true;
+    tempoRollingValue = null;
+    stopTempoSpin();
+    setTempoAlertActive(true);
+    refs?.tempo?.classList.add("combatInitMasked");
+    refs?.tempo?.classList.remove("combatInitRolling");
     refs?.timer?.classList.add("combatTimerFlashGreen");
-    refs?.initiative?.classList.add("combatInitFlashRed");
+    refs?.tempo?.classList.add("combatInitFlashRed");
   }
 
-  function updateInitiativeRevealOnTick(timerValue) {
+  function updateTempoRevealOnTick(timerValue) {
     if ((timerFlashGreenTicks || 0) > 0) {
       timerFlashGreenTicks -= 1;
       if ((timerFlashGreenTicks || 0) <= 0) refs?.timer?.classList.remove("combatTimerFlashGreen");
     }
-    if ((initiativeFlashRedTicks || 0) > 0) {
-      initiativeFlashRedTicks -= 1;
-      if ((initiativeFlashRedTicks || 0) <= 0) {
-        refs?.initiative?.classList.remove("combatInitFlashRed");
-        if (initiativeRollingPending) {
-          initiativeRollingPending = false;
-          initiativeMaskUntilTick = null;
-          initiativeAnimUntilTick = null;
-          initiativeTextHidden = false;
-          refs?.initiative?.classList.remove("combatInitMasked");
-          refs?.initiative?.classList.add("combatInitRolling");
-          startInitiativeSpin(initiativeRollLengthUnits);
+    if ((tempoFlashRedTicks || 0) > 0) {
+      tempoFlashRedTicks -= 1;
+      if ((tempoFlashRedTicks || 0) <= 0) {
+        refs?.tempo?.classList.remove("combatInitFlashRed");
+        if (tempoRollingPending) {
+          tempoRollingPending = false;
+          tempoMaskUntilTick = null;
+          tempoAnimUntilTick = null;
+          tempoTextHidden = false;
+          refs?.tempo?.classList.remove("combatInitMasked");
+          refs?.tempo?.classList.add("combatInitRolling");
+          startTempoSpin(tempoRollLengthUnits);
         }
       }
       render();
@@ -1282,36 +1282,36 @@ export function createCombatScreen({ hostEl, getPlayerName, getTechniques, getPl
     if (!pendingNextInit) return;
     const atBoundary = Number(timerValue) === 32 || Number(timerValue) === 0;
     if (useNarrativeLoopTimer) {
-      const canRoll = initiativeRollDirection === "up"
-        ? Number(timerValue) < Number(initiativeRollStopValue ?? 32)
-        : Number(timerValue) > Number(initiativeRollStopValue ?? 0);
+      const canRoll = tempoRollDirection === "up"
+        ? Number(timerValue) < Number(tempoRollStopValue ?? 32)
+        : Number(timerValue) > Number(tempoRollStopValue ?? 0);
       if (canRoll && !atBoundary) {
-        initiativeTextHidden = false;
-        startInitiativeSpin(initiativeRollLengthUnits);
-        refs?.initiative?.classList.remove("combatInitMasked");
-        refs?.initiative?.classList.add("combatInitRolling");
+        tempoTextHidden = false;
+        startTempoSpin(tempoRollLengthUnits);
+        refs?.tempo?.classList.remove("combatInitMasked");
+        refs?.tempo?.classList.add("combatInitRolling");
         renderTimerOnly();
         render();
         return;
       }
       if (!atBoundary) {
-        initiativeTextHidden = true;
-        initiativeRollingValue = null;
-        stopInitiativeSpin();
-        refs?.initiative?.classList.add("combatInitMasked");
-        refs?.initiative?.classList.remove("combatInitRolling");
+        tempoTextHidden = true;
+        tempoRollingValue = null;
+        stopTempoSpin();
+        refs?.tempo?.classList.add("combatInitMasked");
+        refs?.tempo?.classList.remove("combatInitRolling");
         renderTimerOnly();
         render();
         return;
       }
-    } else if ((initiativeAnimUntilTick || 0) > 0) {
-      initiativeTextHidden = false;
-      initiativeRollingValue = rollD32();
-      refs?.initiative?.classList.remove("combatInitMasked");
-      refs?.initiative?.classList.add("combatInitRolling");
+    } else if ((tempoAnimUntilTick || 0) > 0) {
+      tempoTextHidden = false;
+      tempoRollingValue = rollD32();
+      refs?.tempo?.classList.remove("combatInitMasked");
+      refs?.tempo?.classList.add("combatInitRolling");
       renderTimerOnly();
       render();
-      initiativeAnimUntilTick -= 1;
+      tempoAnimUntilTick -= 1;
       return;
     }
 
@@ -1323,27 +1323,27 @@ export function createCombatScreen({ hostEl, getPlayerName, getTechniques, getPl
     revealedInit.enemy = pendingNextInit.enemy;
     currentCycleInit = { player: revealedInit.player, enemy: revealedInit.enemy };
     pendingNextInit = null;
-    initiativeMaskUntilTick = null;
-    initiativeAnimUntilTick = null;
-    initiativeRollingValue = null;
-    initiativeRollingPending = false;
-    initiativeRollDirection = null;
-    initiativeRollStopValue = null;
-    initiativeTextHidden = false;
-    stopInitiativeSpin();
-    setInitiativeAlertActive(false);
-    refs?.initiative?.classList.remove("combatInitMasked");
-    refs?.initiative?.classList.remove("combatInitRolling");
+    tempoMaskUntilTick = null;
+    tempoAnimUntilTick = null;
+    tempoRollingValue = null;
+    tempoRollingPending = false;
+    tempoRollDirection = null;
+    tempoRollStopValue = null;
+    tempoTextHidden = false;
+    stopTempoSpin();
+    setTempoAlertActive(false);
+    refs?.tempo?.classList.remove("combatInitMasked");
+    refs?.tempo?.classList.remove("combatInitRolling");
     render();
   }
 
-  function maybeTriggerInitiativeRollOnPlayerValidation({ timerTick, timerValue } = {}) {
+  function maybeTriggerTempoRollOnPlayerValidation({ timerTick, timerValue } = {}) {
     if (!useNarrativeLoopTimer) return;
     if (pendingNextInit) return;
     const current = Number(currentCycleInit.player);
     const value = Number(timerValue);
     if (!Number.isFinite(current) || !Number.isFinite(value) || value !== current) return;
-    triggerInitiativeAlert({
+    triggerTempoAlert({
       timerTick: Number.isFinite(Number(timerTick)) ? Number(timerTick) : lastRunTimerTick,
       timerValue: Number.isFinite(Number(timerValue)) ? Number(timerValue) : lastRunTimerValue
     });
@@ -1384,7 +1384,7 @@ export function createCombatScreen({ hostEl, getPlayerName, getTechniques, getPl
     render();
   }
 
-  function validatePlayerAtInitiativeTick() {
+  function validatePlayerAtTempoTick() {
     if (actionValidated.player) return;
     const snap = session?.getSnapshot?.();
     const hasActionQueued = !!(snap?.player?.pendingTechId || snap?.player?.techId);
@@ -1426,7 +1426,7 @@ export function createCombatScreen({ hostEl, getPlayerName, getTechniques, getPl
       return;
     }
     validateEntityAtTick("player");
-    maybeTriggerInitiativeRollOnPlayerValidation({});
+    maybeTriggerTempoRollOnPlayerValidation({});
     pushNarration("Ton intention est engagee.");
     render();
   }
@@ -1453,7 +1453,7 @@ export function createCombatScreen({ hostEl, getPlayerName, getTechniques, getPl
             currentCycleInit = { player: revealedInit.player, enemy: revealedInit.enemy };
             pvpSkipFirstReveal = false;
             pvpInitialInit = null;
-            onInitiativeReveal?.({
+            onTempoReveal?.({
               turn,
               player: revealedInit.player,
               enemy: revealedInit.enemy,
@@ -1476,23 +1476,23 @@ export function createCombatScreen({ hostEl, getPlayerName, getTechniques, getPl
           timerRemaining = activeCombatType === "pve" ? 0 : combatTimeConfig.phaseDurations.askRoll;
           actionValidated = { player: false, enemy: false };
           paidThisTurn = { player: false, enemy: false };
-          initiativePulseUntilTick = 0;
-          initiativeTextHidden = false;
-          initiativeMaskUntilTick = null;
-          initiativeAnimUntilTick = null;
-          initiativeRollingValue = null;
+          tempoPulseUntilTick = 0;
+          tempoTextHidden = false;
+          tempoMaskUntilTick = null;
+          tempoAnimUntilTick = null;
+          tempoRollingValue = null;
           pendingNextInit = null;
-          stopInitiativeSpin();
+          stopTempoSpin();
           skipNextFlowResolve = false;
-          setInitiativePulseActive(false);
-          setInitiativeAlertActive(false);
+          setTempoPulseActive(false);
+          setTempoAlertActive(false);
           markEntityState("player", false);
           markEntityState("enemy", false);
           if (activeCombatType === "pve") {
             rolledInit.player = null;
             rolledInit.enemy = null;
           } else {
-            rolledInit.player = useNarrativeLoopTimer ? rollPlayerInitiativeNarrative() : rollD20();
+            rolledInit.player = useNarrativeLoopTimer ? rollPlayerTempoNarrative() : rollD20();
             rolledInit.enemy = useNarrativeLoopTimer ? rollD32() : rollD20();
           }
           const autoStartPvpFirstRoll = activeCombatType === "pvp" && turn === 0;
@@ -1501,12 +1501,12 @@ export function createCombatScreen({ hostEl, getPlayerName, getTechniques, getPl
             `Tour ${turn}`,
             "Lis la posture adverse et prepare ton engagement.",
             autoStartPvpFirstRoll
-              ? "Les deux camps sont prets: initiative automatique."
+              ? "Les deux camps sont prets: tempo automatique."
               : (requirePlayerRollEveryTurn
-              ? "Appuie sur ESPACE pour engager ton initiative."
+              ? "Appuie sur ESPACE pour engager ton tempo."
               : (turn === 0
-              ? "Appuie sur ESPACE pour lancer la premiere initiative."
-              : "Nouvelle initiative en preparation.")),
+              ? "Appuie sur ESPACE pour lancer le premier tempo."
+              : "Nouvelle tempo en preparation.")),
             "Choisis ton intention pendant cette fenetre."
           ]);
           if (autoStartPvpFirstRoll) {
@@ -1517,17 +1517,17 @@ export function createCombatScreen({ hostEl, getPlayerName, getTechniques, getPl
           setNarrativeOnlyMode(forceNarrativeOnlyUi);
           timerRemaining = combatTimeConfig.phaseDurations.revealRoll;
           if (activeCombatType === "pve" || activeCombatType === "pvp") {
-            // 5u animation: spin initiative values before revealing final rolls.
-            initiativeTextHidden = false;
-            initiativeRollingValue = rollD20();
-            refs?.initiative?.classList.remove("combatInitMasked");
-            refs?.initiative?.classList.add("combatInitRolling");
+            // 5u animation: spin tempo values before revealing final rolls.
+            tempoTextHidden = false;
+            tempoRollingValue = rollD20();
+            refs?.tempo?.classList.remove("combatInitMasked");
+            refs?.tempo?.classList.add("combatInitRolling");
             startRevealRollSpin(combatTimeConfig.phaseDurations.revealRoll);
             setNarration([
               `Tour ${turn}`,
               activeCombatType === "pvp"
-                ? "Nouvelle initiative en cours..."
-                : "Initiative en cours..."
+                ? "Nouvelle tempo en cours..."
+                : "tempo en cours..."
             ]);
             render();
             renderTimerOnly();
@@ -1536,7 +1536,7 @@ export function createCombatScreen({ hostEl, getPlayerName, getTechniques, getPl
           revealedInit.player = rolledInit.player;
           revealedInit.enemy = rolledInit.enemy;
           currentCycleInit = { player: revealedInit.player, enemy: revealedInit.enemy };
-          onInitiativeReveal?.({
+          onTempoReveal?.({
             turn,
             player: revealedInit.player,
             enemy: revealedInit.enemy,
@@ -1544,7 +1544,7 @@ export function createCombatScreen({ hostEl, getPlayerName, getTechniques, getPl
           });
           setNarration([
             `Tour ${turn}`,
-            `Resultat d'initiative: J ${revealedInit.player} / E ${revealedInit.enemy}.`
+            `Resultat de tempo: J ${revealedInit.player} / E ${revealedInit.enemy}.`
           ]);
         } else if (phase === "runTimer") {
           stopRevealRollSpin();
@@ -1553,11 +1553,11 @@ export function createCombatScreen({ hostEl, getPlayerName, getTechniques, getPl
           if (turn === 0) pendingLockedForOpeningInit = false;
           ensureAutoTargets();
           if (useNarrativeLoopTimer && turn === 0) {
-            revealedInit.player = narrativeIntroInitialInit?.player ?? rollPlayerInitiativeNarrative();
+            revealedInit.player = narrativeIntroInitialInit?.player ?? rollPlayerTempoNarrative();
             revealedInit.enemy = narrativeIntroInitialInit?.enemy ?? rollD32();
             currentCycleInit = { player: revealedInit.player, enemy: revealedInit.enemy };
             narrativeIntroInitialInit = null;
-            onInitiativeReveal?.({
+            onTempoReveal?.({
               turn: 0,
               player: revealedInit.player,
               enemy: revealedInit.enemy,
@@ -1566,27 +1566,27 @@ export function createCombatScreen({ hostEl, getPlayerName, getTechniques, getPl
           }
           actionValidated = { player: false, enemy: false };
           paidThisTurn = { player: false, enemy: false };
-          initiativePulseUntilTick = 0;
-          setInitiativePulseActive(false);
-          setInitiativeAlertActive(false);
-          initiativeTextHidden = false;
-          initiativeMaskUntilTick = null;
-          initiativeAnimUntilTick = null;
-          initiativeRollingValue = null;
-          initiativeRollingPending = false;
-          initiativeRollDirection = null;
-          initiativeRollStopValue = null;
+          tempoPulseUntilTick = 0;
+          setTempoPulseActive(false);
+          setTempoAlertActive(false);
+          tempoTextHidden = false;
+          tempoMaskUntilTick = null;
+          tempoAnimUntilTick = null;
+          tempoRollingValue = null;
+          tempoRollingPending = false;
+          tempoRollDirection = null;
+          tempoRollStopValue = null;
           timerFlashGreenTicks = 0;
-          initiativeFlashRedTicks = 0;
+          tempoFlashRedTicks = 0;
           pendingNextInit = null;
-          stopInitiativeSpin();
+          stopTempoSpin();
           skipNextFlowResolve = false;
           timerRemaining = 0;
           markEntityState("player", false);
           markEntityState("enemy", false);
           setNarration([
             `Tour ${turn}`,
-            `Initiative: J ${revealedInit.player} / E ${revealedInit.enemy}.`,
+            `tempo: J ${revealedInit.player} / E ${revealedInit.enemy}.`,
             isOneVsOne()
               ? "Chaque camp engage son symbole sur son tempo."
               : "Le tempo de combat est actif."
@@ -1596,10 +1596,10 @@ export function createCombatScreen({ hostEl, getPlayerName, getTechniques, getPl
           stopRevealRollSpin();
           setNarrativeOnlyMode(forceNarrativeOnlyUi);
           timerRemaining = 0;
-          initiativePulseUntilTick = 0;
-          setInitiativePulseActive(false);
-          setInitiativeAlertActive(false);
-          initiativeTextHidden = false;
+          tempoPulseUntilTick = 0;
+          setTempoPulseActive(false);
+          setTempoAlertActive(false);
+          tempoTextHidden = false;
           setNarration(buildPostResolutionLines(session?.getSnapshot?.() || null));
           refreshPlayerWindowCache();
         }
@@ -1617,17 +1617,17 @@ export function createCombatScreen({ hostEl, getPlayerName, getTechniques, getPl
         else if (phase === "askRoll" && activeCombatType === "pve") timerRemaining = 0;
         else timerRemaining = phaseRemaining;
         if (phase === "revealRoll" && (activeCombatType === "pve" || activeCombatType === "pvp")) {
-          initiativeTextHidden = false;
-          refs?.initiative?.classList.remove("combatInitMasked");
-          refs?.initiative?.classList.add("combatInitRolling");
+          tempoTextHidden = false;
+          refs?.tempo?.classList.remove("combatInitMasked");
+          refs?.tempo?.classList.add("combatInitRolling");
           setNarration([
             `Tour ${turn}`,
-            "L'initiative tourne..."
+            "le tempo tourne..."
           ]);
           render();
         }
-        syncInitiativePulse(timerTick);
-        updateInitiativeRevealOnTick(resolveTimerValue(timerTick));
+        syncTempoPulse(timerTick);
+        updateTempoRevealOnTick(resolveTimerValue(timerTick));
         renderTimerOnly();
       },
       onPhaseEnd: ({ phase, turn }) => {
@@ -1636,17 +1636,17 @@ export function createCombatScreen({ hostEl, getPlayerName, getTechniques, getPl
           revealedInit.player = rollD20();
           revealedInit.enemy = rollD20();
           currentCycleInit = { player: revealedInit.player, enemy: revealedInit.enemy };
-          onInitiativeReveal?.({
+          onTempoReveal?.({
             turn,
             player: revealedInit.player,
             enemy: revealedInit.enemy,
             combatType: activeCombatType
           });
-          initiativeRollingValue = null;
-          refs?.initiative?.classList.remove("combatInitRolling");
+          tempoRollingValue = null;
+          refs?.tempo?.classList.remove("combatInitRolling");
           setNarration([
             `Tour ${turn}`,
-            `Resultat d'initiative: J ${revealedInit.player} / E ${revealedInit.enemy}.`
+            `Resultat de tempo: J ${revealedInit.player} / E ${revealedInit.enemy}.`
           ]);
           render();
           renderTimerOnly();
@@ -1654,16 +1654,16 @@ export function createCombatScreen({ hostEl, getPlayerName, getTechniques, getPl
       },
       onRunTimerTick: ({ timerTick }) => {
         const timerValue = resolveTimerValue(timerTick);
-        maybeTriggerInitiativeRollOnPlayerValidation({ timerTick, timerValue });
+        maybeTriggerTempoRollOnPlayerValidation({ timerTick, timerValue });
         if (timerValue === currentCycleInit.player || timerValue === currentCycleInit.enemy) {
-          initiativePulseUntilTick = Math.max(initiativePulseUntilTick, timerTick + 2);
-          syncInitiativePulse(timerTick);
+          tempoPulseUntilTick = Math.max(tempoPulseUntilTick, timerTick + 2);
+          syncTempoPulse(timerTick);
         }
         if (timerValue === currentCycleInit.player && !actionValidated.player) {
           ensureAutoTargets();
           if (selectedTargets.player) {
-            validatePlayerAtInitiativeTick();
-            maybeTriggerInitiativeRollOnPlayerValidation({ timerTick, timerValue });
+            validatePlayerAtTempoTick();
+            maybeTriggerTempoRollOnPlayerValidation({ timerTick, timerValue });
           }
         }
         if (timerValue === currentCycleInit.enemy) {
@@ -1674,8 +1674,8 @@ export function createCombatScreen({ hostEl, getPlayerName, getTechniques, getPl
         if (atNarrativeBoundary) {
           ensureAutoTargets();
           if (!actionValidated.player && selectedTargets.player) {
-            validatePlayerAtInitiativeTick();
-            maybeTriggerInitiativeRollOnPlayerValidation({ timerTick, timerValue });
+            validatePlayerAtTempoTick();
+            maybeTriggerTempoRollOnPlayerValidation({ timerTick, timerValue });
           }
           if (!actionValidated.enemy && selectedTargets.enemy) validateEntityAtTick("enemy");
           resolveTurnNow();
@@ -1687,8 +1687,8 @@ export function createCombatScreen({ hostEl, getPlayerName, getTechniques, getPl
         if (!useNarrativeLoopTimer && timerTick === combatTimeConfig.phaseDurations.runTimer) {
           ensureAutoTargets();
           if (!actionValidated.player && selectedTargets.player) {
-            validatePlayerAtInitiativeTick();
-            maybeTriggerInitiativeRollOnPlayerValidation({ timerTick, timerValue });
+            validatePlayerAtTempoTick();
+            maybeTriggerTempoRollOnPlayerValidation({ timerTick, timerValue });
           }
           if (!actionValidated.enemy && selectedTargets.enemy) validateEntityAtTick("enemy");
         }
@@ -1794,10 +1794,10 @@ export function createCombatScreen({ hostEl, getPlayerName, getTechniques, getPl
     }
   }
 
-  function updateInitiativeBoxPosition() {
-    if (!refs?.initiative || !refs?.lastSymbols || !rootEl) return;
-    // Initiative box is now placed by CSS grid (no absolute positioning).
-    if (window.getComputedStyle(refs.initiative).position !== "absolute") return;
+  function updateTempoBoxPosition() {
+    if (!refs?.tempo || !refs?.lastSymbols || !rootEl) return;
+    // tempo box is now placed by CSS grid (no absolute positioning).
+    if (window.getComputedStyle(refs.tempo).position !== "absolute") return;
     const shellRect = rootEl.querySelector(".combatAsciiRight")?.getBoundingClientRect();
     const lastRect = refs.lastSymbols.getBoundingClientRect();
     if (!shellRect || !lastRect || !shellRect.width || !lastRect.width) return;
@@ -1807,10 +1807,10 @@ export function createCombatScreen({ hostEl, getPlayerName, getTechniques, getPl
     const left = Math.max(0, Math.floor(lastRect.left - shellRect.left - size - gap));
     const top = Math.max(0, Math.floor(lastRect.top - shellRect.top));
 
-    refs.initiative.style.left = `${left}px`;
-    refs.initiative.style.top = `${top}px`;
-    refs.initiative.style.width = `${size}px`;
-    refs.initiative.style.height = `${size}px`;
+    refs.tempo.style.left = `${left}px`;
+    refs.tempo.style.top = `${top}px`;
+    refs.tempo.style.width = `${size}px`;
+    refs.tempo.style.height = `${size}px`;
   }
 
   function ensureRoot() {
@@ -1855,7 +1855,7 @@ export function createCombatScreen({ hostEl, getPlayerName, getTechniques, getPl
         <section class="combatAsciiRight">
           <div class="combatRightTop">
             <div id="c6_timer" class="combatSquare combatSquareInfo box box--info">-</div>
-            <div id="c7_initiative" class="combatSquare combatSquareInfo box box--info" data-bind="initiative">-</div>
+            <div id="c7_tempo" class="combatSquare combatSquareInfo box box--info" data-bind="tempo">-</div>
 
             <div id="c2_enemy" class="combatSquare combatSquareLarge box box--enemy">
               <span class="combatTurnRank combatEnemyOrderBadge box box--action" data-bind="enemyLastSymbol">-</span>
@@ -1895,7 +1895,7 @@ export function createCombatScreen({ hostEl, getPlayerName, getTechniques, getPl
 
           <div id="c10_narrative" class="combatRect combatNarrativeBox box box--info">
             <div data-bind="narrativeBody"></div>
-            <div class="combatNarrativeHint">Espace = initialiser la premiere initiative. Resolution deterministe hors initiative.</div>
+            <div class="combatNarrativeHint">Espace = initialiser le premier tempo. Resolution deterministe hors tempo.</div>
           </div>
         </section>
       </div>
@@ -1918,7 +1918,7 @@ export function createCombatScreen({ hostEl, getPlayerName, getTechniques, getPl
       playerOrder: rootEl.querySelector('[data-bind="playerOrder"]'),
       enemyOrder: rootEl.querySelector('[data-bind="enemyOrder"]'),
       enemyLastSymbol: rootEl.querySelector('[data-bind="enemyLastSymbol"]'),
-      initiative: rootEl.querySelector('[data-bind="initiative"]'),
+      tempo: rootEl.querySelector('[data-bind="tempo"]'),
       timer: rootEl.querySelector("#c6_timer"),
       uiLeft: rootEl.querySelector(".combatAsciiLeft"),
       uiTop: rootEl.querySelector(".combatRightTop"),
@@ -2052,7 +2052,7 @@ export function createCombatScreen({ hostEl, getPlayerName, getTechniques, getPl
   function phaseLabel(phase) {
     const key = String(phase || "").toLowerCase();
     if (key === "ask_roll") return "Preparation";
-    if (key === "reveal_roll") return "Initiative";
+    if (key === "reveal_roll") return "tempo";
     if (key === "run_timer") return "Resolution";
     if (key === "end_wait") return "Transition";
     if (key === "idle") return "Attente";
@@ -2271,7 +2271,7 @@ export function createCombatScreen({ hostEl, getPlayerName, getTechniques, getPl
       combatType: activeCombatType,
       phase: currentPhase,
       timer: Number(timerRemaining || 0),
-      initiative: {
+      tempo: {
         player: revealedInit.player ?? null,
         enemy: revealedInit.enemy ?? null
       },
@@ -2348,10 +2348,10 @@ export function createCombatScreen({ hostEl, getPlayerName, getTechniques, getPl
     const lastEnemySymbol = lastEnemyToken?.sym ? formatToken(lastEnemyToken) : "-";
     bindText(refs.enemyLastSymbol, lastEnemySymbol);
 
-    const initiativeDisplay = initiativeTextHidden
+    const tempoDisplay = tempoTextHidden
       ? ""
-      : `${initiativeRollingValue != null ? initiativeRollingValue : (revealedInit.player ?? "-")}`;
-    bindText(refs.initiative, initiativeDisplay);
+      : `${tempoRollingValue != null ? tempoRollingValue : (revealedInit.player ?? "-")}`;
+    bindText(refs.tempo, tempoDisplay);
 
     bindText(refs.energyText, `Energie : ${snapshot.player.energy}/${snapshot.player.energyMax}`);
     renderTimerOnly();
@@ -2389,7 +2389,7 @@ export function createCombatScreen({ hostEl, getPlayerName, getTechniques, getPl
     }
     emitCombatSyncPayload(snapshot);
     updateArrowPosition();
-    updateInitiativeBoxPosition();
+    updateTempoBoxPosition();
   }
 
   function getEquippedTechniques() {
@@ -2456,7 +2456,7 @@ export function createCombatScreen({ hostEl, getPlayerName, getTechniques, getPl
       }
       if (flow?.handleSpace()) {
         if (currentPhase === "askRoll") {
-          setNarration(["Initiative engagee.", "Le resultat est en lecture..."]);
+          setNarration(["tempo engagee.", "Le resultat est en lecture..."]);
         }
         render();
       }
@@ -2482,7 +2482,7 @@ export function createCombatScreen({ hostEl, getPlayerName, getTechniques, getPl
     if (!resizeAttached) {
       resizeHandler = () => {
         updateArrowPosition();
-        updateInitiativeBoxPosition();
+        updateTempoBoxPosition();
       };
       window.addEventListener("resize", resizeHandler);
       resizeAttached = true;
@@ -2502,8 +2502,8 @@ export function createCombatScreen({ hostEl, getPlayerName, getTechniques, getPl
       setNarration([
         "Pret au combat.",
         activeCombatType === "pvp"
-          ? "En PVP, l'initiative part des que les deux camps sont prets."
-          : "Appuie sur ESPACE pour engager la premiere initiative."
+          ? "En PVP, le tempo part des que les deux camps sont prets."
+          : "Appuie sur ESPACE pour engager le premier tempo."
       ]);
       startCombatFlow();
       render();
@@ -2529,7 +2529,7 @@ export function createCombatScreen({ hostEl, getPlayerName, getTechniques, getPl
     if (combatAutoCloseTimer) window.clearTimeout(combatAutoCloseTimer);
     combatAutoCloseTimer = null;
     stopRevealRollSpin();
-    stopInitiativeSpin();
+    stopTempoSpin();
     stopTutorialInitRollAnimation();
     stopNarrativeIntroTimer();
     clearNarrativeIntroStage();

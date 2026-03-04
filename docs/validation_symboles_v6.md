@@ -1,4 +1,4 @@
-﻿# Validation symboles SOARA V6
+# Validation symboles SOARA V6
 
 Source de reference: `docs/SOARA_V6_Table_Symboles.docx`.
 
@@ -17,7 +17,7 @@ Source de reference: `docs/SOARA_V6_Table_Symboles.docx`.
 ## Regle de resolution globale
 
 - Aucun de en resolution de degats/defense/esquive.
-- Seule l'initiative conserve un tirage.
+- Seul le tempo conserve un tirage.
 
 ## Fichiers de reference
 

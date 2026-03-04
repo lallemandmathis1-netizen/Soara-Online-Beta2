@@ -1,4 +1,4 @@
-﻿# SOARA V2 - Traduction Lore -> Gameplay
+# SOARA V2 - Traduction Lore -> Gameplay
 
 Version: 2.0
 Statut: Design reference
@@ -20,7 +20,7 @@ Statut: Design reference
 ### Gobelin
 - Identite: pression courte, coordination, adaptation.
 - Mecanique:
-  - +3 d'initatiative en plus du jet(ne peux pas dépasser le max du timer), PV reduit, Atk Resuit def reduit, esq forte)
+  - +3 d'initatiative en plus du jet(ne peux pas d�passer le max du timer), PV reduit, Atk Resuit def reduit, esq forte)
   - effets de drain/pression energie
   - pics d'efficacite en enchainements courts
 
@@ -42,7 +42,7 @@ Statut: Design reference
 - Technique = sequence de symboles.
 - Chaque tour:
   - intention (technique en attente)
-  - validation (timer / initiative)
+  - validation (timer / Tempo)
   - resolution deterministe via table et fiches entites
   - trace dans le log
 - Log = donnee de lecture/relecture, pas decoration UI.

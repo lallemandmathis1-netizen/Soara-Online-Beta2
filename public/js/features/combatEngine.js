@@ -293,8 +293,8 @@ export function createCombatSessionV6({ playerName, enemyName, techniques, playe
     flatReduce: enemyMeta?.flatReduce ?? 0
   }, "Ennemi");
 
-  function nextInitiative() {
-    // Initiative keeps a random roll. Resolution itself remains deterministic.
+  function nextTempo() {
+    // tempo keeps a random roll. Resolution itself remains deterministic.
     return 1 + Math.floor(Math.random() * 20);
   }
 
@@ -306,7 +306,7 @@ export function createCombatSessionV6({ playerName, enemyName, techniques, playe
 
   const state = {
     turn: 1,
-    initiative: { player: nextInitiative(), enemy: nextInitiative() },
+    tempo: { player: nextTempo(), enemy: nextTempo() },
     player: basePlayer,
     enemy: baseEnemy
   };
@@ -505,10 +505,10 @@ export function createCombatSessionV6({ playerName, enemyName, techniques, playe
     const eNextIsReflex = eTech?.type === "reflex" || eTech?.category === "reflex";
     return clone({
       turn: state.turn,
-      initiative: state.initiative,
+      tempo: state.tempo,
       timerSeconds: Math.min(
-        state.initiative.player ?? 20,
-        state.initiative.enemy ?? 20
+        state.tempo.player ?? 20,
+        state.tempo.enemy ?? 20
       ),
       player: {
         ...state.player,
@@ -545,7 +545,7 @@ export function createCombatSessionV6({ playerName, enemyName, techniques, playe
     applyRegen(state.enemy);
 
     narration.push(
-      `Init ${state.player.name}=${state.initiative.player} | ${state.enemy.name}=${state.initiative.enemy}${auto ? " [auto]" : ""}`
+      `Init ${state.player.name}=${state.tempo.player} | ${state.enemy.name}=${state.tempo.enemy}${auto ? " [auto]" : ""}`
     );
 
     const pMove = state.player.validatedMove || consumeTechniqueSymbol(state.player, techs);
@@ -795,9 +795,9 @@ export function createCombatSessionV6({ playerName, enemyName, techniques, playe
     if (state.player.hp <= 0) narration.push(`${state.player.name} est KO.`);
 
     state.turn += 1;
-    state.initiative = {
-      player: nextInitiative(),
-      enemy: nextInitiative()
+    state.tempo = {
+      player: nextTempo(),
+      enemy: nextTempo()
     };
     state.player.validatedMove = null;
     state.enemy.validatedMove = null;

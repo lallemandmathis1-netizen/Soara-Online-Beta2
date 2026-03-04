@@ -1,10 +1,10 @@
-﻿# SOARA - Reference Runtime Beta 2 (Source de Verite)
+# SOARA - Reference Runtime Beta 2 (Source de Verite)
 
 Date de consolidation: 2026-03-03
 
 ## 1) Regles de resolution
 - Aucun de pour attaque/defense/esquive/mitigation.
-- Seule l'initiative utilise un tirage.
+- Seul le tempo utilise un tirage.
 - Les facteurs de degats/defense/esquive sont bases sur `docs/SOARA_V6_Table_Symboles.docx` via `public/js/data/symbolsV6.js`.
 - Esquive binaire: `ESQ_power > energie depensee attaquant` => esquive totale.
 - Parade: `renvoi = min(attaque entrante, 2xATK du pareur)`.
