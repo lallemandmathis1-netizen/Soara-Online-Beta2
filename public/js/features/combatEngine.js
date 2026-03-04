@@ -88,6 +88,7 @@ function normalizeEntity(input, fallbackName) {
     pendingTechId: input?.pendingTechId || null,
     step: Number(input?.step ?? 0),
     forcedNextSymbol: null,
+    forcedSymbol: typeof input?.forcedSymbol === "string" ? normalizeSymbolKey(input.forcedSymbol) : null,
     cancelAfterSymbol: false,
     states: {
       airborne: !!input?.states?.airborne,
@@ -160,6 +161,18 @@ function applyAirborneTransition(entity, sym) {
 }
 
 function consumeTechniqueSymbol(entity, techniques) {
+  if (entity.forcedSymbol) {
+    const forcedToken = normalizeToken({ sym: entity.forcedSymbol });
+    return {
+      token: forcedToken,
+      sym: forcedToken?.sym || entity.forcedSymbol,
+      techStart: false,
+      techEnd: false,
+      techId: null,
+      fromTechnique: false
+    };
+  }
+
   if (entity.forcedNextSymbol) {
     const forced = entity.forcedNextSymbol;
     entity.forcedNextSymbol = null;

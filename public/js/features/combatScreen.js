@@ -229,8 +229,10 @@ export function createCombatScreen({ hostEl, getPlayerName, getTechniques, getPl
     enemyPreset = options.enemyPreset || enemyPreset;
     if (type === "tutorial") {
       enemyPreset = {
-        hp: 24,
-        hpMax: 24,
+        name: "DUMMY",
+        hp: 10,
+        hpMax: 10,
+        forcedSymbol: "O",
         atkStat: 1,
         defStat: 1,
         esqStat: 1,
