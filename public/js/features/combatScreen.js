@@ -163,7 +163,7 @@ export function createCombatScreen({ hostEl, getPlayerName, getTechniques, getPl
 
   function canManualCloseCombat() {
     const type = String(activeCombatType || "").toLowerCase();
-    return !(type === "pve" || type === "pvp" || type === "narrative");
+    return type !== "pvp";
   }
 
   function syncManualCloseControl() {

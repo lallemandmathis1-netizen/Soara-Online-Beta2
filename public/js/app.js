@@ -530,13 +530,16 @@ const REWARD_TECHNIQUES = {
 
   function getRuntimePins() {
     const flags = getProgressFlags();
-    const base = [...(staticData?.pins || [])].filter((pin) => {
-      if (pin?.id === "U") return flags.tutorialDone;
-      if (pin?.id === "N") return flags.pveUDone;
-      return true;
-    });
-    if (flags.dialogueDone && !flags.tutorialDone) base.push(tutorialCombatPin());
-    return base;
+    const sourcePins = Array.isArray(staticData?.pins) ? staticData.pins : [];
+    const campPin = sourcePins.find((pin) => pin?.id === "C");
+    const pvePin = sourcePins.find((pin) => pin?.id === "U");
+    const narrativePin = sourcePins.find((pin) => pin?.id === "N");
+    const out = [];
+    if (campPin) out.push(campPin);
+    if (flags.dialogueDone && !flags.tutorialDone) out.push(tutorialCombatPin());
+    if (flags.tutorialDone && pvePin) out.push(pvePin);
+    if (flags.pveUDone && narrativePin) out.push(narrativePin);
+    return out;
   }
 
   function onStateChanged(next){
@@ -1399,6 +1402,29 @@ const REWARD_TECHNIQUES = {
     });
   }
 
+  async function openWelcomeIntroModal() {
+    await new Promise((resolve) => {
+      modal.open("Accueil", `
+        <div class="card">
+          <div><b>Bienvenue sur Soara.</b></div>
+          <div class="small">Commence par C-01 (dialogue), puis debloque T, ensuite U puis N.</div>
+          <div style="height:10px"></div>
+          <button class="btn" id="btnWelcomeSoara" style="width:100%;">Continuer</button>
+        </div>
+      `);
+      const btn = document.getElementById("btnWelcomeSoara");
+      if (!btn) {
+        modal.close();
+        resolve();
+        return;
+      }
+      btn.onclick = () => {
+        modal.close();
+        resolve();
+      };
+    });
+  }
+
   async function doLogout(){
     auth.logout();
     api.clearToken();
@@ -1542,6 +1568,7 @@ const REWARD_TECHNIQUES = {
     hud.render(userState);
     pins.render(getRuntimePins(), userState);
     if (!hasHistoryMarker(PROGRESS_MARKERS.dialogue)) {
+      await openWelcomeIntroModal();
       openCampaignTutorDialogue();
     }
   }

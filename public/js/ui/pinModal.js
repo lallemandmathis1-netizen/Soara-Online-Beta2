@@ -393,19 +393,8 @@ export function createPinModal({ modal, getCampaigns, campaignRunner, openCombat
         <div class="small">Type: ${escapeHtml(pin.kind || "?")}</div>
         <div style="height:10px"></div>
         <div class="small">(Pas d'action definie.)</div>
-        <div style="height:12px"></div>
-        <div class="small"><b>Declencher un duel d'essai ?</b></div>
-        <button class="btn" id="pin_launch_combat_beta" style="width:100%; margin-top:8px;">Declencher duel (beta)</button>
       </div>
     `);
-
-    const launchBtn = document.getElementById("pin_launch_combat_beta");
-    if (launchBtn) {
-      launchBtn.onclick = () => {
-        modal.close();
-        if (typeof openCombatScreen === "function") openCombatScreen();
-      };
-    }
   }
 
   return { open };
