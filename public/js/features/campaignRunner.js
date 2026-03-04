@@ -86,10 +86,6 @@ export function createCampaignRunner({ modal, stateSvc, onStateChanged, openComb
       html += `<button class="btn" id="camp_choice_${i}">${c.label}</button>`;
     });
 
-    html += `<div style="height:12px"></div>`;
-    html += `<div class="small"><b>Voulez-vous lancer un duel d'essai ?</b></div>`;
-    html += `<button class="btn" id="camp_launch_combat_beta">Declencher duel (beta)</button>`;
-
     // fin
     if ((node.choices || []).length === 0){
       html += `<div class="small">—</div>`;
@@ -147,13 +143,6 @@ export function createCampaignRunner({ modal, stateSvc, onStateChanged, openComb
       };
     });
 
-    const launchBtn = document.getElementById("camp_launch_combat_beta");
-    if (launchBtn) {
-      launchBtn.onclick = () => {
-        modal.close();
-        if (typeof openCombatScreen === "function") openCombatScreen();
-      };
-    }
   }
 
   function escapeHtml(s){

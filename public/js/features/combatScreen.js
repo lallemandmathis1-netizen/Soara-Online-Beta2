@@ -161,6 +161,17 @@ export function createCombatScreen({ hostEl, getPlayerName, getTechniques, getPl
     ui.narration = ui.narration.slice(0, 9);
   }
 
+  function canManualCloseCombat() {
+    const type = String(activeCombatType || "").toLowerCase();
+    return !(type === "pve" || type === "pvp" || type === "narrative");
+  }
+
+  function syncManualCloseControl() {
+    const closeBtn = rootEl?.querySelector('[data-action="close"]');
+    if (!closeBtn) return;
+    closeBtn.style.display = canManualCloseCombat() ? "" : "none";
+  }
+
   function initState(options = {}) {
     if (flow) {
       flow.stop();
@@ -1915,6 +1926,7 @@ export function createCombatScreen({ hostEl, getPlayerName, getTechniques, getPl
 
       const action = target.dataset.action;
       if (action === "close") {
+        if (!canManualCloseCombat()) return;
         close();
         return;
       }
@@ -2278,6 +2290,7 @@ export function createCombatScreen({ hostEl, getPlayerName, getTechniques, getPl
 
   function render() {
     if (!rootEl || !session) return;
+    syncManualCloseControl();
     const snapshot = session.getSnapshot();
 
     bindText(refs.playerName, snapshot.player.name);
@@ -2413,6 +2426,7 @@ export function createCombatScreen({ hostEl, getPlayerName, getTechniques, getPl
 
   function onKeyDown(event) {
     if (event.key === "Escape") {
+      if (!canManualCloseCombat()) return;
       close();
       return;
     }
@@ -2441,6 +2455,7 @@ export function createCombatScreen({ hostEl, getPlayerName, getTechniques, getPl
     initState(options);
     hostEl.style.pointerEvents = "auto";
     rootEl.style.display = "block";
+    syncManualCloseControl();
 
     if (!escAttached) {
       document.addEventListener("keydown", onKeyDown);
