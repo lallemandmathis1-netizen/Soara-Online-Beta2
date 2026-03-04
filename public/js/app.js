@@ -329,6 +329,10 @@ const ENABLE_MULTI_MODE = false;
     return playerState.get().player;
   }
 
+  function isAlkaneUser() {
+    return String(userState?.username || "").trim().toLowerCase() === "alkane";
+  }
+
   function normalizeTechniqueProfileFromAccount(stateLike) {
     const learnedSet = new Set(
       (Array.isArray(stateLike?.learnedTechniques) ? stateLike.learnedTechniques : [])
@@ -792,6 +796,8 @@ const ENABLE_MULTI_MODE = false;
   }
 
   function openSettings(){
+    const isAlkane = isAlkaneUser();
+
     function openLoreCodex() {
       const loreBlocks = [
         staticData?.lore?.canon,
@@ -987,7 +993,7 @@ const ENABLE_MULTI_MODE = false;
           <div id="musicVolumeValue" class="small">-</div>
         </div>
         <div style="height:12px"></div>
-        <button class="btn" id="btnOpenResolutionTest" style="width:100%; margin-bottom:8px;">Test de resolution</button>
+        ${isAlkane ? `<button class="btn" id="btnOpenResolutionTest" style="width:100%; margin-bottom:8px;">Test de resolution</button>` : ``}
         <button class="btn" id="btnOpenCombatRules" style="width:100%; margin-bottom:8px;">Regles de resolution</button>
         <button class="btn" id="btnOpenSymbolsGuide" style="width:100%; margin-bottom:8px;">Reference symboles</button>
         <button class="btn" id="btnOpenTechList" style="width:100%; margin-bottom:8px;">Catalogue technique</button>
@@ -1009,7 +1015,8 @@ const ENABLE_MULTI_MODE = false;
       volRange.addEventListener("input", onVol);
       volRange.addEventListener("change", onVol);
     }
-    document.getElementById("btnOpenResolutionTest").onclick = openResolutionTestModal;
+    const resolutionBtn = document.getElementById("btnOpenResolutionTest");
+    if (resolutionBtn) resolutionBtn.onclick = openResolutionTestModal;
     document.getElementById("btnOpenCombatRules").onclick = () => {
       modal.open("Regles de resolution", `
         <div class="card" style="max-height:72vh; overflow-y:auto;">
@@ -1092,6 +1099,11 @@ const ENABLE_MULTI_MODE = false;
     };
     document.getElementById("btnOpenTechList").onclick = () => {
       const all = Array.isArray(runtimeTechCatalogue) ? runtimeTechCatalogue : [];
+      const learnedSet = new Set(
+        (Array.isArray(getPlayerSnapshot()?.learnedTechniques) ? getPlayerSnapshot().learnedTechniques : [])
+          .map((x) => (typeof x === "string" ? x : x?.id))
+          .filter(Boolean)
+      );
       const expectedSeqRange = (tech) => {
         if (tech?.type === "reflex") return { min: 2, max: 2 };
         return { min: 1, max: 7 };
@@ -1105,31 +1117,40 @@ const ENABLE_MULTI_MODE = false;
         expert: all.filter((t) => String(t?.tier || "").toLowerCase() === "expert").length
       };
       function techCard(t) {
+        const isLearned = learnedSet.has(t?.id);
+        const isLocked = !isAlkane && !isLearned;
         const typeLabel = t?.type === "reflex" ? "Reflexe" : "Technique";
         const rarity = t?.type === "reflex" ? null : (t?.rarity || "-");
         const category = t?.category || "-";
         const rawSeq = Array.isArray(t?.symbols) ? t.symbols : (Array.isArray(t?.seq) ? t.seq : []);
-        const seq = formatSeq(Array.isArray(t?.tokens) ? t.tokens : rawSeq, t?.type === "reflex" ? "reflex" : "base");
+        const seq = isLocked
+          ? "????"
+          : formatSeq(Array.isArray(t?.tokens) ? t.tokens : rawSeq, t?.type === "reflex" ? "reflex" : "base");
         const seqLen = rawSeq.length;
         const expected = expectedSeqRange(t);
         const badSeq = seqLen < expected.min || seqLen > expected.max;
         const seqLabel = expected.min === expected.max
           ? `${expected.min}`
           : `${expected.min}-${expected.max}`;
-        const cost = t?.totalEnergyCost ?? t?.totalCost ?? "-";
-        const dpt = t?.estimatedDamagePerTurn ?? t?.dpt ?? "-";
-        const eff = Number.isFinite(Number(t?.efficiency)) ? Number(t.efficiency).toFixed(2) : "-";
-        const bal = Number.isFinite(Number(t?.balanceIndex)) ? Number(t.balanceIndex).toFixed(1) : "-";
-        const profile = `O:${t?.offensePer10 ?? "-"} D:${t?.defensePer10 ?? "-"} E:${t?.evasionPer10 ?? "-"} Eco:${t?.economyPer10 ?? "-"}`;
-        const desc = t?.description || "-";
-        const util = t?.utility || "-";
-        const weak = t?.weakness || t?.drawback || "-";
+        const cost = isLocked ? "?" : (t?.totalEnergyCost ?? t?.totalCost ?? "-");
+        const dpt = isLocked ? "?" : (t?.estimatedDamagePerTurn ?? t?.dpt ?? "-");
+        const eff = isLocked ? "?" : (Number.isFinite(Number(t?.efficiency)) ? Number(t.efficiency).toFixed(2) : "-");
+        const bal = isLocked ? "?" : (Number.isFinite(Number(t?.balanceIndex)) ? Number(t.balanceIndex).toFixed(1) : "-");
+        const profile = isLocked
+          ? "O:? D:? E:? Eco:?"
+          : `O:${t?.offensePer10 ?? "-"} D:${t?.defensePer10 ?? "-"} E:${t?.evasionPer10 ?? "-"} Eco:${t?.economyPer10 ?? "-"}`;
+        const desc = isLocked ? "Technique non apprise." : (t?.description || "-");
+        const util = isLocked ? "Debloquer pour voir les details." : (t?.utility || "-");
+        const weak = isLocked ? "-" : (t?.weakness || t?.drawback || "-");
+        const lockStyle = isLocked
+          ? `background-image: repeating-linear-gradient(135deg, rgba(107,114,128,0.18) 0 8px, rgba(17,24,39,0.28) 8px 16px); border: 1px solid #6b7280;`
+          : ``;
         return `
-          <div class="card" style="margin-bottom:6px;">
+          <div class="card" style="margin-bottom:6px; ${lockStyle}">
             <div><b>${t?.name || "-"}</b></div>
-            <div class="small">${typeLabel} | ${category}${rarity ? ` | ${rarity}` : ""}</div>
+            <div class="small">${typeLabel} | ${category}${rarity ? ` | ${rarity}` : ""}${isLocked ? " | Hachuree" : ""}</div>
             <div class="small">${seq}</div>
-            <div class="small">Longueur: ${seqLen} (attendu ${seqLabel})${badSeq ? " | INVALIDE" : ""}</div>
+            <div class="small">Longueur: ${isLocked ? "?" : seqLen} (attendu ${seqLabel})${isLocked ? "" : (badSeq ? " | INVALIDE" : "")}</div>
             <div class="small">Cout: ${cost} | DPT: ${dpt} | Eff: ${eff} | Equilibre: ${bal}</div>
             <div class="small">Profil: ${profile}</div>
             <div class="small">Description: ${desc}</div>

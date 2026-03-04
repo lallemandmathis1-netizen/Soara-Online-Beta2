@@ -1,152 +1,79 @@
 {
-  "users": [
-    {
-      "username": "Alkane",
-      "password": "$2b$10$yZ2bGG3PL3SRjEjOsIQrB.nsM2Yg7.lC5CI70fEp9EwCZngoFsTri",
-      "state": {
-        "username": "Alkane",
-        "name": "alkane",
-        "race": "",
-        "faction": "",
-        "hpMax": 10,
-        "hp": 10,
-        "reputation": {
-          "bazeides": 0,
-          "federation": 0,
-          "roor": 0,
-          "gobelins": 0
-        },
-        "money": 0,
-        "pos": {
-          "x": 0.515,
-          "y": 0.58
-        },
-        "techSlots": {
-          "base": 3,
-          "advanced": 0,
-          "unique": 0
-        },
-        "reflexSlots": 1,
-        "learnedReflexes": [
-          "reflex_01"
-        ],
-        "learnedTechniques": [
-          "base_punch",
-          "base_guard",
-          "base_wait"
-        ],
-        "techSlotsTotal": 10,
-        "techniquesBySlot": [
-          "base_punch",
-          "base_guard",
-          "base_wait",
-          null,
-          null,
-          null,
-          null,
-          null,
-          null,
-          null
-        ],
-        "hasStarterKitV2": true,
-        "history": [],
-        "notebook": "",
-        "campaign": {
-          "c-01": {
-            "node": "attitude",
-            "completed": false
-          }
-        },
-        "inventory": [
-          null,
-          null,
-          null,
-          null,
-          null,
-          null,
-          null,
-          null,
-          null
-        ]
-      }
-    },
-    {
-      "username": "beta2_1772636044291",
-      "password": "$2b$10$e6o13Jd3hWf8U427m.ow3.Y1kLe0f1HezsQLmnB.hZfA8.sjcUzZC",
-      "state": {
-        "username": "beta2_1772636044291",
-        "name": "",
-        "race": "",
-        "faction": "",
-        "hpMax": 10,
-        "hp": 10,
-        "reputation": {
-          "bazeides": 0,
-          "federation": 0,
-          "roor": 0,
-          "gobelins": 0
-        },
-        "money": 0,
-        "pos": {
-          "x": 0.515,
-          "y": 0.58
-        },
-        "techSlots": {
-          "base": 3,
-          "advanced": 0,
-          "expert": 0
-        },
-        "reflexSlots": 1,
-        "learnedReflexes": [
-          "r_base_001"
-        ],
-        "learnedTechniques": [
-          "base_punch",
-          "base_guard",
-          "base_wait"
-        ],
-        "techSlotsTotal": 10,
-        "techniquesBySlot": [
-          "base_punch",
-          "base_guard",
-          "base_wait",
-          null,
-          null,
-          null,
-          null,
-          null,
-          null,
-          null
-        ],
-        "hasStarterKitV2": true,
-        "history": [],
-        "notebook": "",
-        "campaign": {
-          "c-01": {
-            "node": "n0",
-            "completed": false
-          }
-        },
-        "tagsProfil": {
-          "prudence": 0,
-          "agressivite": 0,
-          "tempo": 0
-        },
-        "reputationLocale": 0,
-        "historiqueC01": [],
-        "inventory": [
-          null,
-          null,
-          null,
-          null,
-          null,
-          null,
-          null,
-          null,
-          null
-        ]
-      }
-    }
-  ],
-  "pvpRooms": {}
+    "users":  [
+                  {
+                      "username":  "Alkane",
+                      "password":  "$2b$10$yZ2bGG3PL3SRjEjOsIQrB.nsM2Yg7.lC5CI70fEp9EwCZngoFsTri",
+                      "state":  {
+                                    "username":  "Alkane",
+                                    "name":  "alkane",
+                                    "race":  "",
+                                    "faction":  "",
+                                    "hpMax":  10,
+                                    "hp":  10,
+                                    "reputation":  {
+                                                       "bazeides":  0,
+                                                       "federation":  0,
+                                                       "roor":  0,
+                                                       "gobelins":  0
+                                                   },
+                                    "money":  0,
+                                    "pos":  {
+                                                "x":  0.515,
+                                                "y":  0.58
+                                            },
+                                    "techSlots":  {
+                                                      "base":  3,
+                                                      "advanced":  0,
+                                                      "unique":  0
+                                                  },
+                                    "reflexSlots":  1,
+                                    "learnedReflexes":  [
+                                                            "reflex_01"
+                                                        ],
+                                    "learnedTechniques":  [
+                                                              "base_punch",
+                                                              "base_guard",
+                                                              "base_wait"
+                                                          ],
+                                    "techSlotsTotal":  10,
+                                    "techniquesBySlot":  [
+                                                             "base_punch",
+                                                             "base_guard",
+                                                             "base_wait",
+                                                             null,
+                                                             null,
+                                                             null,
+                                                             null,
+                                                             null,
+                                                             null,
+                                                             null
+                                                         ],
+                                    "hasStarterKitV2":  true,
+                                    "history":  [
+
+                                                ],
+                                    "notebook":  "",
+                                    "campaign":  {
+                                                     "c-01":  {
+                                                                  "node":  "attitude",
+                                                                  "completed":  false
+                                                              }
+                                                 },
+                                    "inventory":  [
+                                                      null,
+                                                      null,
+                                                      null,
+                                                      null,
+                                                      null,
+                                                      null,
+                                                      null,
+                                                      null,
+                                                      null
+                                                  ]
+                                }
+                  }
+              ],
+    "pvpRooms":  {
+
+                 }
 }
