@@ -29,7 +29,7 @@ export function createPlayerState({ initialName = "Joueur1" } = {}) {
       learnedTechniques: [],
       techSlotsTotal: 10,
       techniquesBySlot: Array.from({ length: 10 }, () => null),
-      combatConfig: { combatType: "tutorial", unitDurationMs: 500 },
+      combatConfig: { combatType: "tutorial", unitDurationMs: 500, autoTempo: false },
       hasStarterKitV2: false
     },
     campaign: { tutorialDialogueDone: false, tutorialCombatDone: false }

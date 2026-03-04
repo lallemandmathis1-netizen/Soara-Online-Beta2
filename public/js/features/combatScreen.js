@@ -203,12 +203,17 @@ export function createCombatScreen({ hostEl, getPlayerName, getTechniques, getPl
       || meta?.combatConfig?.phaseDurations
       || typeConfig.phaseDurations
       || combatTimeConfigByType.tutorial.phaseDurations;
+    const autoTempoEnabled = !!(options?.autoTempo ?? meta?.combatConfig?.autoTempo);
+    const shouldShortenRoll = autoTempoEnabled && (type === "tutorial" || type === "pve");
+    const revealRollUnits = shouldShortenRoll
+      ? 1
+      : Math.max(1, Number(configuredDurations?.revealRoll ?? 8));
     const effectiveUnitMs = type === "tutorial" ? 500 : configuredMs;
     combatTimeConfig = {
       unitDurationMs: Math.max(50, effectiveUnitMs || 500),
       phaseDurations: {
         askRoll: Math.max(1, Number(configuredDurations?.askRoll ?? 10)),
-        revealRoll: Math.max(1, Number(configuredDurations?.revealRoll ?? 8)),
+        revealRoll: revealRollUnits,
         runTimer: Math.max(1, Number(configuredDurations?.runTimer ?? 20)),
         endWait: Math.max(0, Number(configuredDurations?.endWait ?? 10))
       }

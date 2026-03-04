@@ -1166,6 +1166,14 @@ const REWARD_TECHNIQUES = {
           <input id="musicVolumeRange" type="range" min="0" max="100" step="1" style="width:100%;" />
           <div id="musicVolumeValue" class="small">-</div>
         </div>
+        <div style="height:8px"></div>
+        <div class="card">
+          <div><b>Tempo automatique</b></div>
+          <div class="small">Active: roll PVE/Tutoriel reduit a 1u. Desactive: comportement normal.</div>
+          <div style="height:6px"></div>
+          <button class="btn" id="btnToggleAutoTempo" style="width:100%;"></button>
+          <div id="autoTempoStatus" class="small" style="margin-top:4px;"></div>
+        </div>
         <div style="height:12px"></div>
         ${isAlkane ? `<button class="btn" id="btnOpenResolutionTest" style="width:100%; margin-bottom:8px;">Test de resolution</button>` : ``}
         <button class="btn" id="btnOpenCombatRules" style="width:100%; margin-bottom:8px;">Regles de resolution</button>
@@ -1190,10 +1198,31 @@ const REWARD_TECHNIQUES = {
       volRange.addEventListener("input", onVol);
       volRange.addEventListener("change", onVol);
     }
+    const readAutoTempoEnabled = () => !!(getPlayerSnapshot()?.combatConfig?.autoTempo);
+    const renderAutoTempoToggle = () => {
+      const btn = document.getElementById("btnToggleAutoTempo");
+      const status = document.getElementById("autoTempoStatus");
+      if (!btn || !status) return;
+      const enabled = readAutoTempoEnabled();
+      btn.textContent = `Tempo automatique: ${enabled ? "ON" : "OFF"}`;
+      status.textContent = enabled
+        ? "Active: animation de roll fixee a 1u en Tutoriel/PVE."
+        : "Desactive: animation de roll standard.";
+    };
+    const toggleAutoTempo = () => {
+      playerState.patch((s) => {
+        if (!s.player.combatConfig || typeof s.player.combatConfig !== "object") s.player.combatConfig = {};
+        s.player.combatConfig.autoTempo = !s.player.combatConfig.autoTempo;
+      });
+      renderAutoTempoToggle();
+    };
+    renderAutoTempoToggle();
+
     const bindClick = (id, handler) => {
       const el = document.getElementById(id);
       if (el) el.onclick = handler;
     };
+    bindClick("btnToggleAutoTempo", toggleAutoTempo);
     bindClick("btnOpenResolutionTest", openResolutionTestModal);
     bindClick("btnOpenPatchNotes", openPatchNotesModal);
     bindClick("btnOpenCombatRules", () => {
