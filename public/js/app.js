@@ -56,9 +56,9 @@ const REWARD_TECHNIQUES = {
 
   function readStoredVolume() {
     const raw = window.localStorage.getItem(VOLUME_KEY);
-    if (raw == null) return 0.1;
+    if (raw == null) return 0.03;
     const v = clampVolume(raw);
-    return Number.isFinite(v) ? v : 0.1;
+    return Number.isFinite(v) ? v : 0.03;
   }
 
   function setVolume(v) {
