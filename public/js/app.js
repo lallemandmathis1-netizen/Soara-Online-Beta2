@@ -22,7 +22,7 @@ import { runTutorialDialogue } from "./features/campaignTutorialDialogue.js";
 import { TECH_CATALOGUE, buildCatalogueMap, buildRuntimeCatalogue } from "./data/techCatalogue.js";
 import { formatTechniqueSequence } from "./features/tokenModel.js";
 import { SYMBOLS_V6_UI } from "./data/symbolsV6.js";
-import { computeEquipmentStats, getEquipmentLabel } from "./data/equipmentBase.js";
+import { computeEquipmentStats, getEquipmentLabel, STARTER_EQUIPMENT } from "./data/equipmentBase.js";
 import { computeResolution } from "./features/resolutionSandbox.js";
 import { escapeHtml } from "./utils/escapeHtml.js";
 
@@ -424,7 +424,7 @@ const REWARD_TECHNIQUES = {
     }
     if (stage === "tutorial") {
       if (!hasHistoryMarker(PROGRESS_MARKERS.tutorial)) {
-        applyEquipmentReward({ leftHand: "offhand_tutorial_shield" });
+        applyEquipmentReward({ leftHand: "offhand_wood_shield" });
         grantTechniqueIfMissing(REWARD_TECHNIQUES.tutorial);
         await syncTechniquesToAccount({ silent: true });
         await appendHistoryEntries([PROGRESS_MARKERS.tutorial, "Recompense T: technique commune + bouclier (+2 DEF)."]);
@@ -454,9 +454,12 @@ const REWARD_TECHNIQUES = {
 
   async function applyProgressionFromHistory() {
     const flags = getProgressFlags();
+    playerState.patch((s) => {
+      s.player.equipment = { ...STARTER_EQUIPMENT };
+    });
     if (flags.dialogueDone) applyEquipmentReward({ rightHand: "weapon_training_sword" });
     if (flags.tutorialDone) {
-      applyEquipmentReward({ leftHand: "offhand_tutorial_shield" });
+      applyEquipmentReward({ leftHand: "offhand_wood_shield" });
       grantTechniqueIfMissing(REWARD_TECHNIQUES.tutorial);
     }
     if (flags.pveUDone) {

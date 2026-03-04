@@ -251,7 +251,7 @@ function pushLastSymbol(entity, sym, token = null) {
   }
 }
 
-export function createCombatSessionV6({ playerName, enemyName, techniques, playerMeta }) {
+export function createCombatSessionV6({ playerName, enemyName, techniques, playerMeta, enemyMeta }) {
   const techs = Array.isArray(techniques) ? techniques : [];
   const byId = new Map(techs.map((t) => [t.id, t]));
 
@@ -282,15 +282,15 @@ export function createCombatSessionV6({ playerName, enemyName, techniques, playe
 
   const baseEnemy = normalizeEntity({
     name: enemyName || "Ennemi",
-    hp: 34,
-    hpMax: 34,
-    energy: 4,
-    energyMax: 4,
-    regen: 1,
-    atkStat: 1,
-    defStat: 1,
-    esqStat: 1,
-    flatReduce: 0
+    hp: enemyMeta?.hp ?? 34,
+    hpMax: enemyMeta?.hpMax ?? 34,
+    energy: enemyMeta?.energy ?? 4,
+    energyMax: enemyMeta?.energyMax ?? 4,
+    regen: enemyMeta?.regen ?? 1,
+    atkStat: enemyMeta?.atkStat ?? 1,
+    defStat: enemyMeta?.defStat ?? 1,
+    esqStat: enemyMeta?.esqStat ?? 1,
+    flatReduce: enemyMeta?.flatReduce ?? 0
   }, "Ennemi");
 
   function nextInitiative() {

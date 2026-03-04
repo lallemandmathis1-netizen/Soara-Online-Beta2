@@ -14,8 +14,9 @@ const BETA_TECHNIQUES = [
 const NARRATIVE_SYMBOL_SEQUENCE = (SYMBOLS_V6_UI || [])
   .map((s) => (typeof s?.symbol === "string" ? s.symbol : ""))
   .filter((s) => s.length > 0);
-const ROLL_SPEED_MS = 45;
-const MAX_ROLL_DELAY_MS = 260;
+  const ROLL_SPEED_MS = 45;
+  const MAX_ROLL_DELAY_MS = 260;
+  const COMBAT_DURATION_MS = 180000;
 
 export function createCombatScreen({ hostEl, getPlayerName, getTechniques, getPlayerMeta, onOpen, onClose, onInitiativeReveal, onSpacePress, onNarrativeIntroStart, onOpenSettings, onCombatSyncPayload }) {
   if (!hostEl) throw new Error("combat_screen_missing_host");
@@ -100,6 +101,7 @@ export function createCombatScreen({ hostEl, getPlayerName, getTechniques, getPl
   let tutorialRankOrder = [];
   let tutorialRankIndex = 0;
   let tutorialInitRollTimers = [];
+  let combatAutoCloseTimer = null;
 
   function allTechniques() {
     const raw = typeof getTechniques === "function" ? getTechniques() : null;
@@ -225,11 +227,22 @@ export function createCombatScreen({ hostEl, getPlayerName, getTechniques, getPl
     }));
 
     enemyPreset = options.enemyPreset || enemyPreset;
+    if (type === "tutorial") {
+      enemyPreset = {
+        hp: 24,
+        hpMax: 24,
+        atkStat: 1,
+        defStat: 1,
+        esqStat: 1,
+        ...(enemyPreset || {})
+      };
+    }
     session = createCombatSessionV6({
       playerName: playerName || "Vous",
       enemyName: enemyPreset.name || "Gobelin",
       techniques,
-      playerMeta: meta
+      playerMeta: meta,
+      enemyMeta: enemyPreset
     });
 
     const snap = session.getSnapshot();
@@ -2456,6 +2469,11 @@ export function createCombatScreen({ hostEl, getPlayerName, getTechniques, getPl
     hostEl.style.pointerEvents = "auto";
     rootEl.style.display = "block";
     syncManualCloseControl();
+    if (combatAutoCloseTimer) window.clearTimeout(combatAutoCloseTimer);
+    combatAutoCloseTimer = window.setTimeout(() => {
+      if (rootEl?.style.display === "none") return;
+      close();
+    }, COMBAT_DURATION_MS);
 
     if (!escAttached) {
       document.addEventListener("keydown", onKeyDown);
@@ -2508,6 +2526,8 @@ export function createCombatScreen({ hostEl, getPlayerName, getTechniques, getPl
       resizeAttached = false;
     }
     if (flow) flow.stop();
+    if (combatAutoCloseTimer) window.clearTimeout(combatAutoCloseTimer);
+    combatAutoCloseTimer = null;
     stopRevealRollSpin();
     stopInitiativeSpin();
     stopTutorialInitRollAnimation();
