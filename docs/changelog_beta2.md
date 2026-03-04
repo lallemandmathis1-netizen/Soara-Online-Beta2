@@ -1,4 +1,35 @@
-﻿# Changelog - Beta 2
+# Changelog - Beta 2
+
+## Date
+2026-03-04
+
+## Ajouts
+- Ajout d'un bouton `Notes de patch` dans `Parametres`.
+- Ajout de `public/data/patch_notes.json` comme source de verite des mises a jour visibles en jeu.
+- Le modal `Notes de patch` affiche l'historique des releases.
+
+## Progression carte
+- Progression verrouillee en sequence: `C-01` -> `T` -> `U` -> `N`.
+- Suppression des actions de duel d'essai.
+- Ecran `Accueil` avant le premier dialogue.
+
+## Combat / Equilibrage
+- Duree max d'un combat: 3 minutes.
+- Monstre tutoriel ajuste a 24 PV.
+- Fermeture manuelle autorisee sur U/N, bloquee en PVP.
+
+## Equipement / Recompenses
+- Aucun equipement donne au joueur au demarrage.
+- Equipements attribues uniquement via progression:
+  - dialogue: epee en bois
+  - T: bouclier bois
+  - U: gants
+
+## Process release
+- A chaque update, renseigner `public/data/patch_notes.json`.
+- Conserver `docs/changelog_beta2.md` synchronise avec les points majeurs runtime/UI.
+
+---
 
 ## Date
 2026-03-03

@@ -1,0 +1,31 @@
+{
+  "version": 1,
+  "items": [
+    {
+      "id": "beta2_2026_03_04_1",
+      "date": "2026-03-04",
+      "versionLabel": "Beta 2.0.4",
+      "title": "Progression C->T->U->N et combat stabilise",
+      "changes": [
+        "Progression carte verrouillee: C-01 puis T, ensuite U, puis N.",
+        "Suppression des boutons de duel d'essai dans les interfaces campagne/pin.",
+        "Ajout ecran Accueil 'Bienvenue sur Soara' avant le premier dialogue.",
+        "Fermeture combat autorisee sur U/N, bloquee en PVP.",
+        "Duree max combat fixee a 3 minutes.",
+        "Equilibrage tutoriel: ennemi a 24 PV.",
+        "Le joueur ne recoit plus d'equipement au debut; equipements gagnes via dialogue/T/U."
+      ]
+    },
+    {
+      "id": "beta2_2026_03_03_1",
+      "date": "2026-03-03",
+      "versionLabel": "Beta 2.0.3",
+      "title": "Consolidation runtime et documentation",
+      "changes": [
+        "Reference runtime unifiee docs/moteur/donnees.",
+        "Clarification des regles deterministes (sans des hors initiative).",
+        "Consolidation des documents de suivi projet."
+      ]
+    }
+  ]
+}

@@ -20,10 +20,17 @@ Puis http://localhost:3000
 - Premier choix de voie de combat: 3 techniques de base + 1 reflexe.
 - UI combat solo stable, slots techniques et bibliotheque synchronises.
 - Fiche joueur reliee a l'etat compte (techniques apprises/equipees).
+- Progression carte guidee: `C-01` -> `T` -> `U` -> `N`.
+- Notes de patch consultables en jeu via `Parametres` -> `Notes de patch`.
 
 ## Documentation utile
 - [Reference runtime Beta 2 (source de verite)](docs/runtime_reference_beta2.md)
 - [Etat projet Beta 2](docs/project_status_beta2.md)
+- [Changelog Beta 2](docs/changelog_beta2.md)
 - [Prompt Codex Beta 2](docs/codex_prompt_beta2.md)
 - [Flux campagne C-01](docs/campaign_c01_flow.md)
 - [Techniques officielles V6](docs/techniques_officielles_v6.md)
+
+## Process update
+- Mettre a jour `public/data/patch_notes.json` a chaque release.
+- Conserver `docs/changelog_beta2.md` aligne avec les changements runtime/UI majeurs.

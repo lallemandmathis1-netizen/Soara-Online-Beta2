@@ -38,6 +38,8 @@ Le coeur de jeu vise un systeme:
 - Choix de voie de combat (implante)
 - Attribution immediate: 3 techniques de base + 1 reflexe
 - Synchronisation immediate vers le compte
+- Progression carte verrouillee: `C-01` -> `T` -> `U` -> `N`
+- Aucun duel d'essai manuel expose au joueur
 
 ## Synchronisation
 - Source de donnees techniques: catalogue runtime
@@ -50,6 +52,11 @@ Le coeur de jeu vise un systeme:
 - Pas de dependance additionnelle
 - Priorite stabilite solo
 - Multi prevu ensuite (etat de combat serialisable)
+
+## Notes de patch (in-game)
+- Bouton `Parametres` -> `Notes de patch` disponible pour tous les joueurs.
+- Source de donnees: `public/data/patch_notes.json`.
+- Regle de maintenance: mise a jour obligatoire de ce fichier a chaque release.
 
 ## Prochaines etapes
 1. Garder une reference unique docs/moteur/donnees (`runtime_reference_beta2.md`).

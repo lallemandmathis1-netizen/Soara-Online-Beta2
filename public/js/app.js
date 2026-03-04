@@ -980,6 +980,31 @@ const REWARD_TECHNIQUES = {
       modal.open("Codex Soara", `<div class="card" style="max-height:72vh; overflow-y:auto;">${body}</div>`);
     }
 
+    function openPatchNotesModal() {
+      const rows = Array.isArray(staticData?.patchNotes) ? staticData.patchNotes : [];
+      if (!rows.length) {
+        modal.open("Notes de patch", `<div class="card"><div class="small">Aucune note de patch disponible.</div></div>`);
+        return;
+      }
+      const sorted = [...rows].sort((a, b) => String(b?.date || "").localeCompare(String(a?.date || "")));
+      modal.open("Notes de patch", `
+        <div class="card" style="max-height:72vh; overflow-y:auto;">
+          <div class="small">Historique des mises a jour gameplay/UI.</div>
+          <div class="small">Process: mettre a jour public/data/patch_notes.json a chaque release.</div>
+          <div style="height:8px"></div>
+          ${sorted.map((entry) => `
+            <div class="card" style="margin-bottom:8px;">
+              <div><b>${escapeHtml(entry?.versionLabel || "Release")}</b> - ${escapeHtml(entry?.date || "-")}</div>
+              <div class="small">${escapeHtml(entry?.title || "-")}</div>
+              <div style="height:6px"></div>
+              ${(Array.isArray(entry?.changes) ? entry.changes : [])
+                .map((line) => `<div class="small">- ${escapeHtml(String(line || ""))}</div>`).join("")}
+            </div>
+          `).join("")}
+        </div>
+      `);
+    }
+
     function openResolutionTestModal() {
       const symbolOptions = SYMBOLS_V6_UI
         .map((s) => `<option value="${s.key}">${s.symbol} ${s.name}</option>`)
@@ -1146,6 +1171,7 @@ const REWARD_TECHNIQUES = {
         <button class="btn" id="btnOpenCombatRules" style="width:100%; margin-bottom:8px;">Regles de resolution</button>
         <button class="btn" id="btnOpenSymbolsGuide" style="width:100%; margin-bottom:8px;">Reference symboles</button>
         <button class="btn" id="btnOpenTechList" style="width:100%; margin-bottom:8px;">Catalogue technique</button>
+        <button class="btn" id="btnOpenPatchNotes" style="width:100%; margin-bottom:8px;">Notes de patch</button>
         ${isAlkane ? `<button class="btn" id="btnOpenLoreCodex" style="width:100%; margin-bottom:8px;">Codex de campagne</button>` : ``}
         <button class="btn" id="btnLogoutInSettings" style="width:100%;">Quitter la session</button>
       </div>
@@ -1164,9 +1190,13 @@ const REWARD_TECHNIQUES = {
       volRange.addEventListener("input", onVol);
       volRange.addEventListener("change", onVol);
     }
-    const resolutionBtn = document.getElementById("btnOpenResolutionTest");
-    if (resolutionBtn) resolutionBtn.onclick = openResolutionTestModal;
-    document.getElementById("btnOpenCombatRules").onclick = () => {
+    const bindClick = (id, handler) => {
+      const el = document.getElementById(id);
+      if (el) el.onclick = handler;
+    };
+    bindClick("btnOpenResolutionTest", openResolutionTestModal);
+    bindClick("btnOpenPatchNotes", openPatchNotesModal);
+    bindClick("btnOpenCombatRules", () => {
       modal.open("Regles de resolution", `
         <div class="card" style="max-height:72vh; overflow-y:auto;">
           <div><b>Systeme deterministe (sans des)</b></div>
@@ -1191,8 +1221,8 @@ const REWARD_TECHNIQUES = {
           <div class="small">{ } : phase aerienne, cout triple</div>
         </div>
       `);
-    };
-    document.getElementById("btnOpenSymbolsGuide").onclick = () => {
+    });
+    bindClick("btnOpenSymbolsGuide", () => {
       const learnedSet = new Set(
         (Array.isArray(getPlayerSnapshot()?.learnedTechniques) ? getPlayerSnapshot().learnedTechniques : [])
           .map((x) => (typeof x === "string" ? x : x?.id))
@@ -1269,8 +1299,8 @@ const REWARD_TECHNIQUES = {
           </div>` : ``}
         </div>
       `);
-    };
-    document.getElementById("btnOpenTechList").onclick = () => {
+    });
+    bindClick("btnOpenTechList", () => {
       const all = Array.isArray(runtimeTechCatalogue) ? runtimeTechCatalogue : [];
       const learnedSet = new Set(
         (Array.isArray(getPlayerSnapshot()?.learnedTechniques) ? getPlayerSnapshot().learnedTechniques : [])
@@ -1387,10 +1417,9 @@ const REWARD_TECHNIQUES = {
         input.oninput = () => renderTechList(input.value || "");
       }
       renderTechList("");
-    };
-    const loreBtn = document.getElementById("btnOpenLoreCodex");
-    if (loreBtn) loreBtn.onclick = openLoreCodex;
-    document.getElementById("btnLogoutInSettings").onclick = doLogout;
+    });
+    bindClick("btnOpenLoreCodex", openLoreCodex);
+    bindClick("btnLogoutInSettings", doLogout);
   }
 
   function openCampaignTutorDialogue() {

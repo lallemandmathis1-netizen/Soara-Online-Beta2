@@ -25,6 +25,7 @@ export function createDataService({ basePath = "/data" } = {}){
       loreC01,
       loreFactions,
       loreTone,
+      patchNotes,
       baseTechniques,
       advancedTechniques,
       expertTechniques,
@@ -38,6 +39,7 @@ export function createDataService({ basePath = "/data" } = {}){
       loadJson("campaign_c01_flow.json"),
       loadJson("factions_matrix.json"),
       loadJson("tone_guide.json"),
+      loadJson("patch_notes.json"),
       loadJson("techniques/base.json"),
       loadJson("techniques/advanced.json"),
       loadJson("techniques/expert.json"),
@@ -64,7 +66,8 @@ export function createDataService({ basePath = "/data" } = {}){
       campaigns: { "c-01": c01 },
       techniques,
       reflexes: Array.isArray(reflexesData?.items) ? reflexesData.items : [],
-      lore
+      lore,
+      patchNotes: Array.isArray(patchNotes?.items) ? patchNotes.items : []
     };
   }
 
