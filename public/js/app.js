@@ -539,7 +539,7 @@ const REWARD_TECHNIQUES = {
     const narrativePin = sourcePins.find((pin) => pin?.id === "N");
     const out = [];
     if (campPin) out.push(campPin);
-    if (flags.dialogueDone && !flags.tutorialDone) out.push(tutorialCombatPin());
+    if (flags.dialogueDone) out.push(tutorialCombatPin());
     if (flags.tutorialDone && pvePin) out.push(pvePin);
     if (flags.pveUDone && narrativePin) out.push(narrativePin);
     return out;
