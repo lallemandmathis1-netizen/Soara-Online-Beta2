@@ -5,6 +5,7 @@ import { STARTER_EQUIPMENT } from "../data/equipmentBase.js";
 const STORAGE_KEY = "soara_beta2_player_state";
 
 export function createPlayerState({ initialName = "Joueur1" } = {}) {
+  let storageKey = STORAGE_KEY;
   let runtimeCatalogue = Array.isArray(TECH_CATALOGUE) ? [...TECH_CATALOGUE] : [];
   let runtimeCatalogueMap = buildCatalogueMap(runtimeCatalogue);
 
@@ -87,11 +88,11 @@ export function createPlayerState({ initialName = "Joueur1" } = {}) {
   }
 
   function save() {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+    localStorage.setItem(storageKey, JSON.stringify(state));
   }
 
   function load() {
-    const raw = localStorage.getItem(STORAGE_KEY);
+    const raw = localStorage.getItem(storageKey);
     if (!raw) return false;
     try {
       state = normalizeState(JSON.parse(raw));
@@ -99,6 +100,25 @@ export function createPlayerState({ initialName = "Joueur1" } = {}) {
     } catch {
       return false;
     }
+  }
+
+  function bindAccount(accountId, { migrateLegacy = true } = {}) {
+    const raw = String(accountId || "").trim();
+    const safe = raw.replace(/[^A-Za-z0-9_.-]/g, "_");
+    const nextKey = safe ? `${STORAGE_KEY}:${safe}` : STORAGE_KEY;
+    if (nextKey === storageKey) return;
+    storageKey = nextKey;
+
+    if (migrateLegacy) {
+      const hasScoped = localStorage.getItem(storageKey);
+      if (hasScoped == null) {
+        const legacy = localStorage.getItem(STORAGE_KEY);
+        if (legacy != null) localStorage.setItem(storageKey, legacy);
+      }
+    }
+
+    load();
+    emit();
   }
 
   function get() {
@@ -189,6 +209,7 @@ export function createPlayerState({ initialName = "Joueur1" } = {}) {
     patch,
     load,
     save,
+    bindAccount,
     subscribe,
     updatePlayer,
     setCatalogue,

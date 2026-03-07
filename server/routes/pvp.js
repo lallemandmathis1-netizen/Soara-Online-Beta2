@@ -54,11 +54,15 @@ function purgeStaleRooms(dbData) {
   const rooms = ensureRooms(dbData);
   const now = Date.now();
   for (const [code, room] of Object.entries(rooms)) {
-    const ts = Number(room?.updatedAt || room?.createdAt || 0);
-    if (!Number.isFinite(ts) || now - ts > 1000 * 60 * 30) {
+    if (isStaleRoom(room, now)) {
       delete rooms[code];
     }
   }
+}
+
+function isStaleRoom(room, now = Date.now()) {
+  const ts = Number(room?.updatedAt || room?.createdAt || 0);
+  return !Number.isFinite(ts) || now - ts > 1000 * 60 * 30;
 }
 
 function roomViewForUser(db, dbData, room, username) {
@@ -195,24 +199,18 @@ function mountPvpRoutes(app, { db, config }) {
     }
   });
 
-  app.get("/api/pvp/status/:code", auth, async (req, res) => {
+  app.get("/api/pvp/status/:code", auth, (req, res) => {
     const code = String(req.params?.code || "").trim().toUpperCase();
     try {
-      const view = await db.update((dbData) => {
-        purgeStaleRooms(dbData);
-        const room = ensureRooms(dbData)[code];
-        if (!room) {
-          const err = new Error("room_not_found");
-          err.code = "room_not_found";
-          throw err;
-        }
-        if (room.host !== req.username && room.guest !== req.username) {
-          const err = new Error("forbidden");
-          err.code = "forbidden";
-          throw err;
-        }
-        return roomViewForUser(db, dbData, room, req.username);
-      });
+      const dbData = db.read();
+      const room = ensureRooms(dbData)[code];
+      if (!room || isStaleRoom(room)) {
+        return res.status(404).json({ error: "room_not_found" });
+      }
+      if (room.host !== req.username && room.guest !== req.username) {
+        return res.status(403).json({ error: "forbidden" });
+      }
+      const view = roomViewForUser(db, dbData, room, req.username);
       return res.json(view);
     } catch (e) {
       if (e?.code === "room_not_found") return res.status(404).json({ error: "room_not_found" });
@@ -221,25 +219,24 @@ function mountPvpRoutes(app, { db, config }) {
     }
   });
 
-  app.get("/api/pvp/rooms", auth, async (req, res) => {
+  app.get("/api/pvp/rooms", auth, (req, res) => {
     const pinId = String(req.query?.pinId || "").trim();
-    const list = await db.update((dbData) => {
-      purgeStaleRooms(dbData);
-      const rooms = ensureRooms(dbData);
-      return Object.values(rooms)
-        .filter((room) => {
-          if (!room || typeof room !== "object") return false;
-          if (pinId && String(room.pinId || "") !== pinId) return false;
-          if (room.status === "active") return false;
-          return true;
-        })
-        .map((room) => roomListItem(db, dbData, room))
-        .sort((a, b) => {
-          const sa = a.status === "starting" ? 0 : 1;
-          const sb = b.status === "starting" ? 0 : 1;
-          if (sa !== sb) return sa - sb;
-          return String(a.code).localeCompare(String(b.code));
-        });
+    const dbData = db.read();
+    const rooms = ensureRooms(dbData);
+    const list = Object.values(rooms)
+      .filter((room) => {
+        if (!room || typeof room !== "object") return false;
+        if (isStaleRoom(room)) return false;
+        if (pinId && String(room.pinId || "") !== pinId) return false;
+        if (room.status === "active") return false;
+        return true;
+      })
+      .map((room) => roomListItem(db, dbData, room))
+      .sort((a, b) => {
+        const sa = a.status === "starting" ? 0 : 1;
+        const sb = b.status === "starting" ? 0 : 1;
+        if (sa !== sb) return sa - sb;
+        return String(a.code).localeCompare(String(b.code));
       });
     return res.json({ rooms: list });
   });

@@ -36,6 +36,7 @@
       "name": "U - Combat PVE",
       "kind": "combat_pve",
       "scenarioId": "pve_classic_v1",
+      "enemyEntityId": "entity_loup_base_v1",
       "x": 0.59,
       "y": 0.585,
       "icon": "U",

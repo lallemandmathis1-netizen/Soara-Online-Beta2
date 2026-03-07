@@ -89,6 +89,8 @@ function normalizeEntity(input, fallbackName) {
     step: Number(input?.step ?? 0),
     forcedNextSymbol: null,
     forcedSymbol: typeof input?.forcedSymbol === "string" ? normalizeSymbolKey(input.forcedSymbol) : null,
+    aiMode: typeof input?.aiProfile?.mode === "string" ? String(input.aiProfile.mode) : "",
+    preferredTechniques: Array.isArray(input?.preferredTechniques) ? input.preferredTechniques.map((x) => String(x)) : [],
     cancelAfterSymbol: false,
     states: {
       airborne: !!input?.states?.airborne,
@@ -344,6 +346,62 @@ export function createCombatSessionV6({ playerName, enemyName, techniques, playe
   function ensureTechniqueForEntity(entityKey) {
     const ent = entityKey === "enemy" ? state.enemy : state.player;
     if (ent.techId) return ent.techId;
+    if (entityKey === "enemy") {
+      const mode = String(ent.aiMode || "").toLowerCase();
+      const byStats = (tech) => {
+        const tokens = getTechniqueTokens(tech);
+        let atk = 0;
+        let def = 0;
+        let esq = 0;
+        let cost = 0;
+        for (const tok of tokens) {
+          const sym = normalizeToken(tok)?.sym;
+          const p = classifySymbol(sym);
+          if (p.kind === "attack") atk += Math.max(1, Number(p.atkFactor || 0));
+          if (p.kind === "defense") def += Math.max(1, Number(p.defFactor || 0));
+          if (p.kind === "evasion") esq += Math.max(1, Number(p.esqFactor || 0));
+          cost += Math.max(0, Number(tokenCost(sym, 1) || 0));
+        }
+        return { atk, def, esq, cost, len: tokens.length };
+      };
+      const scoreByMode = (tech) => {
+        const s = byStats(tech);
+        if (mode === "aggressive_short_burst") {
+          return (s.atk * 10) - (s.cost * 2) + s.esq;
+        }
+        if (mode === "defensive_balanced") {
+          return (s.def * 8) + (s.esq * 6) - s.cost + s.atk;
+        }
+        // default balanced profile
+        return (s.atk * 5) + (s.def * 4) + (s.esq * 3) - s.cost;
+      };
+      const pickEnemyTechnique = () => {
+        const preferred = Array.isArray(ent.preferredTechniques) ? ent.preferredTechniques : [];
+        let pool = preferred
+          .map((id) => byId.get(id))
+          .filter((t) => t && getTechniqueTokens(t).length > 0);
+        if (!pool.length) {
+          pool = techs.filter((t) => getTechniqueTokens(t).length > 0 && t?.type !== "reflex" && t?.category !== "reflex");
+        }
+        if (!pool.length) {
+          pool = techs.filter((t) => getTechniqueTokens(t).length > 0);
+        }
+        if (!pool.length) return null;
+        const sorted = [...pool].sort((a, b) => {
+          const delta = scoreByMode(b) - scoreByMode(a);
+          if (delta !== 0) return delta;
+          // deterministic tie-breaker: shortest first, then lexical id.
+          const lenDelta = getTechniqueTokens(a).length - getTechniqueTokens(b).length;
+          if (lenDelta !== 0) return lenDelta;
+          return String(a?.id || "").localeCompare(String(b?.id || ""));
+        });
+        return sorted[0]?.id || null;
+      };
+      if (!ent.pendingTechId) {
+        const picked = pickEnemyTechnique();
+        if (picked && byId.has(picked)) ent.pendingTechId = picked;
+      }
+    }
     if (ent.pendingTechId && byId.has(ent.pendingTechId)) {
       ent.techId = ent.pendingTechId;
       ent.pendingTechId = null;

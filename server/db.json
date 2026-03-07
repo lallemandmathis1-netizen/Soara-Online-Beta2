@@ -1,79 +1,821 @@
 {
-    "users":  [
-                  {
-                      "username":  "Alkane",
-                      "password":  "$2b$10$yZ2bGG3PL3SRjEjOsIQrB.nsM2Yg7.lC5CI70fEp9EwCZngoFsTri",
-                      "state":  {
-                                    "username":  "Alkane",
-                                    "name":  "alkane",
-                                    "race":  "",
-                                    "faction":  "",
-                                    "hpMax":  10,
-                                    "hp":  10,
-                                    "reputation":  {
-                                                       "bazeides":  0,
-                                                       "federation":  0,
-                                                       "roor":  0,
-                                                       "gobelins":  0
-                                                   },
-                                    "money":  0,
-                                    "pos":  {
-                                                "x":  0.515,
-                                                "y":  0.58
-                                            },
-                                    "techSlots":  {
-                                                      "base":  3,
-                                                      "advanced":  0,
-                                                      "unique":  0
-                                                  },
-                                    "reflexSlots":  1,
-                                    "learnedReflexes":  [
-                                                            "reflex_01"
-                                                        ],
-                                    "learnedTechniques":  [
-                                                              "base_punch",
-                                                              "base_guard",
-                                                              "base_wait"
-                                                          ],
-                                    "techSlotsTotal":  10,
-                                    "techniquesBySlot":  [
-                                                             "base_punch",
-                                                             "base_guard",
-                                                             "base_wait",
-                                                             null,
-                                                             null,
-                                                             null,
-                                                             null,
-                                                             null,
-                                                             null,
-                                                             null
-                                                         ],
-                                    "hasStarterKitV2":  true,
-                                    "history":  [
-
-                                                ],
-                                    "notebook":  "",
-                                    "campaign":  {
-                                                     "c-01":  {
-                                                                  "node":  "attitude",
-                                                                  "completed":  false
-                                                              }
-                                                 },
-                                    "inventory":  [
-                                                      null,
-                                                      null,
-                                                      null,
-                                                      null,
-                                                      null,
-                                                      null,
-                                                      null,
-                                                      null,
-                                                      null
-                                                  ]
-                                }
-                  }
-              ],
-    "pvpRooms":  {
-
-                 }
+  "users": [
+    {
+      "username": "Alkane",
+      "password": "$2b$10$sCABdh9pdNt1lEsReAySTOcM0l16aoxwhpyx6vDGg.hLA9NtULgnW",
+      "state": {
+        "username": "Alkane",
+        "name": "Alkane",
+        "race": "Humain",
+        "faction": "",
+        "hpMax": 10,
+        "hp": 10,
+        "reputation": {
+          "bazeides": 0,
+          "federation": 0,
+          "roor": 0,
+          "gobelins": 0
+        },
+        "money": 0,
+        "pos": {
+          "x": 0.5,
+          "y": 0.58
+        },
+        "techSlots": {
+          "base": 3,
+          "advanced": 0,
+          "expert": 0
+        },
+        "reflexSlots": 1,
+        "learnedReflexes": [
+          "r_base_001",
+          "r_base_009"
+        ],
+        "learnedTechniques": [
+          "base_punch",
+          "base_guard",
+          "base_wait",
+          "base_parry",
+          "base_prudent",
+          "r_base_001",
+          "base_003",
+          "r_base_009"
+        ],
+        "techSlotsTotal": 10,
+        "techniquesBySlot": [
+          "base_punch",
+          "base_guard",
+          "base_wait",
+          "r_base_009",
+          "base_wait",
+          "base_punch",
+          "base_003",
+          null,
+          null,
+          null
+        ],
+        "hasStarterKitV2": true,
+        "history": [
+          "prog_dialogue_done_v1",
+          "Recompense: epee en bois (+2 ATK).",
+          "prog_t_done_v1",
+          "Recompense T: technique commune + bouclier (+2 DEF)."
+        ],
+        "notebook": "",
+        "campaign": {
+          "c-01": {
+            "node": "end",
+            "completed": true
+          }
+        },
+        "tagsProfil": {
+          "prudence": 0,
+          "agressivite": 0,
+          "tempo": 0
+        },
+        "reputationLocale": 0,
+        "historiqueC01": [
+          "Debrief C01: branche recommandee et destination locale suggeree."
+        ],
+        "inventory": [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ],
+        "starterRacePackV1": "humain",
+        "discoveredPins": [
+          "C"
+        ]
+      }
+    },
+    {
+      "username": "test",
+      "password": "$2b$10$C4nz65L8NNFtnd4mbgpSIujwZT39n4isQ8qNIxkithqxKgOImuC2K",
+      "state": {
+        "username": "test",
+        "name": "test",
+        "race": "Gobelin",
+        "age": null,
+        "faction": "",
+        "hpMax": 10,
+        "hp": 10,
+        "reputation": {
+          "bazeides": 0,
+          "federation": 0,
+          "roor": 0,
+          "gobelins": 0
+        },
+        "money": 0,
+        "pos": {
+          "x": 0.503,
+          "y": 0.582
+        },
+        "techSlots": {
+          "base": 3,
+          "advanced": 0,
+          "expert": 0
+        },
+        "reflexSlots": 1,
+        "learnedReflexes": [
+          "r_base_001",
+          "r_base_010"
+        ],
+        "learnedTechniques": [
+          "base_punch",
+          "base_guard",
+          "base_wait",
+          "base_quick",
+          "base_feint",
+          "base_024",
+          "r_base_010",
+          "base_003"
+        ],
+        "techSlotsTotal": 10,
+        "techniquesBySlot": [
+          "base_quick",
+          "base_feint",
+          "base_024",
+          "r_base_010",
+          "base_003",
+          null,
+          null,
+          null,
+          null,
+          null
+        ],
+        "hasStarterKitV2": true,
+        "starterRacePackV1": "gobelin",
+        "discoveredPins": [
+          "C"
+        ],
+        "history": [
+          "prog_dialogue_done_v1",
+          "Recompense: epee en bois (+2 ATK).",
+          "prog_t_done_v1",
+          "Recompense T: technique commune + bouclier (+2 DEF)."
+        ],
+        "notebook": "",
+        "campaign": {
+          "c-01": {
+            "node": "end",
+            "completed": true
+          }
+        },
+        "tagsProfil": {
+          "prudence": 0,
+          "agressivite": 0,
+          "tempo": 0
+        },
+        "reputationLocale": 0,
+        "historiqueC01": [
+          "Debrief C01: branche recommandee et destination locale suggeree."
+        ],
+        "inventory": [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      }
+    },
+    {
+      "username": "pomme",
+      "password": "$2b$10$Grd/4AIm5t2WqWA4PZV8E.JCcDUfneAOwTOmdmjFVZlyeOADXjQq.",
+      "state": {
+        "username": "pomme",
+        "name": "pomme",
+        "race": "Humain",
+        "age": null,
+        "faction": "",
+        "hpMax": 10,
+        "hp": 10,
+        "reputation": {
+          "bazeides": 0,
+          "federation": 0,
+          "roor": 0,
+          "gobelins": 0
+        },
+        "money": 0,
+        "pos": {
+          "x": 0.503,
+          "y": 0.582
+        },
+        "techSlots": {
+          "base": 3,
+          "advanced": 0,
+          "expert": 0
+        },
+        "reflexSlots": 1,
+        "learnedReflexes": [
+          "r_base_001",
+          "r_base_009"
+        ],
+        "learnedTechniques": [
+          "base_punch",
+          "base_guard",
+          "base_wait",
+          "r_base_009",
+          "base_003",
+          "base_008",
+          "base_009"
+        ],
+        "techSlotsTotal": 10,
+        "techniquesBySlot": [
+          "base_punch",
+          "base_guard",
+          "base_wait",
+          "r_base_009",
+          "base_003",
+          "base_008",
+          "base_009",
+          null,
+          null,
+          null
+        ],
+        "hasStarterKitV2": true,
+        "starterRacePackV1": "humain",
+        "discoveredPins": [
+          "C"
+        ],
+        "history": [
+          "prog_dialogue_done_v1",
+          "prog_c01_food_reward_v1",
+          "Recompense: epee en bois (+2 ATK) + 1 ration.",
+          "prog_t_done_v1",
+          "Recompense T: technique commune + bouclier (+2 DEF).",
+          "prog_u_done_v1",
+          "Recompense U: technique commune + gants (+1 ESQ).",
+          "prog_n_done_v1",
+          "Recompense N: technique commune."
+        ],
+        "notebook": "",
+        "campaign": {
+          "c-01": {
+            "node": "end",
+            "completed": true
+          }
+        },
+        "tagsProfil": {
+          "prudence": 0,
+          "agressivite": 0,
+          "tempo": 0
+        },
+        "reputationLocale": 0,
+        "historiqueC01": [
+          "Debrief C01: branche recommandee et destination locale suggeree."
+        ],
+        "inventory": [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      }
+    },
+    {
+      "username": "rest",
+      "password": "$2b$10$TH147ldRAwGxCCuv2R/dTeXIOVURO2AYVq0CJw0D.k0JbpaNvfmTi",
+      "state": {
+        "username": "rest",
+        "name": "rest",
+        "race": "Humain",
+        "age": null,
+        "faction": "",
+        "hpMax": 10,
+        "hp": 10,
+        "reputation": {
+          "bazeides": 0,
+          "federation": 0,
+          "roor": 0,
+          "gobelins": 0
+        },
+        "money": 0,
+        "pos": {
+          "x": 0.503,
+          "y": 0.582
+        },
+        "techSlots": {
+          "base": 3,
+          "advanced": 0,
+          "expert": 0
+        },
+        "reflexSlots": 1,
+        "learnedReflexes": [
+          "r_base_001",
+          "r_base_009"
+        ],
+        "learnedTechniques": [
+          "base_punch",
+          "base_guard",
+          "base_wait",
+          "r_base_009",
+          "base_003"
+        ],
+        "techSlotsTotal": 10,
+        "techniquesBySlot": [
+          "base_punch",
+          "base_guard",
+          "base_wait",
+          "r_base_009",
+          "base_003",
+          null,
+          null,
+          null,
+          null,
+          null
+        ],
+        "hasStarterKitV2": true,
+        "starterRacePackV1": "humain",
+        "discoveredPins": [
+          "C"
+        ],
+        "history": [
+          "prog_dialogue_done_v1",
+          "prog_c01_food_reward_v1",
+          "Recompense: epee en bois (+2 ATK) + 3 rations de pain.",
+          "prog_t_done_v1",
+          "Recompense T: technique commune + bouclier (+2 DEF)."
+        ],
+        "notebook": "",
+        "campaign": {
+          "c-01": {
+            "node": "end",
+            "completed": true
+          }
+        },
+        "tagsProfil": {
+          "prudence": 0,
+          "agressivite": 0,
+          "tempo": 0
+        },
+        "reputationLocale": 0,
+        "historiqueC01": [
+          "Debrief C01: branche recommandee et destination locale suggeree."
+        ],
+        "inventory": [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      }
+    },
+    {
+      "username": "654654",
+      "password": "$2b$10$xbx1YmT1mOWz7.joLqVXeOvw3iGEGdcf0OI.9a6.rHogIclqet/OC",
+      "state": {
+        "username": "654654",
+        "name": "654654",
+        "race": "Humain",
+        "age": null,
+        "faction": "",
+        "hpMax": 10,
+        "hp": 10,
+        "reputation": {
+          "bazeides": 0,
+          "federation": 0,
+          "roor": 0,
+          "gobelins": 0
+        },
+        "money": 0,
+        "pos": {
+          "x": 0.515,
+          "y": 0.58
+        },
+        "techSlots": {
+          "base": 3,
+          "advanced": 0,
+          "expert": 0
+        },
+        "reflexSlots": 1,
+        "learnedReflexes": [
+          "r_base_001",
+          "r_base_009"
+        ],
+        "learnedTechniques": [
+          "base_punch",
+          "base_guard",
+          "base_wait",
+          "r_base_009"
+        ],
+        "techSlotsTotal": 10,
+        "techniquesBySlot": [
+          "base_punch",
+          "base_guard",
+          "base_wait",
+          "r_base_009",
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ],
+        "hasStarterKitV2": true,
+        "starterRacePackV1": "humain",
+        "discoveredPins": [
+          "C"
+        ],
+        "history": [],
+        "notebook": "",
+        "campaign": {
+          "c-01": {
+            "node": "n0",
+            "completed": false
+          }
+        },
+        "tagsProfil": {
+          "prudence": 0,
+          "agressivite": 0,
+          "tempo": 0
+        },
+        "reputationLocale": 0,
+        "historiqueC01": [],
+        "inventory": [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      }
+    },
+    {
+      "username": "987987",
+      "password": "$2b$10$vjujKNrwqw67Cg1UgPNp.e0X4Nni76n3GphQEDe5XrE/XDuJ32EkO",
+      "state": {
+        "username": "987987",
+        "name": "987987",
+        "race": "Humain",
+        "age": null,
+        "faction": "",
+        "hpMax": 10,
+        "hp": 10,
+        "reputation": {
+          "bazeides": 0,
+          "federation": 0,
+          "roor": 0,
+          "gobelins": 0
+        },
+        "money": 0,
+        "pos": {
+          "x": 0.515,
+          "y": 0.58
+        },
+        "techSlots": {
+          "base": 3,
+          "advanced": 0,
+          "expert": 0
+        },
+        "reflexSlots": 1,
+        "learnedReflexes": [
+          "r_base_001",
+          "r_base_009"
+        ],
+        "learnedTechniques": [
+          "base_punch",
+          "base_guard",
+          "base_wait",
+          "r_base_009"
+        ],
+        "techSlotsTotal": 10,
+        "techniquesBySlot": [
+          "base_punch",
+          "base_guard",
+          "base_wait",
+          "r_base_009",
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ],
+        "hasStarterKitV2": true,
+        "starterRacePackV1": "humain",
+        "discoveredPins": [
+          "C"
+        ],
+        "history": [],
+        "notebook": "",
+        "campaign": {
+          "c-01": {
+            "node": "n0",
+            "completed": false
+          }
+        },
+        "tagsProfil": {
+          "prudence": 0,
+          "agressivite": 0,
+          "tempo": 0
+        },
+        "reputationLocale": 0,
+        "historiqueC01": [],
+        "inventory": [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      }
+    },
+    {
+      "username": "654987",
+      "password": "$2b$10$703c5IQ7uf3B90AsdHy9BuNHH5hjRshubHTJKnh7TsPnmxExKQyDW",
+      "state": {
+        "username": "654987",
+        "name": "654987",
+        "race": "Humain",
+        "age": null,
+        "faction": "",
+        "hpMax": 10,
+        "hp": 10,
+        "reputation": {
+          "bazeides": 0,
+          "federation": 0,
+          "roor": 0,
+          "gobelins": 0
+        },
+        "money": 0,
+        "pos": {
+          "x": 0.515,
+          "y": 0.58
+        },
+        "techSlots": {
+          "base": 3,
+          "advanced": 0,
+          "expert": 0
+        },
+        "reflexSlots": 1,
+        "learnedReflexes": [
+          "r_base_001",
+          "r_base_009"
+        ],
+        "learnedTechniques": [
+          "base_punch",
+          "base_guard",
+          "base_wait",
+          "r_base_009"
+        ],
+        "techSlotsTotal": 10,
+        "techniquesBySlot": [
+          "base_punch",
+          "base_guard",
+          "base_wait",
+          "r_base_009",
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ],
+        "hasStarterKitV2": true,
+        "starterRacePackV1": "humain",
+        "discoveredPins": [
+          "C"
+        ],
+        "history": [],
+        "notebook": "",
+        "campaign": {
+          "c-01": {
+            "node": "n0",
+            "completed": false
+          }
+        },
+        "tagsProfil": {
+          "prudence": 0,
+          "agressivite": 0,
+          "tempo": 0
+        },
+        "reputationLocale": 0,
+        "historiqueC01": [],
+        "inventory": [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      }
+    },
+    {
+      "username": "963852",
+      "password": "$2b$10$V4qqJvoemJgm/7Wym2/wNOwWTPXESbcTVDHdG6glllAhmWX57.jMi",
+      "state": {
+        "username": "963852",
+        "name": "963852",
+        "race": "Humain",
+        "age": null,
+        "faction": "",
+        "hpMax": 10,
+        "hp": 10,
+        "reputation": {
+          "bazeides": 0,
+          "federation": 0,
+          "roor": 0,
+          "gobelins": 0
+        },
+        "money": 0,
+        "pos": {
+          "x": 0.5,
+          "y": 0.58
+        },
+        "techSlots": {
+          "base": 3,
+          "advanced": 0,
+          "expert": 0
+        },
+        "reflexSlots": 1,
+        "learnedReflexes": [
+          "r_base_001",
+          "r_base_009"
+        ],
+        "learnedTechniques": [
+          "base_punch",
+          "base_guard",
+          "base_wait",
+          "r_base_009"
+        ],
+        "techSlotsTotal": 10,
+        "techniquesBySlot": [
+          "base_punch",
+          "base_guard",
+          "base_wait",
+          "r_base_009",
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ],
+        "hasStarterKitV2": true,
+        "starterRacePackV1": "humain",
+        "discoveredPins": [
+          "C"
+        ],
+        "history": [
+          "prog_dialogue_done_v1",
+          "prog_c01_food_reward_v1",
+          "Recompense: epee en bois (+2 ATK) + 3 rations de pain."
+        ],
+        "notebook": "",
+        "campaign": {
+          "c-01": {
+            "node": "end",
+            "completed": true
+          }
+        },
+        "tagsProfil": {
+          "prudence": 0,
+          "agressivite": 0,
+          "tempo": 0
+        },
+        "reputationLocale": 0,
+        "historiqueC01": [
+          "Debrief C01: branche recommandee et destination locale suggeree."
+        ],
+        "inventory": [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      }
+    },
+    {
+      "username": "987456",
+      "password": "$2b$10$hvLe9CDDlP70SCINxxKbUubiUzDHgsbPkEfLw6v7T6igFETJevZW.",
+      "state": {
+        "username": "987456",
+        "name": "987456",
+        "race": "Humain",
+        "age": null,
+        "faction": "",
+        "hpMax": 10,
+        "hp": 10,
+        "reputation": {
+          "bazeides": 0,
+          "federation": 0,
+          "roor": 0,
+          "gobelins": 0
+        },
+        "money": 0,
+        "pos": {
+          "x": 0.54,
+          "y": 0.56
+        },
+        "techSlots": {
+          "base": 3,
+          "advanced": 0,
+          "expert": 0
+        },
+        "reflexSlots": 1,
+        "learnedReflexes": [
+          "r_base_001",
+          "r_base_009"
+        ],
+        "learnedTechniques": [
+          "base_punch",
+          "base_guard",
+          "base_wait",
+          "r_base_009",
+          "base_003"
+        ],
+        "techSlotsTotal": 10,
+        "techniquesBySlot": [
+          "base_punch",
+          "base_guard",
+          "base_wait",
+          "r_base_009",
+          "base_003",
+          null,
+          null,
+          null,
+          null,
+          null
+        ],
+        "hasStarterKitV2": true,
+        "starterRacePackV1": "humain",
+        "discoveredPins": [
+          "C"
+        ],
+        "history": [
+          "prog_dialogue_done_v1",
+          "prog_c01_food_reward_v1",
+          "Recompense: epee en bois (+2 ATK) + 3 rations de pain.",
+          "prog_t_done_v1",
+          "Recompense T: technique commune + bouclier (+2 DEF)."
+        ],
+        "notebook": "",
+        "campaign": {
+          "c-01": {
+            "node": "end",
+            "completed": true
+          }
+        },
+        "tagsProfil": {
+          "prudence": 0,
+          "agressivite": 0,
+          "tempo": 0
+        },
+        "reputationLocale": 0,
+        "historiqueC01": [
+          "Debrief C01: branche recommandee et destination locale suggeree."
+        ],
+        "inventory": [
+          null,
+          null,
+          "food_bread_ration",
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      }
+    }
+  ],
+  "pvpRooms": {}
 }

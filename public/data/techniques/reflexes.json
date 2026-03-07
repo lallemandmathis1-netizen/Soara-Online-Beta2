@@ -1,136 +1,136 @@
 {
-  "version": 1,
+  "version": 2,
   "tier": "reflex",
   "items": [
     {
       "id": "r_base_001",
-      "name": "Riposte Instinctive",
+      "name": "Reflexe humain - Riposte",
       "category": "reflex",
       "symbols": [
         "PARRY",
         "X"
       ],
       "costMultiplier": 2,
-      "description": "Parade suivie d'une frappe rapide.",
-      "utility": "Punit les attaques frontales.",
-      "drawback": "Inutile si l'attaque adverse est faible."
+      "description": "Contre rapide humain.",
+      "utility": "Punition tactique.",
+      "drawback": "Demande un bon timing."
     },
     {
       "id": "r_base_002",
-      "name": "Recul Protecteur",
+      "name": "Reflexe humain - Repli",
       "category": "reflex",
       "symbols": [
-        "ROLL",
-        "GUARD"
+        "GUARD",
+        "ROLL"
       ],
       "costMultiplier": 2,
-      "description": "Esquive suivie d'un bloc.",
-      "utility": "Securise face a pression moyenne.",
-      "drawback": "Tres energivore."
+      "description": "Repli protege.",
+      "utility": "Stabilise le tour.",
+      "drawback": "Faible pression."
     },
     {
       "id": "r_base_003",
-      "name": "Frappe Reactive",
+      "name": "Reflexe gobelin - Entaille",
       "category": "reflex",
       "symbols": [
-        "X",
-        "<>"
-      ],
-      "costMultiplier": 2,
-      "description": "Explosion offensive en reponse immediate.",
-      "utility": "Met une pression brutale sur ouverture.",
-      "drawback": "Aucune protection."
-    },
-    {
-      "id": "r_base_004",
-      "name": "Contre Mesure",
-      "category": "reflex",
-      "symbols": [
-        "PARRY",
-        "GUARD"
-      ],
-      "costMultiplier": 2,
-      "description": "Parade suivie d'un maintien defensif.",
-      "utility": "Tient la ligne sur engagement frontal.",
-      "drawback": "Depend du timing adverse."
-    },
-    {
-      "id": "r_base_005",
-      "name": "Roulade d'Urgence",
-      "category": "reflex",
-      "symbols": [
-        "ROLL",
-        "O"
-      ],
-      "costMultiplier": 2,
-      "description": "Roulade rapide pour casser la pression.",
-      "utility": "Repositionne et absorbe le tempo.",
-      "drawback": "Ne protege pas contre attaques multiples."
-    },
-    {
-      "id": "r_base_006",
-      "name": "Protection Spontanee",
-      "category": "reflex",
-      "symbols": [
-        "BULWARK",
-        "GUARD"
-      ],
-      "costMultiplier": 2,
-      "description": "Blocage lourd instantane.",
-      "utility": "Tres fort contre burst direct.",
-      "drawback": "Pas de contre-pression."
-    },
-    {
-      "id": "r_base_007",
-      "name": "Lecture Soudaine",
-      "category": "reflex",
-      "symbols": [
-        "?",
+        "FEINT",
         "X"
       ],
       "costMultiplier": 2,
-      "description": "Observation rapide suivie d'une attaque ciblee.",
-      "utility": "Coupe les routines adverses.",
-      "drawback": "Fragile si mal anticipe."
+      "description": "Feinte puis impact.",
+      "utility": "Ouvre la garde.",
+      "drawback": "Fragile en echange long."
+    },
+    {
+      "id": "r_base_004",
+      "name": "Reflexe orc - Mur choc",
+      "category": "reflex",
+      "symbols": [
+        "<>",
+        "GUARD"
+      ],
+      "costMultiplier": 2,
+      "description": "Blocage lourd immediat.",
+      "utility": "Absorbe et repond.",
+      "drawback": "Cout eleve."
+    },
+    {
+      "id": "r_base_005",
+      "name": "Reflexe loup - Morsure",
+      "category": "reflex",
+      "symbols": [
+        "~",
+        "X"
+      ],
+      "costMultiplier": 2,
+      "description": "Pique agressive.",
+      "utility": "Interrompt le rythme.",
+      "drawback": "Peu defensif."
+    },
+    {
+      "id": "r_base_006",
+      "name": "Reflexe construct - Verrou",
+      "category": "reflex",
+      "symbols": [
+        "BULWARK",
+        "PARRY"
+      ],
+      "costMultiplier": 2,
+      "description": "Verrou mecanique.",
+      "utility": "Tres solide en defense.",
+      "drawback": "Lent offensivement."
+    },
+    {
+      "id": "r_base_007",
+      "name": "Reflexe gobelin - Fuite",
+      "category": "reflex",
+      "symbols": [
+        "FEINT",
+        "ROLL"
+      ],
+      "costMultiplier": 2,
+      "description": "Esquive feintee.",
+      "utility": "Sort de la pression.",
+      "drawback": "Degats faibles."
     },
     {
       "id": "r_base_008",
-      "name": "Riposte Orc",
+      "name": "Reflexe orc - Fracasse",
       "category": "reflex",
       "symbols": [
         "<>",
         "X"
       ],
       "costMultiplier": 2,
-      "description": "Brutalite immediate.",
-      "utility": "Punition massive sur fenetre courte.",
-      "drawback": "Tres couteux."
+      "description": "Impact direct.",
+      "utility": "Punition lourde.",
+      "drawback": "Expose en cas d echec."
     },
     {
       "id": "r_base_009",
-      "name": "Discipline Bazeide",
+      "name": "Reflexe humain - Discipline",
       "category": "reflex",
       "symbols": [
-        "GUARD",
-        "X"
+        "?",
+        "GUARD"
       ],
       "costMultiplier": 2,
-      "description": "Defense ordonnee suivie d'un coup precis.",
-      "utility": "Stable en duel technique.",
-      "drawback": "Puissance moderee."
+      "description": "Lecture puis tenue.",
+      "utility": "Fiable en duel.",
+      "drawback": "Peu de degats."
     },
     {
       "id": "r_base_010",
-      "name": "Esquive Gobeline",
+      "name": "Reflexe gobelin - Esquive",
       "category": "reflex",
       "symbols": [
-        "ROLL",
-        "X"
+        "FEINT",
+        "PARRY"
       ],
       "costMultiplier": 2,
-      "description": "Esquive laterale suivie d'une frappe rapide.",
-      "utility": "Excellent contre cible isolee.",
-      "drawback": "Inefficace en surnombre."
+      "description": "Feinte defensive.",
+      "utility": "Retourne les echanges.",
+      "drawback": "Fenetre courte."
     }
   ]
 }

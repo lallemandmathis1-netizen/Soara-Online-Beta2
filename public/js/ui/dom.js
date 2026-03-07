@@ -21,6 +21,11 @@ export function getDomRefs(){
     btnLogin: document.getElementById("btnLogin"),
     btnRegister: document.getElementById("btnRegister"),
     authMsg: document.getElementById("authMsg"),
+    characterGate: document.getElementById("characterGate"),
+    characterName: document.getElementById("characterName"),
+    characterRace: document.getElementById("characterRace"),
+    characterMsg: document.getElementById("characterMsg"),
+    btnCharacterSubmit: document.getElementById("btnCharacterSubmit"),
 
     hudTop: document.getElementById("hudTop"),
     hudMap: document.getElementById("hudMap"),
@@ -43,7 +48,9 @@ export function getDomRefs(){
     btnClose: document.getElementById("btnClose"),
   };
 
+  const optional = new Set(["hudMap", "btnMap"]);
   for (const [k,v] of Object.entries(required)){
+    if (optional.has(k)) continue;
     if (!v) throw new Error("missing_dom:" + k);
   }
 

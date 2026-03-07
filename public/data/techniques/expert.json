@@ -1,112 +1,112 @@
 {
-  "version": 2,
+  "version": 3,
   "tier": "expert",
   "items": [
     {
-      "id": "uniq_aura_script",
-      "name": "Ecriture d'Aura",
+      "id": "uniq_human_aegis",
+      "name": "Aegis humaine de Soara",
       "seq": [
         "?",
+        "GUARD",
         "PARRY",
         "X",
-        "FINAL",
         "?",
-        "PARRY",
-        "X"
+        "ROLL",
+        "FINAL"
       ],
-      "lore": "Le combat devient texte vivant.",
-      "description": "Technique signature Aura.",
-      "rarity": "epic",
-      "category": "offense",
-      "tier": "expert"
-    },
-    {
-      "id": "uniq_rewriter_hint",
-      "name": "Indice Reecrivain",
-      "seq": [
-        "O",
-        "!",
-        "PARRY",
-        "FINAL",
-        "O",
-        "!",
-        "PARRY"
-      ],
-      "lore": "Briser puis reimposer le tempo.",
-      "description": "Rare et exigeante.",
-      "rarity": "epic",
-      "category": "offense",
-      "tier": "expert"
-    },
-    {
-      "id": "uniq_bazeide_ordo",
-      "name": "Ordalie bazeide",
-      "seq": [
-        "GUARD",
-        "PARRY",
-        "FINAL",
-        "GUARD",
-        "PARRY",
-        "FINAL",
-        "BULWARK"
-      ],
-      "lore": "Jugement par duel moral.",
-      "description": "Execution d'honneur.",
+      "lore": "Maitrise humaine complete.",
+      "description": "Cycle complet lecture-protection-finisher.",
       "rarity": "epic",
       "category": "defense",
       "tier": "expert"
     },
     {
-      "id": "uniq_contract_black",
-      "name": "Contrat noir",
+      "id": "uniq_human_verdict",
+      "name": "Verdict humain",
       "seq": [
         "?",
-        "ROLL",
-        "!",
-        "FINAL",
+        "X",
+        "PARRY",
+        "GUARD",
         "?",
-        "ROLL",
-        "!"
+        "X",
+        "FINAL"
       ],
-      "lore": "Un seul echange, zero hesitation.",
-      "description": "Assassinat technique.",
-      "rarity": "legendary",
+      "lore": "Execution tactique humaine.",
+      "description": "Decision et conclusion.",
+      "rarity": "epic",
       "category": "offense",
       "tier": "expert"
     },
     {
-      "id": "uniq_roor_ten",
-      "name": "Dixieme tournoi",
+      "id": "uniq_goblin_maelstrom",
+      "name": "Maelstrom gobelin",
       "seq": [
-        "BULWARK",
-        "<>",
-        "PARRY",
+        "FEINT",
+        "ROLL",
         "X",
-        "BULWARK",
-        "<>",
-        "PARRY"
+        "!",
+        "FEINT",
+        "~",
+        "FINAL"
       ],
-      "lore": "Legitimite par endurance.",
-      "description": "Impact de roi orc.",
+      "lore": "Chaos controle gobelin.",
+      "description": "Pression continue a forte variance.",
+      "rarity": "epic",
+      "category": "offense",
+      "tier": "expert"
+    },
+    {
+      "id": "uniq_goblin_talon",
+      "name": "Talon gobelin",
+      "seq": [
+        "FEINT",
+        "PARRY",
+        "ROLL",
+        "X",
+        "FEINT",
+        "!",
+        "FINAL"
+      ],
+      "lore": "Execution gobeline de finition.",
+      "description": "Feinte, coupe, finisher.",
+      "rarity": "epic",
+      "category": "mixed",
+      "tier": "expert"
+    },
+    {
+      "id": "uniq_orc_roor_ten",
+      "name": "Dixieme serment de Roor",
+      "seq": [
+        "<>",
+        "BULWARK",
+        "GUARD",
+        "PARRY",
+        "<>",
+        "X",
+        "FINAL"
+      ],
+      "lore": "Sommet martial orc.",
+      "description": "Mur puis percussion terminale.",
       "rarity": "legendary",
       "category": "defense",
       "tier": "expert"
     },
     {
-      "id": "uniq_uruntal_grand",
-      "name": "Grand Marais",
+      "id": "uniq_orc_crownbreak",
+      "name": "Brise-couronne orc",
       "seq": [
-        "FEINT",
-        "~",
-        "VULN",
+        "<>",
+        "GUARD",
         "X",
-        "FEINT",
-        "~",
-        "VULN"
+        "PARRY",
+        "<>",
+        "BULWARK",
+        "FINAL"
       ],
-      "lore": "Saturer puis punir.",
-      "description": "Style collectif gobelin.",
-      "rarity": "rare",
+      "lore": "Rituel de duel orc.",
+      "description": "Percussion lourde de conclusion.",
+      "rarity": "legendary",
       "category": "offense",
       "tier": "expert"
     }

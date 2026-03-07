@@ -1,185 +1,185 @@
 {
-  "version": 2,
+  "version": 3,
   "tier": "advanced",
   "items": [
     {
       "id": "adv_human_lecture",
-      "name": "Lecture d'intention",
+      "name": "Lecture d'intention humaine",
       "seq": [
         "?",
-        "FEINT",
         "PARRY",
-        "X"
+        "X",
+        "O"
       ],
-      "lore": "Maitrise humaine de la decision.",
-      "description": "Controle de tempo avance.",
+      "lore": "Style humain: lecture et adaptation.",
+      "description": "Controle de tempo et punition.",
       "rarity": "uncommon",
       "category": "offense",
       "tier": "advanced"
     },
     {
       "id": "adv_human_ascent",
-      "name": "Trame d'ascension",
+      "name": "Ascension tactique humaine",
       "seq": [
-        "O",
-        "^",
-        "v",
+        "GUARD",
+        "?",
+        "ROLL",
         "X"
       ],
-      "lore": "Premiere marche vers l'Aura.",
-      "description": "Mobilite puis impact.",
-      "rarity": "common",
+      "lore": "Style humain: mobilisation progressive.",
+      "description": "Defense puis ouverture.",
+      "rarity": "uncommon",
+      "category": "mixed",
+      "tier": "advanced"
+    },
+    {
+      "id": "adv_human_guardline",
+      "name": "Ligne de garde humaine",
+      "seq": [
+        "?",
+        "GUARD",
+        "PARRY",
+        "X"
+      ],
+      "lore": "Style humain: securisation active.",
+      "description": "Tenue de ligne efficace.",
+      "rarity": "rare",
+      "category": "defense",
+      "tier": "advanced"
+    },
+    {
+      "id": "adv_human_counter",
+      "name": "Contre-lecture humaine",
+      "seq": [
+        "?",
+        "X",
+        "ROLL",
+        "PARRY"
+      ],
+      "lore": "Style humain: reponse mesuree.",
+      "description": "Punition tactique.",
+      "rarity": "rare",
       "category": "evasion",
       "tier": "advanced"
     },
     {
       "id": "adv_goblin_subjug",
-      "name": "Subjugation rapide",
+      "name": "Subjugation gobeline",
       "seq": [
-        "!",
+        "FEINT",
         "X",
-        "VULN",
-        "!"
+        "!",
+        "ROLL"
       ],
-      "lore": "Forcer la faiblesse adverse.",
-      "description": "Pression punitive.",
+      "lore": "Style gobelin: pression et rupture.",
+      "description": "Pression mobile agressive.",
       "rarity": "uncommon",
       "category": "offense",
       "tier": "advanced"
     },
     {
       "id": "adv_goblin_swarm",
-      "name": "Nuee coordonnee",
+      "name": "Nuee gobeline",
       "seq": [
-        "X",
+        "FEINT",
         "ROLL",
         "X",
-        "FEINT"
+        "~"
       ],
-      "lore": "Coordination en chaine.",
-      "description": "Attaque mobile.",
-      "rarity": "common",
+      "lore": "Style gobelin: assauts courts.",
+      "description": "Harcelement en chaine.",
+      "rarity": "uncommon",
       "category": "offense",
       "tier": "advanced"
     },
     {
-      "id": "adv_orc_royal",
-      "name": "Defi royal",
+      "id": "adv_goblin_cut",
+      "name": "Entaille gobeline",
       "seq": [
-        "BULWARK",
+        "FEINT",
         "PARRY",
-        "<>",
-        "BULWARK"
+        "X",
+        "!"
       ],
-      "lore": "Style des tournois de Roor.",
-      "description": "Duel lourd.",
-      "rarity": "epic",
+      "lore": "Style gobelin: feinte de contact.",
+      "description": "Contre offensif rapide.",
+      "rarity": "rare",
+      "category": "mixed",
+      "tier": "advanced"
+    },
+    {
+      "id": "adv_goblin_shadow",
+      "name": "Ombre gobeline",
+      "seq": [
+        "FEINT",
+        "O",
+        "ROLL",
+        "X"
+      ],
+      "lore": "Style gobelin: deroute et angle.",
+      "description": "Tempo instable offensif.",
+      "rarity": "rare",
+      "category": "evasion",
+      "tier": "advanced"
+    },
+    {
+      "id": "adv_orc_royal",
+      "name": "Defi orc de Roor",
+      "seq": [
+        "<>",
+        "GUARD",
+        "PARRY",
+        "X"
+      ],
+      "lore": "Style orc: impact frontal.",
+      "description": "Duel robuste.",
+      "rarity": "rare",
       "category": "defense",
       "tier": "advanced"
     },
     {
       "id": "adv_orc_breaker",
-      "name": "Briseur de ligne",
+      "name": "Briseur orc",
       "seq": [
-        "GUARD",
+        "<>",
         "X",
-        "FINAL",
+        "BULWARK",
         "GUARD"
       ],
-      "lore": "Percer en restant stable.",
-      "description": "Finish frontal.",
+      "lore": "Style orc: rupture de ligne.",
+      "description": "Pression lourde.",
       "rarity": "uncommon",
       "category": "offense",
       "tier": "advanced"
     },
     {
-      "id": "adv_bazeide_vow",
-      "name": "Serment de lame",
+      "id": "adv_orc_anvil",
+      "name": "Enclume orc",
       "seq": [
-        "PARRY",
-        "X",
+        "<>",
+        "BULWARK",
         "GUARD",
-        "FINAL"
+        "PARRY"
       ],
-      "lore": "Honneur, lecture, execution.",
-      "description": "Cycle duel.",
-      "rarity": "uncommon",
-      "category": "offense",
-      "tier": "advanced"
-    },
-    {
-      "id": "adv_bazeide_wall",
-      "name": "Rempart de foi",
-      "seq": [
-        "GUARD",
-        "GUARD",
-        "PARRY",
-        "X"
-      ],
-      "lore": "Tenir avant de riposter.",
-      "description": "Defense progressive.",
-      "rarity": "common",
+      "lore": "Style orc: ancrage.",
+      "description": "Mitigation et reponse.",
+      "rarity": "rare",
       "category": "defense",
       "tier": "advanced"
     },
     {
-      "id": "adv_fed_opt",
-      "name": "Optimisation froide",
+      "id": "adv_orc_hunt",
+      "name": "Chasse orc",
       "seq": [
-        "?",
-        "O",
+        "<>",
         "ROLL",
-        "X"
-      ],
-      "lore": "Pragmatisme mercenaire.",
-      "description": "Efficience energie.",
-      "rarity": "uncommon",
-      "category": "economy",
-      "tier": "advanced"
-    },
-    {
-      "id": "adv_fed_clause",
-      "name": "Clause punitive",
-      "seq": [
-        "?",
-        "PARRY",
         "X",
-        "!"
+        "PARRY"
       ],
-      "lore": "Contrat execute sans hesitation.",
-      "description": "Contre calculateur.",
+      "lore": "Style orc: poursuite du tempo.",
+      "description": "Impact puis verrouillage.",
       "rarity": "uncommon",
-      "category": "offense",
-      "tier": "advanced"
-    },
-    {
-      "id": "adv_uruntal_tide",
-      "name": "Maree d'Uruntal",
-      "seq": [
-        "ROLL",
-        "~",
-        "X",
-        "O"
-      ],
-      "lore": "Pression humide et continue.",
-      "description": "Degats avec tempo.",
-      "rarity": "uncommon",
-      "category": "offense",
-      "tier": "advanced"
-    },
-    {
-      "id": "adv_uruntal_queen",
-      "name": "Ordre de Reine",
-      "seq": [
-        "?",
-        "FEINT",
-        "X",
-        "VULN"
-      ],
-      "lore": "Coordination de caste.",
-      "description": "Controle et punition.",
-      "rarity": "uncommon",
-      "category": "offense",
+      "category": "mixed",
       "tier": "advanced"
     }
   ]

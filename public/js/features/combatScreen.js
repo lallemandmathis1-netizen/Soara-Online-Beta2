@@ -2,7 +2,7 @@ import { createCombatSessionV6 } from "./combatEngine.js";
 import { createLogState } from "./combatLog.js";
 import { createTurnFlow } from "./turnFlow.js";
 import { formatToken, getTechniqueTokens, normalizeToken } from "./tokenModel.js";
-import { SYMBOLS_V6_UI } from "../data/symbolsV6.js";
+import { SYMBOLS_V6_UI, resolveSymbolMeta } from "../data/symbolsV6.js";
 import { computeResolution } from "./resolutionSandbox.js";
 
 const BETA_TECHNIQUES = [
@@ -78,7 +78,7 @@ export function createCombatScreen({ hostEl, getPlayerName, getTechniques, getPl
   let lastCombatSyncSignature = "";
   const specialSlotsStatic = [];
   const combatTimeConfigByType = {
-    tutorial: { unitDurationMs: 500, phaseDurations: { askRoll: 10, revealRoll: 8, runTimer: 20, endWait: 10 } },
+    tutorial: { unitDurationMs: 500, phaseDurations: { askRoll: 10, revealRoll: 2, runTimer: 20, endWait: 10 } },
     narrative: { unitDurationMs: 526, phaseDurations: { askRoll: 10, revealRoll: 8, runTimer: 20, endWait: 10 } },
     pve: { unitDurationMs: 500, phaseDurations: { askRoll: 10, revealRoll: 5, runTimer: 20, endWait: 6 } },
     pvp: { unitDurationMs: 500, phaseDurations: { askRoll: 1, revealRoll: 10, runTimer: 20, endWait: 4 } }
@@ -165,7 +165,7 @@ export function createCombatScreen({ hostEl, getPlayerName, getTechniques, getPl
 
   function canManualCloseCombat() {
     const type = String(activeCombatType || "").toLowerCase();
-    return type !== "pvp";
+    return type === "tutorial";
   }
 
   function syncManualCloseControl() {
@@ -203,11 +203,7 @@ export function createCombatScreen({ hostEl, getPlayerName, getTechniques, getPl
       || meta?.combatConfig?.phaseDurations
       || typeConfig.phaseDurations
       || combatTimeConfigByType.tutorial.phaseDurations;
-    const autoTempoEnabled = !!(options?.autoTempo ?? meta?.combatConfig?.autoTempo);
-    const shouldShortenRoll = autoTempoEnabled && (type === "tutorial" || type === "pve");
-    const revealRollUnits = shouldShortenRoll
-      ? 1
-      : Math.max(1, Number(configuredDurations?.revealRoll ?? 8));
+    const revealRollUnits = Math.max(1, Number(configuredDurations?.revealRoll ?? 8));
     const effectiveUnitMs = type === "tutorial" ? 500 : configuredMs;
     combatTimeConfig = {
       unitDurationMs: Math.max(50, effectiveUnitMs || 500),
@@ -391,7 +387,10 @@ export function createCombatScreen({ hostEl, getPlayerName, getTechniques, getPl
 
     const finalPlayer = rollD20();
     const finalEnemy = rollD20();
-    const delays = buildTutorialRollDelays(2000, 26);
+    const revealUnits = Math.max(1, Number(combatTimeConfig?.phaseDurations?.revealRoll ?? 8));
+    const totalMs = Math.max(140, Math.floor(Number(combatTimeConfig?.unitDurationMs || 500) * revealUnits));
+    const steps = Math.max(5, revealUnits * 5);
+    const delays = buildTutorialRollDelays(totalMs, steps);
     let idx = 0;
 
     const step = () => {
@@ -476,11 +475,14 @@ export function createCombatScreen({ hostEl, getPlayerName, getTechniques, getPl
     markEntityState("player", false);
     markEntityState("enemy", false);
     const first = tutorialRankOrder[0] === "player" ? "Joueur" : "Ennemi";
+    const firstInstruction = tutorialRankOrder[0] === "player"
+      ? "Choisit une technique en cliquant sur les boutons au gauche de ton ecran."
+      : "Attends l'action ennemie, puis prepare ta reponse.";
     setNarration([
       `Tour ${Number(session?.getSnapshot?.()?.turn || 1)}`,
       `tempo: J ${revealedInit.player} / E ${revealedInit.enemy}.`,
       `Rang 1: ${first} prend le tempo.`,
-      "Suivant -> ESPACE."
+      firstInstruction
     ]);
     slotsDirty = true;
     render();
@@ -520,11 +522,14 @@ export function createCombatScreen({ hostEl, getPlayerName, getTechniques, getPl
         ]);
       } else {
         const nextActor = tutorialRankOrder[tutorialRankIndex] === "player" ? "Joueur" : "Ennemi";
+        const nextInstruction = tutorialRankOrder[tutorialRankIndex] === "player"
+          ? "Choisit une technique en cliquant sur les boutons au gauche de ton ecran."
+          : "L'ennemi entre dans l'echange.";
         setNarration([
           `Tour ${Number(session?.getSnapshot?.()?.turn || 1)}`,
           `Rang ${tutorialRankIndex}: action engagee.`,
           `Rang ${tutorialRankIndex + 1}: ${nextActor} entre dans l'echange.`,
-          "Suivant -> ESPACE."
+          nextInstruction
         ]);
       }
       render();
@@ -1869,6 +1874,10 @@ export function createCombatScreen({ hostEl, getPlayerName, getTechniques, getPl
               <div class="small" data-bind="enemyName"></div>
               <div class="combatMainSymbol symbolUnified soaraSymbol" data-bind="enemySymbol">-</div>
               <div class="small" data-bind="enemyTech">-</div>
+              <div class="combatIntelStack combatIntelStack--enemy">
+                <div class="combatSquare combatIntelBox box box--info" data-bind="enemyNextSymbol">?</div>
+                <div class="combatSquare combatIntelBox box box--info" data-bind="enemyStatHint"> </div>
+              </div>
             </div>
 
             <div id="c4_hp_enemy" class="combatRect combatHpInfo box box--info">
@@ -1886,6 +1895,10 @@ export function createCombatScreen({ hostEl, getPlayerName, getTechniques, getPl
                   <span data-bind="playerHp">-</span>
                   <span class="combatTurnRank box box--action" data-bind="playerOrder">-</span>
                   <div class="targetAnchor" id="p_anchor" aria-hidden="true"></div>
+                  <div class="combatIntelStack combatIntelStack--player">
+                    <div class="combatSquare combatIntelBox box box--info" data-bind="playerNextSymbol">?</div>
+                    <div class="combatSquare combatIntelBox box box--info" data-bind="playerStatHint"> </div>
+                  </div>
                 </div>
               </div>
               <div class="combatPlayerMainRow">
@@ -1922,8 +1935,12 @@ export function createCombatScreen({ hostEl, getPlayerName, getTechniques, getPl
       enemyTech: rootEl.querySelector('[data-bind="enemyTech"]'),
       playerHp: rootEl.querySelector('[data-bind="playerHp"]'),
       enemyHp: rootEl.querySelector('[data-bind="enemyHp"]'),
+      enemyNextSymbol: rootEl.querySelector('[data-bind="enemyNextSymbol"]'),
+      enemyStatHint: rootEl.querySelector('[data-bind="enemyStatHint"]'),
       playerOrder: rootEl.querySelector('[data-bind="playerOrder"]'),
       enemyOrder: rootEl.querySelector('[data-bind="enemyOrder"]'),
+      playerNextSymbol: rootEl.querySelector('[data-bind="playerNextSymbol"]'),
+      playerStatHint: rootEl.querySelector('[data-bind="playerStatHint"]'),
       enemyLastSymbol: rootEl.querySelector('[data-bind="enemyLastSymbol"]'),
       tempo: rootEl.querySelector('[data-bind="tempo"]'),
       timer: rootEl.querySelector("#c6_timer"),
@@ -2171,6 +2188,31 @@ export function createCombatScreen({ hostEl, getPlayerName, getTechniques, getPl
     syncTechButtons(snapshot);
   }
 
+  function nextEntitySymbol(snapshot, entityKey) {
+    const queued = computeEntityQueuedEvents(snapshot, entityKey);
+    const first = Array.isArray(queued) ? queued.find((ev) => ev?.token?.sym) : null;
+    return first?.token?.sym || null;
+  }
+
+  function statHintFromSymbol(sym, entity) {
+    const type = resolveSymbolMeta(sym)?.type || null;
+    if (type === "attack") return { icon: "\u2694", value: Number(entity?.atkStat ?? 0) };
+    if (type === "defense") return { icon: "\u26E8", value: Number(entity?.defStat ?? 0) };
+    if (type === "evasion") return { icon: "\u21BA", value: Number(entity?.esqStat ?? 0) };
+    return null;
+  }
+
+  function renderIntelBoxes({ symbolRef, statRef, known, knownStat, symbolKey, statSymbolKey = symbolKey, entity }) {
+    if (!symbolRef || !statRef) return;
+    const symText = known && symbolKey ? formatToken(symbolKey) : "?";
+    const statHint = knownStat && statSymbolKey ? statHintFromSymbol(statSymbolKey, entity) : null;
+    const statText = statHint ? `${statHint.icon} ${Math.max(0, Number(statHint.value || 0))}` : " ";
+    bindText(symbolRef, symText);
+    bindText(statRef, statText);
+    symbolRef.classList.toggle("combatIntelUnknown", !known);
+    statRef.classList.toggle("combatIntelUnknown", !knownStat);
+  }
+
   function renderColumns(snapshot) {
     const pendingLabel = snapshot.player.pendingTechName || "-";
     const currentLabel = snapshot.player.techName || "-";
@@ -2203,6 +2245,29 @@ export function createCombatScreen({ hostEl, getPlayerName, getTechniques, getPl
       ? (tutorialStep === "await_resolution" || tutorialStep === "post_resolution")
       : (currentPhase === "endWait");
     const showEnemySymbolNow = enemyValidated || isResolutionMoment;
+    const observedEnemyNext = snapshot?.player?.observedEnemyNext || null;
+    const enemyIntelSym = observedEnemyNext || null;
+    const enemyStatSym = enemyValidated ? enemySym : observedEnemyNext;
+    const playerIntelSym = nextEntitySymbol(snapshot, "player");
+    const playerStatSym = playerValidated ? playerSym : playerIntelSym;
+    renderIntelBoxes({
+      symbolRef: refs.enemyNextSymbol,
+      statRef: refs.enemyStatHint,
+      known: !!enemyIntelSym,
+      knownStat: !!enemyValidated,
+      symbolKey: enemyIntelSym,
+      statSymbolKey: enemyStatSym,
+      entity: snapshot?.enemy
+    });
+    renderIntelBoxes({
+      symbolRef: refs.playerNextSymbol,
+      statRef: refs.playerStatHint,
+      known: !!playerIntelSym,
+      knownStat: !!playerValidated,
+      symbolKey: playerIntelSym,
+      statSymbolKey: playerStatSym,
+      entity: snapshot?.player
+    });
 
     // Entity view: current symbol is visible during all phases.
     bindText(refs.playerSymbol, win.current || "?");

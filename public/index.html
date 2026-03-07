@@ -16,6 +16,10 @@
     <span><b>M</b> Mentor</span>
     <span><b>T</b> Tutoriel</span>
   </div>
+  <section id="mapDialogue" aria-live="polite" aria-label="Boite de dialogue carte">
+    <div id="mapDialogueTitle">Boite de dialogue</div>
+    <div id="mapDialogueBody">Survole un pin pour afficher son nom, puis clique pour afficher les choix.</div>
+  </section>
 
   <div id="authGate" class="panel auth-gate" style="display:none;">
     <div class="auth-title">Soara Online</div>
@@ -36,12 +40,31 @@
     </div>
   </div>
 
+  <div id="characterGate" class="panel auth-gate" style="display:none;">
+    <div class="auth-title">Creation du personnage</div>
+    <div class="small">Renseigne ton profil avant d'entrer dans Soara.</div>
+    <div style="height:12px"></div>
+    <div class="row">
+      <div class="card" style="flex:1; min-width:260px;">
+        <div><b>Nom</b></div>
+        <input id="characterName" placeholder="Nom du personnage" />
+        <div style="height:8px"></div>
+        <div><b>Espece</b></div>
+        <select id="characterRace" style="width:100%; height:40px;">
+          <option value="Humain">Humain</option>
+          <option value="Gobelin">Gobelin</option>
+          <option value="Orc">Orc</option>
+        </select>
+        <div id="characterMsg" class="small" style="margin-top:10px;"></div>
+        <div style="height:10px"></div>
+        <button class="btn" id="btnCharacterSubmit" style="width:100%;">Valider et entrer</button>
+      </div>
+    </div>
+  </div>
+
   <div id="hudTop" style="display:none;">
     <div class="hudBox" id="hudSettings">
       <button class="btn" id="btnSettings" title="Conseil de campagne" aria-label="Conseil de campagne">&#9881;</button>
-    </div>
-    <div class="hudBox" id="hudMap">
-      <button class="btn" id="btnMap" title="Mode carte" aria-label="Mode carte">CARTE OFF</button>
     </div>
     <div class="hudBox" id="hudName">Nom</div>
     <div class="hudBox" id="hudLocation">Emplacement</div>

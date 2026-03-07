@@ -44,6 +44,43 @@ function sanitizeNullableStringArray(arr, { label, maxItems = 200, maxLen = 80 }
   return { ok: true, value: list };
 }
 
+function sanitizePointArray(arr, { label, maxItems = 800 } = {}) {
+  if (!Array.isArray(arr)) return { ok: false, message: `${label} doit etre un tableau.` };
+  if (arr.length > maxItems) return { ok: false, message: `${label} contient trop d'elements.` };
+  const out = [];
+  for (const item of arr) {
+    if (!item || typeof item !== "object" || Array.isArray(item)) {
+      return { ok: false, message: `${label} contient un point invalide.` };
+    }
+    const x = Number(item.x);
+    const y = Number(item.y);
+    if (!Number.isFinite(x) || !Number.isFinite(y)) {
+      return { ok: false, message: `${label} contient un point non numerique.` };
+    }
+    out.push({ x: Math.max(0, Math.min(1, x)), y: Math.max(0, Math.min(1, y)) });
+  }
+  return { ok: true, value: out };
+}
+
+function sanitizePinOverridesMap(input, { label = "pinOverrides", maxItems = 80 } = {}) {
+  if (!isPlainObject(input)) return { ok: false, message: `${label} doit etre un objet.` };
+  const entries = Object.entries(input);
+  if (entries.length > maxItems) return { ok: false, message: `${label} contient trop d'entrees.` };
+  const out = {};
+  for (const [rawId, rawPos] of entries) {
+    const id = String(rawId || "").trim().slice(0, 40);
+    if (!id) return { ok: false, message: `${label} contient un id invalide.` };
+    if (!isPlainObject(rawPos)) return { ok: false, message: `${label}.${id} doit etre un objet {x,y}.` };
+    const x = Number(rawPos.x);
+    const y = Number(rawPos.y);
+    if (!Number.isFinite(x) || !Number.isFinite(y)) {
+      return { ok: false, message: `${label}.${id} doit contenir des coordonnees numeriques.` };
+    }
+    out[id] = { x: Math.max(0, Math.min(1, x)), y: Math.max(0, Math.min(1, y)) };
+  }
+  return { ok: true, value: out };
+}
+
 function sanitizeStatePatch(input) {
   if (!isPlainObject(input)) {
     return { ok: false, error: "invalid_patch", message: "Patch JSON invalide." };
@@ -71,6 +108,10 @@ function sanitizeStatePatch(input) {
     "techniquesBySlot",
     "techSlotsTotal",
     "hasStarterKitV2",
+    "starterRacePackV1",
+    "discoveredPins",
+    "exploredPoints",
+    "pinOverrides",
     "history"
   ]);
 
@@ -228,33 +269,85 @@ function sanitizeStatePatch(input) {
   if (input.hasStarterKitV2 !== undefined) {
     out.hasStarterKitV2 = !!input.hasStarterKitV2;
   }
+  if (input.starterRacePackV1 !== undefined) {
+    out.starterRacePackV1 = toBoundedString(input.starterRacePackV1, { max: 40, allowEmpty: true });
+  }
   if (input.history !== undefined) {
     const parsed = sanitizeStringArray(input.history, { label: "history", maxItems: 1000, maxLen: 300 });
     if (!parsed.ok) return { ok: false, error: "invalid_history", message: parsed.message };
     out.history = parsed.value;
   }
+  if (input.discoveredPins !== undefined) {
+    const parsed = sanitizeStringArray(input.discoveredPins, { label: "discoveredPins", maxItems: 200, maxLen: 40 });
+    if (!parsed.ok) return { ok: false, error: "invalid_discovered_pins", message: parsed.message };
+    out.discoveredPins = [...new Set(parsed.value)];
+  }
+  if (input.exploredPoints !== undefined) {
+    const parsed = sanitizePointArray(input.exploredPoints, { label: "exploredPoints", maxItems: 800 });
+    if (!parsed.ok) return { ok: false, error: "invalid_explored_points", message: parsed.message };
+    out.exploredPoints = parsed.value;
+  }
+  if (input.pinOverrides !== undefined) {
+    const parsed = sanitizePinOverridesMap(input.pinOverrides, { label: "pinOverrides", maxItems: 80 });
+    if (!parsed.ok) return { ok: false, error: "invalid_pin_overrides", message: parsed.message };
+    out.pinOverrides = parsed.value;
+  }
 
   return { ok: true, value: out };
+}
+
+function applyLegacyStateMigrations(state, username, defaultState) {
+  let next = state;
+  let changed = false;
+  if (!next) {
+    next = defaultState(username);
+    changed = true;
+  }
+
+  if (!isPlainObject(next.techSlots)) {
+    next.techSlots = { base: 0, advanced: 0, expert: 0 };
+    changed = true;
+  }
+  if (next.techSlots.expert === undefined && next.techSlots.unique !== undefined) {
+    next.techSlots.expert = Number(next.techSlots.unique) || 0;
+    changed = true;
+  }
+  if (next.techSlots.unique !== undefined) {
+    delete next.techSlots.unique;
+    changed = true;
+  }
+  if (Array.isArray(next.learnedReflexes) && next.learnedReflexes.includes("reflex_01")) {
+    next.learnedReflexes = next.learnedReflexes.map((id) => (id === "reflex_01" ? "r_base_001" : id));
+    changed = true;
+  }
+  if (!isPlainObject(next.pinOverrides)) {
+    next.pinOverrides = {};
+    changed = true;
+  }
+
+  return { state: next, changed };
 }
 
 function mountStateRoutes(app, { db, config, defaultState }){
   const auth = authMiddleware({ secret: config.JWT_SECRET });
 
-  app.get("/api/state", auth, (req, res) => {
+  app.get("/api/state", auth, async (req, res) => {
     const dbData = db.read();
     const user = db.getUser(dbData, req.username);
     if (!user) return res.status(404).json({ error: "not_found" });
-    if (!user.state) user.state = defaultState(req.username);
-    if (!isPlainObject(user.state.techSlots)) user.state.techSlots = { base: 0, advanced: 0, expert: 0 };
-    if (user.state.techSlots.expert === undefined && user.state.techSlots.unique !== undefined) {
-      user.state.techSlots.expert = Number(user.state.techSlots.unique) || 0;
+
+    const migrated = applyLegacyStateMigrations(user.state, req.username, defaultState);
+    user.state = migrated.state;
+
+    if (migrated.changed) {
+      await db.update((dbDataWrite) => {
+        const userWrite = db.getUser(dbDataWrite, req.username);
+        if (!userWrite) return;
+        const migratedWrite = applyLegacyStateMigrations(userWrite.state, req.username, defaultState);
+        userWrite.state = migratedWrite.state;
+      });
     }
-    if (user.state.techSlots.unique !== undefined) {
-      delete user.state.techSlots.unique;
-    }
-    if (Array.isArray(user.state.learnedReflexes) && user.state.learnedReflexes.includes("reflex_01")) {
-      user.state.learnedReflexes = user.state.learnedReflexes.map((id) => (id === "reflex_01" ? "r_base_001" : id));
-    }
+
     return res.json(user.state);
   });
 

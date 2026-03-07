@@ -63,27 +63,27 @@ export function createCampaignRunner({ modal, stateSvc, onStateChanged, openComb
       return;
     }
 
-    let html = `<div class="card"><div><b>${campaign.title}</b></div><div style="height:10px"></div>`;
+    let html = `<div class="card"><div><b>${escapeHtml(campaign.title)}</b></div><div style="height:10px"></div>`;
     for (const line of (node.text || [])){
       if (line && typeof line === "object") {
-        const txt = String(line.text || "");
-        const id = line.id ? `<span class="small" style="opacity:.65">[${line.id}]</span> ` : "";
+        const txt = escapeHtml(String(line.text || ""));
+        const id = line.id ? `<span class="small" style="opacity:.65">[${escapeHtml(String(line.id))}]</span> ` : "";
         html += `<div>${id}${txt}</div>`;
       } else {
-        html += `<div>${line}</div>`;
+        html += `<div>${escapeHtml(String(line || ""))}</div>`;
       }
     }
     html += `<div style="height:12px"></div>`;
 
     if (node.input){
       const current = userState[node.input.field] || "";
-      html += `<div class="small">${node.input.field}</div>`;
-      html += `<input id="camp_input" placeholder="${node.input.placeholder || ""}" value="${escapeHtml(current)}" />`;
+      html += `<div class="small">${escapeHtml(String(node.input.field || ""))}</div>`;
+      html += `<input id="camp_input" placeholder="${escapeHtml(String(node.input.placeholder || ""))}" value="${escapeHtml(current)}" />`;
       html += `<div style="height:12px"></div>`;
     }
 
     (node.choices || []).forEach((c, i) => {
-      html += `<button class="btn" id="camp_choice_${i}">${c.label}</button>`;
+      html += `<button class="btn" id="camp_choice_${i}">${escapeHtml(String(c.label || ""))}</button>`;
     });
 
     // fin

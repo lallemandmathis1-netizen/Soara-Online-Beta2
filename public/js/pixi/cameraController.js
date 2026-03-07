@@ -2,9 +2,9 @@
   let attached = false;
   let handlers = null;
   const MIN_ZOOM_FACTOR = 1;
-  const DEFAULT_ZOOM_FACTOR = 1.75;
+  const DEFAULT_ZOOM_FACTOR = 3.4;
   // Avoid pushing map texture too far beyond source resolution (prevents pixelated zoom).
-  const MAX_ZOOM = Math.max(1.2, Math.min(2, Number(window.devicePixelRatio || 1.5)));
+  const MAX_ZOOM = Math.max(2.2, Math.min(5, Number(window.devicePixelRatio || 4)));
 
   let dragging = false;
   let last = { x:0, y:0 };

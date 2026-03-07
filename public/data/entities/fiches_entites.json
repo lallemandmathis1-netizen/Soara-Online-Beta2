@@ -1,0 +1,264 @@
+{
+  "version": 1,
+  "updatedAt": "2026-03-07",
+  "items": [
+    {
+      "id": "entity_dummy_training_v1",
+      "role": "training_dummy",
+      "identity": {
+        "nom": "DUMMY",
+        "espece": "Construct",
+        "faction": "Neutre"
+      },
+      "stats": {
+        "pv": 10,
+        "pvMax": 10,
+        "energie": 4,
+        "energieMax": 4,
+        "regenEnergie": 1,
+        "atk": 1,
+        "def": 1,
+        "esq": 1
+      },
+      "reputation": {
+        "locale": 0
+      },
+      "information": {
+        "techniquesApprises": 1,
+        "techSlotsDebloques": 1,
+        "techniquesEquipees": [
+          "force_O"
+        ]
+      },
+      "equipement": {
+        "mainDroite": "-",
+        "mainGauche": "-",
+        "armure": "-",
+        "accessoire": "-"
+      },
+      "inventaire": [
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null
+      ],
+      "aiProfile": {
+        "mode": "scripted",
+        "description": "Cible d'entrainement stable, action simple forcee."
+      }
+    },
+    {
+      "id": "entity_gobelin_base_v1",
+      "role": "monster",
+      "identity": {
+        "nom": "Gobelin",
+        "espece": "Gobelin",
+        "faction": "Royaume Gobelin"
+      },
+      "stats": {
+        "pv": 24,
+        "pvMax": 24,
+        "energie": 5,
+        "energieMax": 5,
+        "regenEnergie": 1,
+        "atk": 2,
+        "def": 1,
+        "esq": 2
+      },
+      "reputation": {
+        "locale": 0
+      },
+      "information": {
+        "techniquesApprises": 3,
+        "techSlotsDebloques": 3,
+        "techniquesEquipees": [
+          "base_punch",
+          "base_quick",
+          "base_feint"
+        ]
+      },
+      "equipement": {
+        "mainDroite": "Lame rouillee",
+        "mainGauche": "-",
+        "armure": "Peau cloutee legere",
+        "accessoire": "-"
+      },
+      "inventaire": [
+        "Bandage",
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null
+      ],
+      "aiProfile": {
+        "mode": "aggressive_short_burst",
+        "description": "Pression courte et mobile, cherche l'ouverture rapide."
+      }
+    },
+    {
+      "id": "entity_humain_classique_v1",
+      "role": "npc",
+      "identity": {
+        "nom": "Humain classique",
+        "espece": "Humain",
+        "faction": "Neutre"
+      },
+      "stats": {
+        "pv": 22,
+        "pvMax": 22,
+        "energie": 5,
+        "energieMax": 5,
+        "regenEnergie": 1,
+        "atk": 2,
+        "def": 2,
+        "esq": 1
+      },
+      "reputation": {
+        "locale": 0
+      },
+      "information": {
+        "techniquesApprises": 3,
+        "techSlotsDebloques": 3,
+        "techniquesEquipees": [
+          "base_punch",
+          "base_guard",
+          "base_wait"
+        ]
+      },
+      "equipement": {
+        "mainDroite": "Lame d'appoint",
+        "mainGauche": "Bouclier leger",
+        "armure": "Gambison simple",
+        "accessoire": "-"
+      },
+      "inventaire": [
+        "Bandage",
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null
+      ],
+      "aiProfile": {
+        "mode": "balanced_rotation",
+        "description": "Alternance offense/defense/economie pour duel stable."
+      }
+    },
+    {
+      "id": "entity_orc_classique_v1",
+      "role": "npc",
+      "identity": {
+        "nom": "Orc classique",
+        "espece": "Orc",
+        "faction": "Royaume de Roor"
+      },
+      "stats": {
+        "pv": 26,
+        "pvMax": 26,
+        "energie": 5,
+        "energieMax": 5,
+        "regenEnergie": 1,
+        "atk": 3,
+        "def": 2,
+        "esq": 1
+      },
+      "reputation": {
+        "locale": 0
+      },
+      "information": {
+        "techniquesApprises": 3,
+        "techSlotsDebloques": 3,
+        "techniquesEquipees": [
+          "base_double",
+          "base_turtle",
+          "base_027"
+        ]
+      },
+      "equipement": {
+        "mainDroite": "Masse d'entrainement",
+        "mainGauche": "-",
+        "armure": "Cuir epais",
+        "accessoire": "-"
+      },
+      "inventaire": [
+        "Ration seche",
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null
+      ],
+      "aiProfile": {
+        "mode": "aggressive_short_burst",
+        "description": "Pression frontale avec pointes d'impact."
+      }
+    },
+    {
+      "id": "entity_loup_base_v1",
+      "role": "monster",
+      "identity": {
+        "nom": "Loup",
+        "espece": "Canide",
+        "faction": "Meute sauvage"
+      },
+      "stats": {
+        "pv": 16,
+        "pvMax": 16,
+        "energie": 4,
+        "energieMax": 4,
+        "regenEnergie": 1,
+        "atk": 2,
+        "def": 1,
+        "esq": 2
+      },
+      "reputation": {
+        "locale": 0
+      },
+      "information": {
+        "techniquesApprises": 3,
+        "techSlotsDebloques": 3,
+        "techniquesEquipees": [
+          "base_023",
+          "base_quick",
+          "base_024"
+        ]
+      },
+      "equipement": {
+        "mainDroite": "Crocs",
+        "mainGauche": "Griffes",
+        "armure": "Pelage dense",
+        "accessoire": "-"
+      },
+      "inventaire": [
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null
+      ],
+      "aiProfile": {
+        "mode": "aggressive_short_burst",
+        "description": "Harcelement rapide et pression par mobilite."
+      }
+    }
+  ]
+}

@@ -2,6 +2,8 @@
   const mapUrls = Array.isArray(mapUrl) ? mapUrl : [mapUrl];
   let world = null;
   let mapSprite = null;
+  let trailLayer = null;
+  let trailPoints = [];
   let playerMarker = null;
   let remoteLayer = null;
   const remoteMarkers = new Map();
@@ -102,6 +104,8 @@
     }
 
     // Player marker: 3D-like red pin.
+    trailLayer = new PIXI.Graphics();
+    world.addChild(trailLayer);
     playerMarker = createPlayerPinMarker(PIXI);
     world.addChild(playerMarker);
 
@@ -113,8 +117,59 @@
 
   function setPlayerPosNorm(pos){
     if (!mapSprite || !playerMarker || !pos) return;
-    playerMarker.x = pos.x * mapSprite.width;
-    playerMarker.y = pos.y * mapSprite.height;
+    const x = pos.x * mapSprite.width;
+    const y = pos.y * mapSprite.height;
+    playerMarker.x = x;
+    playerMarker.y = y;
+    if (!trailPoints.length) {
+      trailPoints = [{ x, y }];
+    }
+  }
+
+  function appendTrailPointNorm(pos) {
+    if (!mapSprite || !trailLayer || !pos) return;
+    const x = Number(pos.x) * mapSprite.width;
+    const y = Number(pos.y) * mapSprite.height;
+    if (!Number.isFinite(x) || !Number.isFinite(y)) return;
+    if (!trailPoints.length) {
+      trailPoints = [{ x, y }];
+      return;
+    }
+    const last = trailPoints[trailPoints.length - 1];
+    const dx = x - last.x;
+    const dy = y - last.y;
+    if ((dx * dx + dy * dy) < 0.25) return;
+    trailPoints.push({ x, y });
+    if (trailPoints.length > 800) trailPoints = trailPoints.slice(-800);
+
+    trailLayer.clear();
+    if (trailPoints.length < 2) return;
+    const dash = 5;
+    const gap = 14;
+    for (let i = 1; i < trailPoints.length; i += 1) {
+      const a = trailPoints[i - 1];
+      const b = trailPoints[i];
+      const dx = b.x - a.x;
+      const dy = b.y - a.y;
+      const segLen = Math.hypot(dx, dy);
+      if (segLen <= 0.001) continue;
+      const ux = dx / segLen;
+      const uy = dy / segLen;
+      let t = 0;
+      while (t < segLen) {
+        const start = t;
+        const end = Math.min(segLen, t + dash);
+        trailLayer.moveTo(a.x + ux * start, a.y + uy * start);
+        trailLayer.lineTo(a.x + ux * end, a.y + uy * end);
+        t += dash + gap;
+      }
+    }
+    trailLayer.stroke({ color: 0xbe123c, width: 1.5, alpha: 0.92, cap: "round", join: "round" });
+  }
+
+  function resetTrail() {
+    trailLayer?.clear?.();
+    trailPoints = [];
   }
 
   function getPlayerPosWorld(){
@@ -213,6 +268,8 @@
     fitToScreen,
     centerOnPlayer,
     setPlayerPosNorm,
+    appendTrailPointNorm,
+    resetTrail,
     getPlayerPosWorld,
     get world(){ return world; },
     get mapSprite(){ return mapSprite; },

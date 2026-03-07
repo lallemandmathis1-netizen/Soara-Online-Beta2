@@ -15,6 +15,7 @@ function defaultState(username){
     username,
     name: "",
     race: "",
+    age: null,
     faction: "",
     // Combat / progression
     hpMax: 10,
@@ -26,7 +27,7 @@ function defaultState(username){
       gobelins: 0
     },
     money: 0,
-    pos: { x: 0.515, y: 0.58 },
+    pos: { x: 0.5, y: 0.58 },
     // Techniques apprises (ids)
     techSlots: { base: 3, advanced: 0, expert: 0 },
     reflexSlots: 1,
@@ -35,6 +36,10 @@ function defaultState(username){
     techSlotsTotal: 10,
     techniquesBySlot: ["base_punch", "base_guard", "base_wait", null, null, null, null, null, null, null],
     hasStarterKitV2: true,
+    starterRacePackV1: "",
+    pinOverrides: {},
+    discoveredPins: ["C"],
+    exploredPoints: [{ x: 0.5, y: 0.58 }],
     // Journal / historique (affichage)
     history: [],
     notebook: "",

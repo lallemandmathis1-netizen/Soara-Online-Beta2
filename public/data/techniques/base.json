@@ -1,1588 +1,1561 @@
 {
-  "version": 8,
+  "version": 9,
   "tier": "base",
   "items": [
     {
       "id": "base_punch",
-      "name": "Frappe de milice simple",
+      "name": "Humain - Technique 01",
       "seq": [
+        "?",
         "X",
-        "O",
-        "ROLL"
+        "GUARD"
       ],
-      "description": "Technique offensive de milice. Cout volontairement bas pour eviter la sous-energie au debut. La roulade porte le tempo d esquive.",
+      "description": "Technique de base humain equilibree (cout/pression/defense).",
       "rarity": "common",
       "category": "offense",
       "tier": "base",
-      "lore": "Style de milice: gestes simples, fiables et soutenables.",
-      "_profile": "milice"
+      "lore": "Doctrine Humain: progression de base stable.",
+      "_profile": "humain"
     },
     {
       "id": "base_guard",
-      "name": "Garde de milice simple",
+      "name": "Humain - Technique 02",
       "seq": [
-        "?",
-        "GUARD",
-        "X"
-      ],
-      "description": "Technique defensive de milice. Cout volontairement bas pour eviter la sous-energie au debut.",
-      "rarity": "common",
-      "category": "defense",
-      "tier": "base",
-      "lore": "Style de milice: gestes simples, fiables et soutenables.",
-      "_profile": "milice"
-    },
-    {
-      "id": "base_003",
-      "name": "Souffle de ligne simple",
-      "seq": [
-        "O",
-        "?",
-        "ROLL",
-        "X"
-      ],
-      "description": "Technique de gestion de ligne. Cout volontairement bas pour eviter la sous-energie au debut. La roulade porte le tempo d esquive. Conserve une respiration d energie lisible.",
-      "rarity": "common",
-      "category": "economy",
-      "tier": "base",
-      "lore": "Technique de base: apprentissage lisible et cout maitrise.",
-      "_profile": "ligne"
-    },
-    {
-      "id": "base_double",
-      "name": "Frappe de ligne simple",
-      "seq": [
-        "O",
-        "GUARD",
-        "X"
-      ],
-      "description": "Technique offensive de ligne. Cout volontairement bas pour eviter la sous-energie au debut.",
-      "rarity": "common",
-      "category": "offense",
-      "tier": "base",
-      "lore": "Technique de base: apprentissage lisible et cout maitrise.",
-      "_profile": "ligne"
-    },
-    {
-      "id": "base_005",
-      "name": "Roulade de ligne simple",
-      "seq": [
-        "ROLL",
+        "X",
         "?",
         "O"
       ],
-      "description": "Technique evasive de ligne. Cout volontairement bas pour eviter la sous-energie au debut. La roulade porte le tempo d esquive. Conserve une respiration d energie lisible.",
+      "description": "Technique de base humain equilibree (cout/pression/defense).",
       "rarity": "common",
-      "category": "evasion",
+      "category": "defense",
       "tier": "base",
-      "lore": "Technique de base: apprentissage lisible et cout maitrise.",
-      "_profile": "ligne"
-    },
-    {
-      "id": "base_feint",
-      "name": "Transition de milice simple",
-      "seq": [
-        "X",
-        "O",
-        "GUARD"
-      ],
-      "description": "Technique mixte de milice. Cout volontairement bas pour eviter la sous-energie au debut.",
-      "rarity": "common",
-      "category": "mixed",
-      "tier": "base",
-      "lore": "Style de milice: gestes simples, fiables et soutenables.",
-      "_profile": "milice"
+      "lore": "Doctrine Humain: progression de base stable.",
+      "_profile": "humain"
     },
     {
       "id": "base_wait",
-      "name": "Cadence de ligne simple",
+      "name": "Humain - Technique 03",
       "seq": [
+        "GUARD",
         "O",
+        "?"
+      ],
+      "description": "Technique de base humain equilibree (cout/pression/defense).",
+      "rarity": "common",
+      "category": "evasion",
+      "tier": "base",
+      "lore": "Doctrine Humain: progression de base stable.",
+      "_profile": "humain"
+    },
+    {
+      "id": "base_003",
+      "name": "Humain - Technique 04",
+      "seq": [
         "?",
-        "O",
+        "PARRY",
         "X"
       ],
-      "description": "Technique de gestion de ligne. Cout volontairement bas pour eviter la sous-energie au debut. Conserve une respiration d energie lisible.",
+      "description": "Technique de base humain equilibree (cout/pression/defense).",
       "rarity": "common",
       "category": "economy",
       "tier": "base",
-      "lore": "Technique de base: apprentissage lisible et cout maitrise.",
-      "_profile": "ligne"
+      "lore": "Doctrine Humain: progression de base stable.",
+      "_profile": "humain"
     },
     {
       "id": "base_008",
-      "name": "Garde de ligne simple",
+      "name": "Humain - Technique 05",
       "seq": [
         "O",
-        "GUARD",
-        "O"
+        "?",
+        "ROLL"
       ],
-      "description": "Technique defensive de ligne. Cout volontairement bas pour eviter la sous-energie au debut. Conserve une respiration d energie lisible.",
+      "description": "Technique de base humain equilibree (cout/pression/defense).",
       "rarity": "common",
-      "category": "defense",
+      "category": "mixed",
       "tier": "base",
-      "lore": "Technique de base: apprentissage lisible et cout maitrise.",
-      "_profile": "ligne"
+      "lore": "Doctrine Humain: progression de base stable.",
+      "_profile": "humain"
     },
     {
       "id": "base_009",
-      "name": "Assaut de ligne simple",
+      "name": "Humain - Technique 06",
       "seq": [
-        "X",
-        "X",
-        "O"
+        "ROLL",
+        "GUARD",
+        "?"
       ],
-      "description": "Technique offensive de ligne. Cout volontairement bas pour eviter la sous-energie au debut.",
+      "description": "Technique de base humain equilibree (cout/pression/defense).",
       "rarity": "common",
       "category": "offense",
       "tier": "base",
-      "lore": "Technique de base: apprentissage lisible et cout maitrise.",
-      "_profile": "ligne"
+      "lore": "Doctrine Humain: progression de base stable.",
+      "_profile": "humain"
     },
     {
       "id": "base_observe",
-      "name": "Lecture de ligne simple",
+      "name": "Humain - Technique 07",
       "seq": [
-        "X",
-        "X",
-        "O",
+        "?",
+        "!",
         "O"
       ],
-      "description": "Technique de gestion de ligne. Cout volontairement bas pour eviter la sous-energie au debut. Conserve une respiration d energie lisible.",
-      "rarity": "common",
-      "category": "economy",
-      "tier": "base",
-      "lore": "Technique de base: apprentissage lisible et cout maitrise.",
-      "_profile": "ligne"
-    },
-    {
-      "id": "base_turtle",
-      "name": "Rempart de milice simple",
-      "seq": [
-        "O",
-        "GUARD",
-        "GUARD"
-      ],
-      "description": "Technique defensive de milice. Cout volontairement bas pour eviter la sous-energie au debut.",
+      "description": "Technique de base humain equilibree (cout/pression/defense).",
       "rarity": "common",
       "category": "defense",
       "tier": "base",
-      "lore": "Style de milice: gestes simples, fiables et soutenables.",
-      "_profile": "milice"
-    },
-    {
-      "id": "base_prudent",
-      "name": "Decalage de ligne simple",
-      "seq": [
-        "O",
-        "O",
-        "ROLL"
-      ],
-      "description": "Technique evasive de ligne. Cout volontairement bas pour eviter la sous-energie au debut. La roulade porte le tempo d esquive. Conserve une respiration d energie lisible.",
-      "rarity": "common",
-      "category": "evasion",
-      "tier": "base",
-      "lore": "Technique de base: apprentissage lisible et cout maitrise.",
-      "_profile": "ligne"
-    },
-    {
-      "id": "base_013",
-      "name": "Repli de ligne simple",
-      "seq": [
-        "O",
-        "?",
-        "ROLL",
-        "O"
-      ],
-      "description": "Technique evasive de ligne. Cout volontairement bas pour eviter la sous-energie au debut. La roulade porte le tempo d esquive. Conserve une respiration d energie lisible.",
-      "rarity": "common",
-      "category": "evasion",
-      "tier": "base",
-      "lore": "Technique de base: apprentissage lisible et cout maitrise.",
-      "_profile": "ligne"
-    },
-    {
-      "id": "base_014",
-      "name": "Reserve de ligne simple",
-      "seq": [
-        "O",
-        "O",
-        "?",
-        "GUARD"
-      ],
-      "description": "Technique de gestion de ligne. Cout volontairement bas pour eviter la sous-energie au debut. Conserve une respiration d energie lisible.",
-      "rarity": "common",
-      "category": "economy",
-      "tier": "base",
-      "lore": "Technique de base: apprentissage lisible et cout maitrise.",
-      "_profile": "ligne"
-    },
-    {
-      "id": "base_015",
-      "name": "Rythme de ligne simple",
-      "seq": [
-        "X",
-        "O",
-        "?",
-        "O"
-      ],
-      "description": "Technique de gestion de ligne. Cout volontairement bas pour eviter la sous-energie au debut. Conserve une respiration d energie lisible.",
-      "rarity": "common",
-      "category": "economy",
-      "tier": "base",
-      "lore": "Technique de base: apprentissage lisible et cout maitrise.",
-      "_profile": "ligne"
-    },
-    {
-      "id": "base_016",
-      "name": "Ecart de ligne simple",
-      "seq": [
-        "ROLL",
-        "O",
-        "O"
-      ],
-      "description": "Technique evasive de ligne. Cout volontairement bas pour eviter la sous-energie au debut. La roulade porte le tempo d esquive. Conserve une respiration d energie lisible.",
-      "rarity": "common",
-      "category": "evasion",
-      "tier": "base",
-      "lore": "Technique de base: apprentissage lisible et cout maitrise.",
-      "_profile": "ligne"
-    },
-    {
-      "id": "base_017",
-      "name": "Parade de milice simple",
-      "seq": [
-        "O",
-        "O",
-        "GUARD"
-      ],
-      "description": "Technique defensive de milice. Cout volontairement bas pour eviter la sous-energie au debut. Conserve une respiration d energie lisible.",
-      "rarity": "common",
-      "category": "defense",
-      "tier": "base",
-      "lore": "Style de milice: gestes simples, fiables et soutenables.",
-      "_profile": "milice"
+      "lore": "Doctrine Humain: progression de base stable.",
+      "_profile": "humain"
     },
     {
       "id": "base_parry",
-      "name": "Rempart de ligne simple",
+      "name": "Humain - Technique 08",
       "seq": [
-        "ROLL",
-        "GUARD",
-        "O"
+        "PARRY",
+        "?",
+        "!"
       ],
-      "description": "Technique defensive de ligne. Cout volontairement bas pour eviter la sous-energie au debut. La roulade porte le tempo d esquive.",
-      "rarity": "common",
-      "category": "defense",
-      "tier": "base",
-      "lore": "Technique de base: apprentissage lisible et cout maitrise.",
-      "_profile": "ligne"
-    },
-    {
-      "id": "base_019",
-      "name": "Degagement de ligne simple",
-      "seq": [
-        "O",
-        "ROLL",
-        "O"
-      ],
-      "description": "Technique evasive de ligne. Cout volontairement bas pour eviter la sous-energie au debut. La roulade porte le tempo d esquive. Conserve une respiration d energie lisible.",
+      "description": "Technique de base humain equilibree (cout/pression/defense).",
       "rarity": "common",
       "category": "evasion",
       "tier": "base",
-      "lore": "Technique de base: apprentissage lisible et cout maitrise.",
-      "_profile": "ligne"
+      "lore": "Doctrine Humain: progression de base stable.",
+      "_profile": "humain"
     },
     {
-      "id": "base_020",
-      "name": "Respiration de ligne simple",
+      "id": "base_prudent",
+      "name": "Humain - Technique 09",
       "seq": [
-        "O",
-        "ROLL",
         "X",
+        "ROLL",
         "?"
       ],
-      "description": "Technique de gestion de ligne. Cout volontairement bas pour eviter la sous-energie au debut. La roulade porte le tempo d esquive. Conserve une respiration d energie lisible.",
+      "description": "Technique de base humain equilibree (cout/pression/defense).",
       "rarity": "common",
       "category": "economy",
       "tier": "base",
-      "lore": "Technique de base: apprentissage lisible et cout maitrise.",
-      "_profile": "ligne"
+      "lore": "Doctrine Humain: progression de base stable.",
+      "_profile": "humain"
+    },
+    {
+      "id": "base_humain_010",
+      "name": "Humain - Technique 10",
+      "seq": [
+        "?",
+        "O",
+        "PARRY",
+        "X"
+      ],
+      "description": "Technique de base humain equilibree (cout/pression/defense).",
+      "rarity": "common",
+      "category": "mixed",
+      "tier": "base",
+      "lore": "Doctrine Humain: progression de base stable.",
+      "_profile": "humain"
+    },
+    {
+      "id": "base_humain_011",
+      "name": "Humain - Technique 11",
+      "seq": [
+        "GUARD",
+        "?",
+        "X",
+        "ROLL"
+      ],
+      "description": "Technique de base humain equilibree (cout/pression/defense).",
+      "rarity": "uncommon",
+      "category": "offense",
+      "tier": "base",
+      "lore": "Doctrine Humain: progression de base stable.",
+      "_profile": "humain"
+    },
+    {
+      "id": "base_humain_012",
+      "name": "Humain - Technique 12",
+      "seq": [
+        "!",
+        "PARRY",
+        "?",
+        "GUARD"
+      ],
+      "description": "Technique de base humain equilibree (cout/pression/defense).",
+      "rarity": "uncommon",
+      "category": "defense",
+      "tier": "base",
+      "lore": "Doctrine Humain: progression de base stable.",
+      "_profile": "humain"
+    },
+    {
+      "id": "base_humain_013",
+      "name": "Humain - Technique 13",
+      "seq": [
+        "?",
+        "ROLL",
+        "O",
+        "!"
+      ],
+      "description": "Technique de base humain equilibree (cout/pression/defense).",
+      "rarity": "uncommon",
+      "category": "evasion",
+      "tier": "base",
+      "lore": "Doctrine Humain: progression de base stable.",
+      "_profile": "humain"
+    },
+    {
+      "id": "base_humain_014",
+      "name": "Humain - Technique 14",
+      "seq": [
+        "O",
+        "X",
+        "?",
+        "PARRY"
+      ],
+      "description": "Technique de base humain equilibree (cout/pression/defense).",
+      "rarity": "uncommon",
+      "category": "economy",
+      "tier": "base",
+      "lore": "Doctrine Humain: progression de base stable.",
+      "_profile": "humain"
+    },
+    {
+      "id": "base_humain_015",
+      "name": "Humain - Technique 15",
+      "seq": [
+        "ROLL",
+        "?",
+        "!",
+        "X"
+      ],
+      "description": "Technique de base humain equilibree (cout/pression/defense).",
+      "rarity": "uncommon",
+      "category": "mixed",
+      "tier": "base",
+      "lore": "Doctrine Humain: progression de base stable.",
+      "_profile": "humain"
+    },
+    {
+      "id": "base_humain_016",
+      "name": "Humain - Technique 16",
+      "seq": [
+        "?",
+        "GUARD",
+        "PARRY",
+        "ROLL"
+      ],
+      "description": "Technique de base humain equilibree (cout/pression/defense).",
+      "rarity": "uncommon",
+      "category": "offense",
+      "tier": "base",
+      "lore": "Doctrine Humain: progression de base stable.",
+      "_profile": "humain"
+    },
+    {
+      "id": "base_humain_017",
+      "name": "Humain - Technique 17",
+      "seq": [
+        "PARRY",
+        "!",
+        "?",
+        "O"
+      ],
+      "description": "Technique de base humain equilibree (cout/pression/defense).",
+      "rarity": "rare",
+      "category": "defense",
+      "tier": "base",
+      "lore": "Doctrine Humain: progression de base stable.",
+      "_profile": "humain"
+    },
+    {
+      "id": "base_humain_018",
+      "name": "Humain - Technique 18",
+      "seq": [
+        "?",
+        "X",
+        "O",
+        "ROLL"
+      ],
+      "description": "Technique de base humain equilibree (cout/pression/defense).",
+      "rarity": "rare",
+      "category": "evasion",
+      "tier": "base",
+      "lore": "Doctrine Humain: progression de base stable.",
+      "_profile": "humain"
+    },
+    {
+      "id": "base_humain_019",
+      "name": "Humain - Technique 19",
+      "seq": [
+        "!",
+        "?",
+        "GUARD",
+        "PARRY"
+      ],
+      "description": "Technique de base humain equilibree (cout/pression/defense).",
+      "rarity": "rare",
+      "category": "economy",
+      "tier": "base",
+      "lore": "Doctrine Humain: progression de base stable.",
+      "_profile": "humain"
+    },
+    {
+      "id": "base_humain_020",
+      "name": "Humain - Technique 20",
+      "seq": [
+        "ROLL",
+        "O",
+        "?",
+        "X"
+      ],
+      "description": "Technique de base humain equilibree (cout/pression/defense).",
+      "rarity": "epic",
+      "category": "mixed",
+      "tier": "base",
+      "lore": "Doctrine Humain: progression de base stable.",
+      "_profile": "humain"
+    },
+    {
+      "id": "base_feint",
+      "name": "Gobelin - Technique 01",
+      "seq": [
+        "FEINT",
+        "X",
+        "ROLL"
+      ],
+      "description": "Technique de base gobelin equilibree (cout/pression/defense).",
+      "rarity": "common",
+      "category": "offense",
+      "tier": "base",
+      "lore": "Doctrine Gobelin: progression de base stable.",
+      "_profile": "gobelin"
     },
     {
       "id": "base_quick",
-      "name": "Pas lateral de ligne simple",
+      "name": "Gobelin - Technique 02",
       "seq": [
-        "O",
-        "O",
-        "ROLL",
-        "X"
-      ],
-      "description": "Technique evasive de ligne. Cout volontairement bas pour eviter la sous-energie au debut. La roulade porte le tempo d esquive. Conserve une respiration d energie lisible.",
-      "rarity": "common",
-      "category": "evasion",
-      "tier": "base",
-      "lore": "Technique de base: apprentissage lisible et cout maitrise.",
-      "_profile": "ligne"
-    },
-    {
-      "id": "base_022",
-      "name": "Parade de ligne simple",
-      "seq": [
-        "GUARD",
-        "ROLL",
+        "X",
+        "FEINT",
         "O"
       ],
-      "description": "Technique defensive de ligne. Cout volontairement bas pour eviter la sous-energie au debut. La roulade porte le tempo d esquive.",
+      "description": "Technique de base gobelin equilibree (cout/pression/defense).",
       "rarity": "common",
       "category": "defense",
       "tier": "base",
-      "lore": "Technique de base: apprentissage lisible et cout maitrise.",
-      "_profile": "ligne"
-    },
-    {
-      "id": "base_023",
-      "name": "Pression de ligne simple",
-      "seq": [
-        "X",
-        "ROLL",
-        "O"
-      ],
-      "description": "Technique offensive de ligne. Cout volontairement bas pour eviter la sous-energie au debut. La roulade porte le tempo d esquive.",
-      "rarity": "common",
-      "category": "offense",
-      "tier": "base",
-      "lore": "Technique de base: apprentissage lisible et cout maitrise.",
-      "_profile": "ligne"
+      "lore": "Doctrine Gobelin: progression de base stable.",
+      "_profile": "gobelin"
     },
     {
       "id": "base_024",
-      "name": "Glisse de ligne simple",
+      "name": "Gobelin - Technique 03",
       "seq": [
         "ROLL",
         "O",
-        "X"
+        "FEINT"
       ],
-      "description": "Technique evasive de ligne. Cout volontairement bas pour eviter la sous-energie au debut. La roulade porte le tempo d esquive.",
+      "description": "Technique de base gobelin equilibree (cout/pression/defense).",
       "rarity": "common",
       "category": "evasion",
       "tier": "base",
-      "lore": "Technique de base: apprentissage lisible et cout maitrise.",
-      "_profile": "ligne"
+      "lore": "Doctrine Gobelin: progression de base stable.",
+      "_profile": "gobelin"
     },
     {
-      "id": "base_025",
-      "name": "Transition de ligne simple",
+      "id": "base_gobelin_004",
+      "name": "Gobelin - Technique 04",
       "seq": [
-        "X",
-        "GUARD",
-        "O"
+        "FEINT",
+        "PARRY",
+        "X"
       ],
-      "description": "Technique mixte de ligne. Cout volontairement bas pour eviter la sous-energie au debut.",
-      "rarity": "common",
-      "category": "mixed",
-      "tier": "base",
-      "lore": "Technique de base: apprentissage lisible et cout maitrise.",
-      "_profile": "ligne"
-    },
-    {
-      "id": "base_026",
-      "name": "Recuperation de ligne simple",
-      "seq": [
-        "O",
-        "?",
-        "O",
-        "ROLL"
-      ],
-      "description": "Technique de gestion de ligne. Cout volontairement bas pour eviter la sous-energie au debut. La roulade porte le tempo d esquive. Conserve une respiration d energie lisible.",
+      "description": "Technique de base gobelin equilibree (cout/pression/defense).",
       "rarity": "common",
       "category": "economy",
       "tier": "base",
-      "lore": "Technique de base: apprentissage lisible et cout maitrise.",
-      "_profile": "ligne"
+      "lore": "Doctrine Gobelin: progression de base stable.",
+      "_profile": "gobelin"
+    },
+    {
+      "id": "base_gobelin_005",
+      "name": "Gobelin - Technique 05",
+      "seq": [
+        "O",
+        "FEINT",
+        "!"
+      ],
+      "description": "Technique de base gobelin equilibree (cout/pression/defense).",
+      "rarity": "common",
+      "category": "mixed",
+      "tier": "base",
+      "lore": "Doctrine Gobelin: progression de base stable.",
+      "_profile": "gobelin"
+    },
+    {
+      "id": "base_gobelin_006",
+      "name": "Gobelin - Technique 06",
+      "seq": [
+        "!",
+        "ROLL",
+        "FEINT"
+      ],
+      "description": "Technique de base gobelin equilibree (cout/pression/defense).",
+      "rarity": "common",
+      "category": "offense",
+      "tier": "base",
+      "lore": "Doctrine Gobelin: progression de base stable.",
+      "_profile": "gobelin"
+    },
+    {
+      "id": "base_gobelin_007",
+      "name": "Gobelin - Technique 07",
+      "seq": [
+        "FEINT",
+        "~",
+        "O"
+      ],
+      "description": "Technique de base gobelin equilibree (cout/pression/defense).",
+      "rarity": "common",
+      "category": "defense",
+      "tier": "base",
+      "lore": "Doctrine Gobelin: progression de base stable.",
+      "_profile": "gobelin"
+    },
+    {
+      "id": "base_gobelin_008",
+      "name": "Gobelin - Technique 08",
+      "seq": [
+        "PARRY",
+        "FEINT",
+        "~"
+      ],
+      "description": "Technique de base gobelin equilibree (cout/pression/defense).",
+      "rarity": "common",
+      "category": "evasion",
+      "tier": "base",
+      "lore": "Doctrine Gobelin: progression de base stable.",
+      "_profile": "gobelin"
+    },
+    {
+      "id": "base_gobelin_009",
+      "name": "Gobelin - Technique 09",
+      "seq": [
+        "X",
+        "!",
+        "FEINT"
+      ],
+      "description": "Technique de base gobelin equilibree (cout/pression/defense).",
+      "rarity": "common",
+      "category": "economy",
+      "tier": "base",
+      "lore": "Doctrine Gobelin: progression de base stable.",
+      "_profile": "gobelin"
+    },
+    {
+      "id": "base_gobelin_010",
+      "name": "Gobelin - Technique 10",
+      "seq": [
+        "FEINT",
+        "O",
+        "PARRY",
+        "X"
+      ],
+      "description": "Technique de base gobelin equilibree (cout/pression/defense).",
+      "rarity": "common",
+      "category": "mixed",
+      "tier": "base",
+      "lore": "Doctrine Gobelin: progression de base stable.",
+      "_profile": "gobelin"
+    },
+    {
+      "id": "base_gobelin_011",
+      "name": "Gobelin - Technique 11",
+      "seq": [
+        "ROLL",
+        "FEINT",
+        "X",
+        "!"
+      ],
+      "description": "Technique de base gobelin equilibree (cout/pression/defense).",
+      "rarity": "uncommon",
+      "category": "offense",
+      "tier": "base",
+      "lore": "Doctrine Gobelin: progression de base stable.",
+      "_profile": "gobelin"
+    },
+    {
+      "id": "base_gobelin_012",
+      "name": "Gobelin - Technique 12",
+      "seq": [
+        "~",
+        "PARRY",
+        "FEINT",
+        "ROLL"
+      ],
+      "description": "Technique de base gobelin equilibree (cout/pression/defense).",
+      "rarity": "uncommon",
+      "category": "defense",
+      "tier": "base",
+      "lore": "Doctrine Gobelin: progression de base stable.",
+      "_profile": "gobelin"
+    },
+    {
+      "id": "base_gobelin_013",
+      "name": "Gobelin - Technique 13",
+      "seq": [
+        "FEINT",
+        "!",
+        "O",
+        "~"
+      ],
+      "description": "Technique de base gobelin equilibree (cout/pression/defense).",
+      "rarity": "uncommon",
+      "category": "evasion",
+      "tier": "base",
+      "lore": "Doctrine Gobelin: progression de base stable.",
+      "_profile": "gobelin"
+    },
+    {
+      "id": "base_gobelin_014",
+      "name": "Gobelin - Technique 14",
+      "seq": [
+        "O",
+        "X",
+        "FEINT",
+        "PARRY"
+      ],
+      "description": "Technique de base gobelin equilibree (cout/pression/defense).",
+      "rarity": "uncommon",
+      "category": "economy",
+      "tier": "base",
+      "lore": "Doctrine Gobelin: progression de base stable.",
+      "_profile": "gobelin"
+    },
+    {
+      "id": "base_gobelin_015",
+      "name": "Gobelin - Technique 15",
+      "seq": [
+        "!",
+        "FEINT",
+        "~",
+        "X"
+      ],
+      "description": "Technique de base gobelin equilibree (cout/pression/defense).",
+      "rarity": "uncommon",
+      "category": "mixed",
+      "tier": "base",
+      "lore": "Doctrine Gobelin: progression de base stable.",
+      "_profile": "gobelin"
+    },
+    {
+      "id": "base_gobelin_016",
+      "name": "Gobelin - Technique 16",
+      "seq": [
+        "FEINT",
+        "ROLL",
+        "PARRY",
+        "!"
+      ],
+      "description": "Technique de base gobelin equilibree (cout/pression/defense).",
+      "rarity": "uncommon",
+      "category": "offense",
+      "tier": "base",
+      "lore": "Doctrine Gobelin: progression de base stable.",
+      "_profile": "gobelin"
+    },
+    {
+      "id": "base_gobelin_017",
+      "name": "Gobelin - Technique 17",
+      "seq": [
+        "PARRY",
+        "~",
+        "FEINT",
+        "O"
+      ],
+      "description": "Technique de base gobelin equilibree (cout/pression/defense).",
+      "rarity": "rare",
+      "category": "defense",
+      "tier": "base",
+      "lore": "Doctrine Gobelin: progression de base stable.",
+      "_profile": "gobelin"
+    },
+    {
+      "id": "base_gobelin_018",
+      "name": "Gobelin - Technique 18",
+      "seq": [
+        "FEINT",
+        "X",
+        "O",
+        "!"
+      ],
+      "description": "Technique de base gobelin equilibree (cout/pression/defense).",
+      "rarity": "rare",
+      "category": "evasion",
+      "tier": "base",
+      "lore": "Doctrine Gobelin: progression de base stable.",
+      "_profile": "gobelin"
+    },
+    {
+      "id": "base_gobelin_019",
+      "name": "Gobelin - Technique 19",
+      "seq": [
+        "~",
+        "FEINT",
+        "ROLL",
+        "PARRY"
+      ],
+      "description": "Technique de base gobelin equilibree (cout/pression/defense).",
+      "rarity": "rare",
+      "category": "economy",
+      "tier": "base",
+      "lore": "Doctrine Gobelin: progression de base stable.",
+      "_profile": "gobelin"
+    },
+    {
+      "id": "base_gobelin_020",
+      "name": "Gobelin - Technique 20",
+      "seq": [
+        "!",
+        "O",
+        "FEINT",
+        "X"
+      ],
+      "description": "Technique de base gobelin equilibree (cout/pression/defense).",
+      "rarity": "epic",
+      "category": "mixed",
+      "tier": "base",
+      "lore": "Doctrine Gobelin: progression de base stable.",
+      "_profile": "gobelin"
+    },
+    {
+      "id": "base_double",
+      "name": "Orc - Technique 01",
+      "seq": [
+        "<>",
+        "X",
+        "GUARD"
+      ],
+      "description": "Technique de base orc equilibree (cout/pression/defense).",
+      "rarity": "common",
+      "category": "offense",
+      "tier": "base",
+      "lore": "Doctrine Orc: progression de base stable.",
+      "_profile": "orc"
+    },
+    {
+      "id": "base_turtle",
+      "name": "Orc - Technique 02",
+      "seq": [
+        "X",
+        "<>",
+        "O"
+      ],
+      "description": "Technique de base orc equilibree (cout/pression/defense).",
+      "rarity": "common",
+      "category": "defense",
+      "tier": "base",
+      "lore": "Doctrine Orc: progression de base stable.",
+      "_profile": "orc"
     },
     {
       "id": "base_027",
-      "name": "Percussion de ligne simple",
+      "name": "Orc - Technique 03",
       "seq": [
+        "GUARD",
         "O",
-        "X",
-        "X"
+        "<>"
       ],
-      "description": "Technique offensive de ligne. Cout volontairement bas pour eviter la sous-energie au debut.",
-      "rarity": "common",
-      "category": "offense",
-      "tier": "base",
-      "lore": "Technique de base: apprentissage lisible et cout maitrise.",
-      "_profile": "ligne"
-    },
-    {
-      "id": "base_028",
-      "name": "Bouclier de ligne simple",
-      "seq": [
-        "O",
-        "ROLL",
-        "GUARD"
-      ],
-      "description": "Technique defensive de ligne. Cout volontairement bas pour eviter la sous-energie au debut. La roulade porte le tempo d esquive.",
-      "rarity": "common",
-      "category": "defense",
-      "tier": "base",
-      "lore": "Technique de base: apprentissage lisible et cout maitrise.",
-      "_profile": "ligne"
-    },
-    {
-      "id": "base_029",
-      "name": "Retrait de ligne simple",
-      "seq": [
-        "O",
-        "ROLL",
-        "X"
-      ],
-      "description": "Technique evasive de ligne. Cout volontairement bas pour eviter la sous-energie au debut. La roulade porte le tempo d esquive.",
+      "description": "Technique de base orc equilibree (cout/pression/defense).",
       "rarity": "common",
       "category": "evasion",
       "tier": "base",
-      "lore": "Technique de base: apprentissage lisible et cout maitrise.",
-      "_profile": "ligne"
-    },
-    {
-      "id": "base_030",
-      "name": "Bloc de ligne simple",
-      "seq": [
-        "?",
-        "GUARD",
-        "O"
-      ],
-      "description": "Technique defensive de ligne. Cout volontairement bas pour eviter la sous-energie au debut. Conserve une respiration d energie lisible.",
-      "rarity": "common",
-      "category": "defense",
-      "tier": "base",
-      "lore": "Technique de base: apprentissage lisible et cout maitrise.",
-      "_profile": "ligne"
-    },
-    {
-      "id": "base_031",
-      "name": "Gestion de ligne simple",
-      "seq": [
-        "?",
-        "GUARD",
-        "GUARD",
-        "O"
-      ],
-      "description": "Technique de gestion de ligne. Cout volontairement bas pour eviter la sous-energie au debut. Conserve une respiration d energie lisible.",
-      "rarity": "common",
-      "category": "economy",
-      "tier": "base",
-      "lore": "Technique de base: apprentissage lisible et cout maitrise.",
-      "_profile": "ligne"
-    },
-    {
-      "id": "base_032",
-      "name": "Roulade de ligne sobre",
-      "seq": [
-        "O",
-        "X",
-        "ROLL"
-      ],
-      "description": "Technique evasive de ligne. Cout volontairement bas pour eviter la sous-energie au debut. La roulade porte le tempo d esquive.",
-      "rarity": "common",
-      "category": "evasion",
-      "tier": "base",
-      "lore": "Technique de base: apprentissage lisible et cout maitrise.",
-      "_profile": "ligne"
-    },
-    {
-      "id": "base_033",
-      "name": "Tenue de ligne simple",
-      "seq": [
-        "GUARD",
-        "GUARD",
-        "O"
-      ],
-      "description": "Technique defensive de ligne. Cout volontairement bas pour eviter la sous-energie au debut.",
-      "rarity": "common",
-      "category": "defense",
-      "tier": "base",
-      "lore": "Technique de base: apprentissage lisible et cout maitrise.",
-      "_profile": "ligne"
-    },
-    {
-      "id": "base_034",
-      "name": "Decalage de ligne sobre",
-      "seq": [
-        "ROLL",
-        "X",
-        "O"
-      ],
-      "description": "Technique evasive de ligne. Cout volontairement bas pour eviter la sous-energie au debut. La roulade porte le tempo d esquive.",
-      "rarity": "common",
-      "category": "evasion",
-      "tier": "base",
-      "lore": "Technique de base: apprentissage lisible et cout maitrise.",
-      "_profile": "ligne"
-    },
-    {
-      "id": "base_035",
-      "name": "Repli de ligne sobre",
-      "seq": [
-        "ROLL",
-        "O",
-        "?"
-      ],
-      "description": "Technique evasive de ligne. Cout volontairement bas pour eviter la sous-energie au debut. La roulade porte le tempo d esquive. Conserve une respiration d energie lisible.",
-      "rarity": "common",
-      "category": "evasion",
-      "tier": "base",
-      "lore": "Technique de base: apprentissage lisible et cout maitrise.",
-      "_profile": "ligne"
-    },
-    {
-      "id": "base_036",
-      "name": "Souffle de ligne sobre",
-      "seq": [
-        "O",
-        "GUARD",
-        "ROLL",
-        "?"
-      ],
-      "description": "Technique de gestion de ligne. Cout volontairement bas pour eviter la sous-energie au debut. La roulade porte le tempo d esquive. Conserve une respiration d energie lisible.",
-      "rarity": "common",
-      "category": "economy",
-      "tier": "base",
-      "lore": "Technique de base: apprentissage lisible et cout maitrise.",
-      "_profile": "ligne"
-    },
-    {
-      "id": "base_037",
-      "name": "Aegis de ligne simple",
-      "seq": [
-        "O",
-        "GUARD",
-        "ROLL"
-      ],
-      "description": "Technique defensive de ligne. Cout volontairement bas pour eviter la sous-energie au debut. La roulade porte le tempo d esquive.",
-      "rarity": "common",
-      "category": "defense",
-      "tier": "base",
-      "lore": "Technique de base: apprentissage lisible et cout maitrise.",
-      "_profile": "ligne"
-    },
-    {
-      "id": "base_038",
-      "name": "Roulade de milice simple",
-      "seq": [
-        "ROLL",
-        "O",
-        "GUARD"
-      ],
-      "description": "Technique evasive de milice. Cout volontairement bas pour eviter la sous-energie au debut. La roulade porte le tempo d esquive.",
-      "rarity": "common",
-      "category": "evasion",
-      "tier": "base",
-      "lore": "Style de milice: gestes simples, fiables et soutenables.",
-      "_profile": "milice"
-    },
-    {
-      "id": "base_039",
-      "name": "Charge de ligne simple",
-      "seq": [
-        "X",
-        "O",
-        "O"
-      ],
-      "description": "Technique offensive de ligne. Cout volontairement bas pour eviter la sous-energie au debut. Conserve une respiration d energie lisible.",
-      "rarity": "common",
-      "category": "offense",
-      "tier": "base",
-      "lore": "Technique de base: apprentissage lisible et cout maitrise.",
-      "_profile": "ligne"
-    },
-    {
-      "id": "base_040",
-      "name": "Ecart de ligne sobre",
-      "seq": [
-        "O",
-        "ROLL",
-        "O",
-        "X"
-      ],
-      "description": "Technique evasive de ligne. Cout volontairement bas pour eviter la sous-energie au debut. La roulade porte le tempo d esquive. Conserve une respiration d energie lisible.",
-      "rarity": "common",
-      "category": "evasion",
-      "tier": "base",
-      "lore": "Technique de base: apprentissage lisible et cout maitrise.",
-      "_profile": "ligne"
-    },
-    {
-      "id": "base_041",
-      "name": "Frappe de ligne cadencee",
-      "seq": [
-        "X",
-        "O",
-        "O",
-        "PARRY"
-      ],
-      "description": "Technique offensive de ligne. Palier intermediaire: plus de reponse tactique sans exploser le cout. La parade sert de pivot de contre. Conserve une respiration d energie lisible.",
-      "rarity": "uncommon",
-      "category": "offense",
-      "tier": "base",
-      "lore": "Technique de ligne: progression reguliere et execution propre.",
-      "_profile": "ligne"
+      "lore": "Doctrine Orc: progression de base stable.",
+      "_profile": "orc"
     },
     {
       "id": "base_heavy",
-      "name": "Assaut de ligne cadencee",
+      "name": "Orc - Technique 04",
       "seq": [
-        "ROLL",
-        "GUARD",
-        "X",
-        "O"
-      ],
-      "description": "Technique offensive de ligne. Palier intermediaire: plus de reponse tactique sans exploser le cout. La roulade porte le tempo d esquive.",
-      "rarity": "uncommon",
-      "category": "offense",
-      "tier": "base",
-      "lore": "Technique de ligne: progression reguliere et execution propre.",
-      "_profile": "ligne"
-    },
-    {
-      "id": "base_043",
-      "name": "Garde de ligne cadencee",
-      "seq": [
-        "O",
-        "GUARD",
-        "?",
-        "PARRY"
-      ],
-      "description": "Technique defensive de ligne. Palier intermediaire: plus de reponse tactique sans exploser le cout. La parade sert de pivot de contre. Conserve une respiration d energie lisible.",
-      "rarity": "uncommon",
-      "category": "defense",
-      "tier": "base",
-      "lore": "Technique de ligne: progression reguliere et execution propre.",
-      "_profile": "ligne"
-    },
-    {
-      "id": "base_044",
-      "name": "Rempart de ligne cadencee",
-      "seq": [
-        "O",
-        "GUARD",
+        "<>",
         "PARRY",
-        "PARRY"
-      ],
-      "description": "Technique defensive de ligne. Palier intermediaire: plus de reponse tactique sans exploser le cout. La parade sert de pivot de contre.",
-      "rarity": "uncommon",
-      "category": "defense",
-      "tier": "base",
-      "lore": "Technique de ligne: progression reguliere et execution propre.",
-      "_profile": "ligne"
-    },
-    {
-      "id": "base_045",
-      "name": "Pression de ligne cadencee",
-      "seq": [
-        "GUARD",
-        "?",
-        "ROLL",
         "X"
       ],
-      "description": "Technique offensive de ligne. Palier intermediaire: plus de reponse tactique sans exploser le cout. La roulade porte le tempo d esquive.",
-      "rarity": "uncommon",
-      "category": "offense",
-      "tier": "base",
-      "lore": "Technique de ligne: progression reguliere et execution propre.",
-      "_profile": "ligne"
-    },
-    {
-      "id": "base_046",
-      "name": "Souffle de ligne cadencee",
-      "seq": [
-        "O",
-        "O",
-        "X",
-        "PARRY"
-      ],
-      "description": "Technique de gestion de ligne. Palier intermediaire: plus de reponse tactique sans exploser le cout. La parade sert de pivot de contre. Conserve une respiration d energie lisible.",
-      "rarity": "uncommon",
+      "description": "Technique de base orc equilibree (cout/pression/defense).",
+      "rarity": "common",
       "category": "economy",
       "tier": "base",
-      "lore": "Technique de ligne: progression reguliere et execution propre.",
-      "_profile": "ligne"
+      "lore": "Doctrine Orc: progression de base stable.",
+      "_profile": "orc"
     },
     {
-      "id": "base_break",
-      "name": "Percussion de ligne cadencee",
-      "seq": [
-        "X",
-        "X",
-        "O",
-        "ROLL"
-      ],
-      "description": "Technique offensive de ligne. Palier intermediaire: plus de reponse tactique sans exploser le cout. La roulade porte le tempo d esquive.",
-      "rarity": "uncommon",
-      "category": "offense",
-      "tier": "base",
-      "lore": "Technique de ligne: progression reguliere et execution propre.",
-      "_profile": "ligne"
-    },
-    {
-      "id": "base_048",
-      "name": "Parade de ligne cadencee",
-      "seq": [
-        "GUARD",
-        "?",
-        "O",
-        "ROLL"
-      ],
-      "description": "Technique defensive de ligne. Palier intermediaire: plus de reponse tactique sans exploser le cout. La roulade porte le tempo d esquive. Conserve une respiration d energie lisible.",
-      "rarity": "uncommon",
-      "category": "defense",
-      "tier": "base",
-      "lore": "Technique de ligne: progression reguliere et execution propre.",
-      "_profile": "ligne"
-    },
-    {
-      "id": "base_049",
-      "name": "Roulade de ligne cadencee",
-      "seq": [
-        "ROLL",
-        "O",
-        "O",
-        "ROLL"
-      ],
-      "description": "Technique evasive de ligne. Palier intermediaire: plus de reponse tactique sans exploser le cout. La roulade porte le tempo d esquive. Conserve une respiration d energie lisible.",
-      "rarity": "uncommon",
-      "category": "evasion",
-      "tier": "base",
-      "lore": "Technique de ligne: progression reguliere et execution propre.",
-      "_profile": "ligne"
-    },
-    {
-      "id": "base_050",
-      "name": "Bouclier de ligne cadencee",
+      "id": "base_orc_005",
+      "name": "Orc - Technique 05",
       "seq": [
         "O",
-        "ROLL",
-        "X",
-        "PARRY"
+        "<>",
+        "BULWARK"
       ],
-      "description": "Technique defensive de ligne. Palier intermediaire: plus de reponse tactique sans exploser le cout. La parade sert de pivot de contre. La roulade porte le tempo d esquive.",
-      "rarity": "uncommon",
-      "category": "defense",
-      "tier": "base",
-      "lore": "Technique de ligne: progression reguliere et execution propre.",
-      "_profile": "ligne"
-    },
-    {
-      "id": "base_051",
-      "name": "Charge de ligne cadencee",
-      "seq": [
-        "X",
-        "O",
-        "ROLL",
-        "?"
-      ],
-      "description": "Technique offensive de ligne. Palier intermediaire: plus de reponse tactique sans exploser le cout. La roulade porte le tempo d esquive. Conserve une respiration d energie lisible.",
-      "rarity": "uncommon",
-      "category": "offense",
-      "tier": "base",
-      "lore": "Technique de ligne: progression reguliere et execution propre.",
-      "_profile": "ligne"
-    },
-    {
-      "id": "base_052",
-      "name": "Bloc de ligne cadencee",
-      "seq": [
-        "?",
-        "O",
-        "PARRY",
-        "PARRY"
-      ],
-      "description": "Technique defensive de ligne. Palier intermediaire: plus de reponse tactique sans exploser le cout. La parade sert de pivot de contre. Conserve une respiration d energie lisible.",
-      "rarity": "uncommon",
-      "category": "defense",
-      "tier": "base",
-      "lore": "Technique de ligne: progression reguliere et execution propre.",
-      "_profile": "ligne"
-    },
-    {
-      "id": "base_053",
-      "name": "Tenue de ligne cadencee",
-      "seq": [
-        "PARRY",
-        "X",
-        "?",
-        "O"
-      ],
-      "description": "Technique defensive de ligne. Palier intermediaire: plus de reponse tactique sans exploser le cout. La parade sert de pivot de contre. Conserve une respiration d energie lisible.",
-      "rarity": "uncommon",
-      "category": "defense",
-      "tier": "base",
-      "lore": "Technique de ligne: progression reguliere et execution propre.",
-      "_profile": "ligne"
-    },
-    {
-      "id": "base_054",
-      "name": "Rupture de ligne cadencee",
-      "seq": [
-        "X",
-        "O",
-        "ROLL",
-        "O"
-      ],
-      "description": "Technique offensive de ligne. Palier intermediaire: plus de reponse tactique sans exploser le cout. La roulade porte le tempo d esquive. Conserve une respiration d energie lisible.",
-      "rarity": "uncommon",
-      "category": "offense",
-      "tier": "base",
-      "lore": "Technique de ligne: progression reguliere et execution propre.",
-      "_profile": "ligne"
-    },
-    {
-      "id": "base_055",
-      "name": "Souffle de milice cadencee",
-      "seq": [
-        "?",
-        "O",
-        "O",
-        "?"
-      ],
-      "description": "Technique de gestion de milice. Palier intermediaire: plus de reponse tactique sans exploser le cout. Conserve une respiration d energie lisible.",
-      "rarity": "uncommon",
-      "category": "economy",
-      "tier": "base",
-      "lore": "Style de milice: gestes simples, fiables et soutenables.",
-      "_profile": "milice"
-    },
-    {
-      "id": "base_056",
-      "name": "Decalage de ligne cadencee",
-      "seq": [
-        "O",
-        "ROLL",
-        "?",
-        "ROLL"
-      ],
-      "description": "Technique evasive de ligne. Palier intermediaire: plus de reponse tactique sans exploser le cout. La roulade porte le tempo d esquive. Conserve une respiration d energie lisible.",
-      "rarity": "uncommon",
-      "category": "evasion",
-      "tier": "base",
-      "lore": "Technique de ligne: progression reguliere et execution propre.",
-      "_profile": "ligne"
-    },
-    {
-      "id": "base_057",
-      "name": "Coupe de ligne cadencee",
-      "seq": [
-        "O",
-        "X",
-        "GUARD",
-        "ROLL"
-      ],
-      "description": "Technique offensive de ligne. Palier intermediaire: plus de reponse tactique sans exploser le cout. La roulade porte le tempo d esquive.",
-      "rarity": "uncommon",
-      "category": "offense",
-      "tier": "base",
-      "lore": "Technique de ligne: progression reguliere et execution propre.",
-      "_profile": "ligne"
-    },
-    {
-      "id": "base_058",
-      "name": "Aegis de ligne cadencee",
-      "seq": [
-        "O",
-        "X",
-        "X",
-        "PARRY"
-      ],
-      "description": "Technique defensive de ligne. Palier intermediaire: plus de reponse tactique sans exploser le cout. La parade sert de pivot de contre.",
-      "rarity": "uncommon",
-      "category": "defense",
-      "tier": "base",
-      "lore": "Technique de ligne: progression reguliere et execution propre.",
-      "_profile": "ligne"
-    },
-    {
-      "id": "base_059",
-      "name": "Repli de ligne cadencee",
-      "seq": [
-        "O",
-        "PARRY",
-        "O",
-        "ROLL"
-      ],
-      "description": "Technique evasive de ligne. Palier intermediaire: plus de reponse tactique sans exploser le cout. La parade sert de pivot de contre. La roulade porte le tempo d esquive. Conserve une respiration d energie lisible.",
-      "rarity": "uncommon",
-      "category": "evasion",
-      "tier": "base",
-      "lore": "Technique de ligne: progression reguliere et execution propre.",
-      "_profile": "ligne"
-    },
-    {
-      "id": "base_060",
-      "name": "Offensive de ligne cadencee",
-      "seq": [
-        "X",
-        "O",
-        "ROLL",
-        "ROLL"
-      ],
-      "description": "Technique offensive de ligne. Palier intermediaire: plus de reponse tactique sans exploser le cout. La roulade porte le tempo d esquive.",
-      "rarity": "uncommon",
-      "category": "offense",
-      "tier": "base",
-      "lore": "Technique de ligne: progression reguliere et execution propre.",
-      "_profile": "ligne"
-    },
-    {
-      "id": "base_061",
-      "name": "Frappe de ligne appliquee",
-      "seq": [
-        "GUARD",
-        "X",
-        "O",
-        "ROLL"
-      ],
-      "description": "Technique offensive de ligne. Palier intermediaire: plus de reponse tactique sans exploser le cout. La roulade porte le tempo d esquive.",
-      "rarity": "uncommon",
-      "category": "offense",
-      "tier": "base",
-      "lore": "Technique de ligne: progression reguliere et execution propre.",
-      "_profile": "ligne"
-    },
-    {
-      "id": "base_062",
-      "name": "Ecran de ligne cadencee",
-      "seq": [
-        "X",
-        "PARRY",
-        "O",
-        "?"
-      ],
-      "description": "Technique defensive de ligne. Palier intermediaire: plus de reponse tactique sans exploser le cout. La parade sert de pivot de contre. Conserve une respiration d energie lisible.",
-      "rarity": "uncommon",
-      "category": "defense",
-      "tier": "base",
-      "lore": "Technique de ligne: progression reguliere et execution propre.",
-      "_profile": "ligne"
-    },
-    {
-      "id": "base_063",
-      "name": "Ecart de ligne cadencee",
-      "seq": [
-        "O",
-        "?",
-        "PARRY",
-        "ROLL"
-      ],
-      "description": "Technique evasive de ligne. Palier intermediaire: plus de reponse tactique sans exploser le cout. La parade sert de pivot de contre. La roulade porte le tempo d esquive. Conserve une respiration d energie lisible.",
-      "rarity": "uncommon",
-      "category": "evasion",
-      "tier": "base",
-      "lore": "Technique de ligne: progression reguliere et execution propre.",
-      "_profile": "ligne"
-    },
-    {
-      "id": "base_064",
-      "name": "Assaut de ligne appliquee",
-      "seq": [
-        "ROLL",
-        "?",
-        "ROLL",
-        "X"
-      ],
-      "description": "Technique offensive de ligne. Palier intermediaire: plus de reponse tactique sans exploser le cout. La roulade porte le tempo d esquive.",
-      "rarity": "uncommon",
-      "category": "offense",
-      "tier": "base",
-      "lore": "Technique de ligne: progression reguliere et execution propre.",
-      "_profile": "ligne"
-    },
-    {
-      "id": "base_065",
-      "name": "Degagement de ligne cadencee",
-      "seq": [
-        "ROLL",
-        "O",
-        "PARRY",
-        "PARRY"
-      ],
-      "description": "Technique evasive de ligne. Palier intermediaire: plus de reponse tactique sans exploser le cout. La parade sert de pivot de contre. La roulade porte le tempo d esquive.",
-      "rarity": "uncommon",
-      "category": "evasion",
-      "tier": "base",
-      "lore": "Technique de ligne: progression reguliere et execution propre.",
-      "_profile": "ligne"
-    },
-    {
-      "id": "base_066",
-      "name": "Garde de ligne appliquee",
-      "seq": [
-        "ROLL",
-        "GUARD",
-        "?",
-        "X"
-      ],
-      "description": "Technique defensive de ligne. Palier intermediaire: plus de reponse tactique sans exploser le cout. La roulade porte le tempo d esquive.",
-      "rarity": "uncommon",
-      "category": "defense",
-      "tier": "base",
-      "lore": "Technique de ligne: progression reguliere et execution propre.",
-      "_profile": "ligne"
-    },
-    {
-      "id": "base_067",
-      "name": "Rempart de ligne appliquee",
-      "seq": [
-        "O",
-        "PARRY",
-        "O",
-        "X"
-      ],
-      "description": "Technique defensive de ligne. Palier intermediaire: plus de reponse tactique sans exploser le cout. La parade sert de pivot de contre. Conserve une respiration d energie lisible.",
-      "rarity": "uncommon",
-      "category": "defense",
-      "tier": "base",
-      "lore": "Technique de ligne: progression reguliere et execution propre.",
-      "_profile": "ligne"
-    },
-    {
-      "id": "base_068",
-      "name": "Cadence de ligne cadencee",
-      "seq": [
-        "O",
-        "O",
-        "GUARD",
-        "?"
-      ],
-      "description": "Technique de gestion de ligne. Palier intermediaire: plus de reponse tactique sans exploser le cout. Conserve une respiration d energie lisible.",
-      "rarity": "uncommon",
-      "category": "economy",
-      "tier": "base",
-      "lore": "Technique de ligne: progression reguliere et execution propre.",
-      "_profile": "ligne"
-    },
-    {
-      "id": "base_069",
-      "name": "Pression de ligne appliquee",
-      "seq": [
-        "X",
-        "GUARD",
-        "X",
-        "O"
-      ],
-      "description": "Technique offensive de ligne. Palier intermediaire: plus de reponse tactique sans exploser le cout.",
-      "rarity": "uncommon",
-      "category": "offense",
-      "tier": "base",
-      "lore": "Technique de ligne: progression reguliere et execution propre.",
-      "_profile": "ligne"
-    },
-    {
-      "id": "base_070",
-      "name": "Pas lateral de ligne cadencee",
-      "seq": [
-        "O",
-        "PARRY",
-        "ROLL",
-        "O"
-      ],
-      "description": "Technique evasive de ligne. Palier intermediaire: plus de reponse tactique sans exploser le cout. La parade sert de pivot de contre. La roulade porte le tempo d esquive. Conserve une respiration d energie lisible.",
-      "rarity": "uncommon",
-      "category": "evasion",
-      "tier": "base",
-      "lore": "Technique de ligne: progression reguliere et execution propre.",
-      "_profile": "ligne"
-    },
-    {
-      "id": "base_071",
-      "name": "Souffle bazeide veterane",
-      "seq": [
-        "?",
-        "O",
-        "PARRY",
-        "ROLL"
-      ],
-      "description": "Technique de gestion bazeide. Palier rare: impact plus marque avec execution plus exigeante. La parade sert de pivot de contre. La roulade porte le tempo d esquive. Conserve une respiration d energie lisible.",
-      "rarity": "rare",
-      "category": "economy",
-      "tier": "base",
-      "lore": "Style bazeide: discipline, lecture et duel de controle.",
-      "_profile": "bazeide"
-    },
-    {
-      "id": "base_072",
-      "name": "Transition gobeline veterane",
-      "seq": [
-        "X",
-        "PARRY",
-        "X",
-        "ROLL"
-      ],
-      "description": "Technique mixte gobeline. Palier rare: impact plus marque avec execution plus exigeante. La parade sert de pivot de contre. La roulade porte le tempo d esquive.",
-      "rarity": "rare",
+      "description": "Technique de base orc equilibree (cout/pression/defense).",
+      "rarity": "common",
       "category": "mixed",
       "tier": "base",
-      "lore": "Style gobelin: pression courte, adaptation et decalage rapide.",
-      "_profile": "gobeline"
+      "lore": "Doctrine Orc: progression de base stable.",
+      "_profile": "orc"
     },
     {
-      "id": "base_073",
-      "name": "Frappe orque veterane",
+      "id": "base_orc_006",
+      "name": "Orc - Technique 06",
       "seq": [
-        "O",
+        "BULWARK",
         "GUARD",
-        "X",
-        "GUARD"
+        "<>"
       ],
-      "description": "Technique offensive orque. Palier rare: impact plus marque avec execution plus exigeante.",
-      "rarity": "rare",
+      "description": "Technique de base orc equilibree (cout/pression/defense).",
+      "rarity": "common",
       "category": "offense",
       "tier": "base",
-      "lore": "Style orc: tenue de ligne, impact frontal et endurance.",
-      "_profile": "orque"
+      "lore": "Doctrine Orc: progression de base stable.",
+      "_profile": "orc"
     },
     {
-      "id": "base_074",
-      "name": "Roulade royale veterane",
+      "id": "base_orc_007",
+      "name": "Orc - Technique 07",
       "seq": [
-        "O",
+        "<>",
         "ROLL",
-        "O",
-        "?"
-      ],
-      "description": "Technique evasive royale. Palier rare: impact plus marque avec execution plus exigeante. La roulade porte le tempo d esquive. Conserve une respiration d energie lisible.",
-      "rarity": "rare",
-      "category": "evasion",
-      "tier": "base",
-      "lore": "Style royal: cadence stricte, execution et autorite martiale.",
-      "_profile": "royale"
-    },
-    {
-      "id": "base_075",
-      "name": "Frappe de ligne veterane",
-      "seq": [
-        "X",
-        "O",
-        "ROLL",
-        "GUARD"
-      ],
-      "description": "Technique offensive de ligne. Palier rare: impact plus marque avec execution plus exigeante. La roulade porte le tempo d esquive.",
-      "rarity": "rare",
-      "category": "offense",
-      "tier": "base",
-      "lore": "Technique de ligne: progression reguliere et execution propre.",
-      "_profile": "ligne"
-    },
-    {
-      "id": "base_076",
-      "name": "Garde de ligne veterane",
-      "seq": [
-        "O",
-        "PARRY",
-        "X",
         "O"
       ],
-      "description": "Technique defensive de ligne. Palier rare: impact plus marque avec execution plus exigeante. La parade sert de pivot de contre. Conserve une respiration d energie lisible.",
-      "rarity": "rare",
+      "description": "Technique de base orc equilibree (cout/pression/defense).",
+      "rarity": "common",
       "category": "defense",
       "tier": "base",
-      "lore": "Technique de ligne: progression reguliere et execution propre.",
-      "_profile": "ligne"
+      "lore": "Doctrine Orc: progression de base stable.",
+      "_profile": "orc"
     },
     {
-      "id": "base_077",
-      "name": "Assaut de ligne veterane",
+      "id": "base_orc_008",
+      "name": "Orc - Technique 08",
       "seq": [
-        "X",
-        "ROLL",
-        "O",
-        "?"
-      ],
-      "description": "Technique offensive de ligne. Palier rare: impact plus marque avec execution plus exigeante. La roulade porte le tempo d esquive. Conserve une respiration d energie lisible.",
-      "rarity": "rare",
-      "category": "offense",
-      "tier": "base",
-      "lore": "Technique de ligne: progression reguliere et execution propre.",
-      "_profile": "ligne"
-    },
-    {
-      "id": "base_078",
-      "name": "Garde royale veterane",
-      "seq": [
-        "PARRY",
-        "O",
-        "<>",
-        "X"
-      ],
-      "description": "Technique defensive royale. Palier rare: impact plus marque avec execution plus exigeante. Inclut une attaque lourde pour la fenetre de rupture. La parade sert de pivot de contre.",
-      "rarity": "rare",
-      "category": "defense",
-      "tier": "base",
-      "lore": "Style royal: cadence stricte, execution et autorite martiale.",
-      "_profile": "royale"
-    },
-    {
-      "id": "base_079",
-      "name": "Frappe royale veterane",
-      "seq": [
-        "X",
-        "GUARD",
-        "GUARD",
-        "PARRY"
-      ],
-      "description": "Technique offensive royale. Palier rare: impact plus marque avec execution plus exigeante. La parade sert de pivot de contre.",
-      "rarity": "rare",
-      "category": "offense",
-      "tier": "base",
-      "lore": "Style royal: cadence stricte, execution et autorite martiale.",
-      "_profile": "royale"
-    },
-    {
-      "id": "base_080",
-      "name": "Souffle orque veterane",
-      "seq": [
-        "ROLL",
-        "<>",
-        "?",
-        "O"
-      ],
-      "description": "Technique de gestion orque. Palier rare: impact plus marque avec execution plus exigeante. Inclut une attaque lourde pour la fenetre de rupture. La roulade porte le tempo d esquive. Conserve une respiration d energie lisible.",
-      "rarity": "rare",
-      "category": "economy",
-      "tier": "base",
-      "lore": "Style orc: tenue de ligne, impact frontal et endurance.",
-      "_profile": "orque"
-    },
-    {
-      "id": "base_081",
-      "name": "Pression de ligne veterane",
-      "seq": [
-        "O",
-        "<>",
-        "GUARD",
-        "X"
-      ],
-      "description": "Technique offensive de ligne. Palier rare: impact plus marque avec execution plus exigeante. Inclut une attaque lourde pour la fenetre de rupture.",
-      "rarity": "rare",
-      "category": "offense",
-      "tier": "base",
-      "lore": "Technique de ligne: progression reguliere et execution propre.",
-      "_profile": "ligne"
-    },
-    {
-      "id": "base_082",
-      "name": "Rempart royale veterane",
-      "seq": [
-        "O",
         "PARRY",
         "<>",
         "ROLL"
       ],
-      "description": "Technique defensive royale. Palier rare: impact plus marque avec execution plus exigeante. Inclut une attaque lourde pour la fenetre de rupture. La parade sert de pivot de contre. La roulade porte le tempo d esquive.",
-      "rarity": "rare",
-      "category": "defense",
+      "description": "Technique de base orc equilibree (cout/pression/defense).",
+      "rarity": "common",
+      "category": "evasion",
       "tier": "base",
-      "lore": "Style royal: cadence stricte, execution et autorite martiale.",
-      "_profile": "royale"
+      "lore": "Doctrine Orc: progression de base stable.",
+      "_profile": "orc"
     },
     {
-      "id": "base_083",
-      "name": "Roulade de ligne veterane",
+      "id": "base_orc_009",
+      "name": "Orc - Technique 09",
       "seq": [
-        "ROLL",
-        "O",
+        "X",
+        "BULWARK",
+        "<>"
+      ],
+      "description": "Technique de base orc equilibree (cout/pression/defense).",
+      "rarity": "common",
+      "category": "economy",
+      "tier": "base",
+      "lore": "Doctrine Orc: progression de base stable.",
+      "_profile": "orc"
+    },
+    {
+      "id": "base_orc_010",
+      "name": "Orc - Technique 10",
+      "seq": [
         "<>",
+        "O",
+        "PARRY",
         "X"
       ],
-      "description": "Technique evasive de ligne. Palier rare: impact plus marque avec execution plus exigeante. Inclut une attaque lourde pour la fenetre de rupture. La roulade porte le tempo d esquive.",
-      "rarity": "rare",
-      "category": "evasion",
+      "description": "Technique de base orc equilibree (cout/pression/defense).",
+      "rarity": "common",
+      "category": "mixed",
       "tier": "base",
-      "lore": "Technique de ligne: progression reguliere et execution propre.",
-      "_profile": "ligne"
+      "lore": "Doctrine Orc: progression de base stable.",
+      "_profile": "orc"
     },
     {
-      "id": "base_084",
-      "name": "Parade royale veterane",
+      "id": "base_orc_011",
+      "name": "Orc - Technique 11",
       "seq": [
-        "X",
-        "PARRY",
-        "<>",
-        "?"
-      ],
-      "description": "Technique defensive royale. Palier rare: impact plus marque avec execution plus exigeante. Inclut une attaque lourde pour la fenetre de rupture. La parade sert de pivot de contre.",
-      "rarity": "rare",
-      "category": "defense",
-      "tier": "base",
-      "lore": "Style royal: cadence stricte, execution et autorite martiale.",
-      "_profile": "royale"
-    },
-    {
-      "id": "base_085",
-      "name": "Decalage de ligne veterane",
-      "seq": [
-        "O",
-        "ROLL",
-        "PARRY",
-        "?"
-      ],
-      "description": "Technique evasive de ligne. Palier rare: impact plus marque avec execution plus exigeante. La parade sert de pivot de contre. La roulade porte le tempo d esquive. Conserve une respiration d energie lisible.",
-      "rarity": "rare",
-      "category": "evasion",
-      "tier": "base",
-      "lore": "Technique de ligne: progression reguliere et execution propre.",
-      "_profile": "ligne"
-    },
-    {
-      "id": "base_086",
-      "name": "Percussion de ligne veterane",
-      "seq": [
-        "X",
-        "PARRY",
         "GUARD",
-        "X"
+        "<>",
+        "X",
+        "BULWARK"
       ],
-      "description": "Technique offensive de ligne. Palier rare: impact plus marque avec execution plus exigeante. La parade sert de pivot de contre.",
-      "rarity": "rare",
+      "description": "Technique de base orc equilibree (cout/pression/defense).",
+      "rarity": "uncommon",
       "category": "offense",
       "tier": "base",
-      "lore": "Technique de ligne: progression reguliere et execution propre.",
-      "_profile": "ligne"
+      "lore": "Doctrine Orc: progression de base stable.",
+      "_profile": "orc"
     },
     {
-      "id": "base_087",
-      "name": "Cadence orque veterane",
+      "id": "base_orc_012",
+      "name": "Orc - Technique 12",
       "seq": [
         "ROLL",
+        "PARRY",
+        "<>",
+        "GUARD"
+      ],
+      "description": "Technique de base orc equilibree (cout/pression/defense).",
+      "rarity": "uncommon",
+      "category": "defense",
+      "tier": "base",
+      "lore": "Doctrine Orc: progression de base stable.",
+      "_profile": "orc"
+    },
+    {
+      "id": "base_orc_013",
+      "name": "Orc - Technique 13",
+      "seq": [
+        "<>",
+        "BULWARK",
+        "O",
+        "ROLL"
+      ],
+      "description": "Technique de base orc equilibree (cout/pression/defense).",
+      "rarity": "uncommon",
+      "category": "evasion",
+      "tier": "base",
+      "lore": "Doctrine Orc: progression de base stable.",
+      "_profile": "orc"
+    },
+    {
+      "id": "base_orc_014",
+      "name": "Orc - Technique 14",
+      "seq": [
+        "O",
         "X",
-        "X",
+        "<>",
+        "PARRY"
+      ],
+      "description": "Technique de base orc equilibree (cout/pression/defense).",
+      "rarity": "uncommon",
+      "category": "economy",
+      "tier": "base",
+      "lore": "Doctrine Orc: progression de base stable.",
+      "_profile": "orc"
+    },
+    {
+      "id": "base_orc_015",
+      "name": "Orc - Technique 15",
+      "seq": [
+        "BULWARK",
+        "<>",
+        "ROLL",
+        "X"
+      ],
+      "description": "Technique de base orc equilibree (cout/pression/defense).",
+      "rarity": "uncommon",
+      "category": "mixed",
+      "tier": "base",
+      "lore": "Doctrine Orc: progression de base stable.",
+      "_profile": "orc"
+    },
+    {
+      "id": "base_orc_016",
+      "name": "Orc - Technique 16",
+      "seq": [
+        "<>",
+        "GUARD",
+        "PARRY",
+        "BULWARK"
+      ],
+      "description": "Technique de base orc equilibree (cout/pression/defense).",
+      "rarity": "uncommon",
+      "category": "offense",
+      "tier": "base",
+      "lore": "Doctrine Orc: progression de base stable.",
+      "_profile": "orc"
+    },
+    {
+      "id": "base_orc_017",
+      "name": "Orc - Technique 17",
+      "seq": [
+        "PARRY",
+        "ROLL",
+        "<>",
         "O"
       ],
-      "description": "Technique de gestion orque. Palier rare: impact plus marque avec execution plus exigeante. La roulade porte le tempo d esquive.",
+      "description": "Technique de base orc equilibree (cout/pression/defense).",
+      "rarity": "rare",
+      "category": "defense",
+      "tier": "base",
+      "lore": "Doctrine Orc: progression de base stable.",
+      "_profile": "orc"
+    },
+    {
+      "id": "base_orc_018",
+      "name": "Orc - Technique 18",
+      "seq": [
+        "<>",
+        "X",
+        "O",
+        "BULWARK"
+      ],
+      "description": "Technique de base orc equilibree (cout/pression/defense).",
+      "rarity": "rare",
+      "category": "evasion",
+      "tier": "base",
+      "lore": "Doctrine Orc: progression de base stable.",
+      "_profile": "orc"
+    },
+    {
+      "id": "base_orc_019",
+      "name": "Orc - Technique 19",
+      "seq": [
+        "ROLL",
+        "<>",
+        "GUARD",
+        "PARRY"
+      ],
+      "description": "Technique de base orc equilibree (cout/pression/defense).",
       "rarity": "rare",
       "category": "economy",
       "tier": "base",
-      "lore": "Style orc: tenue de ligne, impact frontal et endurance.",
-      "_profile": "orque"
+      "lore": "Doctrine Orc: progression de base stable.",
+      "_profile": "orc"
     },
     {
-      "id": "base_088",
-      "name": "Bouclier royale veterane",
+      "id": "base_orc_020",
+      "name": "Orc - Technique 20",
       "seq": [
-        "X",
-        "PARRY",
-        "?",
-        "PARRY"
+        "BULWARK",
+        "O",
+        "<>",
+        "X"
       ],
-      "description": "Technique defensive royale. Palier rare: impact plus marque avec execution plus exigeante. La parade sert de pivot de contre.",
-      "rarity": "rare",
-      "category": "defense",
+      "description": "Technique de base orc equilibree (cout/pression/defense).",
+      "rarity": "epic",
+      "category": "mixed",
       "tier": "base",
-      "lore": "Style royal: cadence stricte, execution et autorite martiale.",
-      "_profile": "royale"
+      "lore": "Doctrine Orc: progression de base stable.",
+      "_profile": "orc"
     },
     {
-      "id": "base_089",
-      "name": "Charge de ligne veterane",
+      "id": "base_023",
+      "name": "Loup - Technique 01",
       "seq": [
+        "~",
         "X",
-        "X",
-        "?",
-        "GUARD"
+        "ROLL"
       ],
-      "description": "Technique offensive de ligne. Palier rare: impact plus marque avec execution plus exigeante.",
-      "rarity": "rare",
+      "description": "Technique de base loup equilibree (cout/pression/defense).",
+      "rarity": "common",
       "category": "offense",
       "tier": "base",
-      "lore": "Technique de ligne: progression reguliere et execution propre.",
-      "_profile": "ligne"
+      "lore": "Doctrine Loup: progression de base stable.",
+      "_profile": "loup"
     },
     {
-      "id": "base_090",
-      "name": "Bloc royale veterane",
+      "id": "base_loup_002",
+      "name": "Loup - Technique 02",
+      "seq": [
+        "X",
+        "~",
+        "O"
+      ],
+      "description": "Technique de base loup equilibree (cout/pression/defense).",
+      "rarity": "common",
+      "category": "defense",
+      "tier": "base",
+      "lore": "Doctrine Loup: progression de base stable.",
+      "_profile": "loup"
+    },
+    {
+      "id": "base_loup_003",
+      "name": "Loup - Technique 03",
+      "seq": [
+        "ROLL",
+        "O",
+        "~"
+      ],
+      "description": "Technique de base loup equilibree (cout/pression/defense).",
+      "rarity": "common",
+      "category": "evasion",
+      "tier": "base",
+      "lore": "Doctrine Loup: progression de base stable.",
+      "_profile": "loup"
+    },
+    {
+      "id": "base_loup_004",
+      "name": "Loup - Technique 04",
+      "seq": [
+        "~",
+        "!",
+        "X"
+      ],
+      "description": "Technique de base loup equilibree (cout/pression/defense).",
+      "rarity": "common",
+      "category": "economy",
+      "tier": "base",
+      "lore": "Doctrine Loup: progression de base stable.",
+      "_profile": "loup"
+    },
+    {
+      "id": "base_loup_005",
+      "name": "Loup - Technique 05",
       "seq": [
         "O",
-        "PARRY",
-        "PARRY",
-        "?"
+        "~",
+        "PARRY"
       ],
-      "description": "Technique defensive royale. Palier rare: impact plus marque avec execution plus exigeante. La parade sert de pivot de contre. Conserve une respiration d energie lisible.",
+      "description": "Technique de base loup equilibree (cout/pression/defense).",
+      "rarity": "common",
+      "category": "mixed",
+      "tier": "base",
+      "lore": "Doctrine Loup: progression de base stable.",
+      "_profile": "loup"
+    },
+    {
+      "id": "base_loup_006",
+      "name": "Loup - Technique 06",
+      "seq": [
+        "PARRY",
+        "ROLL",
+        "~"
+      ],
+      "description": "Technique de base loup equilibree (cout/pression/defense).",
+      "rarity": "common",
+      "category": "offense",
+      "tier": "base",
+      "lore": "Doctrine Loup: progression de base stable.",
+      "_profile": "loup"
+    },
+    {
+      "id": "base_loup_007",
+      "name": "Loup - Technique 07",
+      "seq": [
+        "~",
+        "GUARD",
+        "O"
+      ],
+      "description": "Technique de base loup equilibree (cout/pression/defense).",
+      "rarity": "common",
+      "category": "defense",
+      "tier": "base",
+      "lore": "Doctrine Loup: progression de base stable.",
+      "_profile": "loup"
+    },
+    {
+      "id": "base_loup_008",
+      "name": "Loup - Technique 08",
+      "seq": [
+        "!",
+        "~",
+        "GUARD"
+      ],
+      "description": "Technique de base loup equilibree (cout/pression/defense).",
+      "rarity": "common",
+      "category": "evasion",
+      "tier": "base",
+      "lore": "Doctrine Loup: progression de base stable.",
+      "_profile": "loup"
+    },
+    {
+      "id": "base_loup_009",
+      "name": "Loup - Technique 09",
+      "seq": [
+        "X",
+        "PARRY",
+        "~"
+      ],
+      "description": "Technique de base loup equilibree (cout/pression/defense).",
+      "rarity": "common",
+      "category": "economy",
+      "tier": "base",
+      "lore": "Doctrine Loup: progression de base stable.",
+      "_profile": "loup"
+    },
+    {
+      "id": "base_loup_010",
+      "name": "Loup - Technique 10",
+      "seq": [
+        "~",
+        "O",
+        "!",
+        "X"
+      ],
+      "description": "Technique de base loup equilibree (cout/pression/defense).",
+      "rarity": "common",
+      "category": "mixed",
+      "tier": "base",
+      "lore": "Doctrine Loup: progression de base stable.",
+      "_profile": "loup"
+    },
+    {
+      "id": "base_loup_011",
+      "name": "Loup - Technique 11",
+      "seq": [
+        "ROLL",
+        "~",
+        "X",
+        "PARRY"
+      ],
+      "description": "Technique de base loup equilibree (cout/pression/defense).",
+      "rarity": "uncommon",
+      "category": "offense",
+      "tier": "base",
+      "lore": "Doctrine Loup: progression de base stable.",
+      "_profile": "loup"
+    },
+    {
+      "id": "base_loup_012",
+      "name": "Loup - Technique 12",
+      "seq": [
+        "GUARD",
+        "!",
+        "~",
+        "ROLL"
+      ],
+      "description": "Technique de base loup equilibree (cout/pression/defense).",
+      "rarity": "uncommon",
+      "category": "defense",
+      "tier": "base",
+      "lore": "Doctrine Loup: progression de base stable.",
+      "_profile": "loup"
+    },
+    {
+      "id": "base_loup_013",
+      "name": "Loup - Technique 13",
+      "seq": [
+        "~",
+        "PARRY",
+        "O",
+        "GUARD"
+      ],
+      "description": "Technique de base loup equilibree (cout/pression/defense).",
+      "rarity": "uncommon",
+      "category": "evasion",
+      "tier": "base",
+      "lore": "Doctrine Loup: progression de base stable.",
+      "_profile": "loup"
+    },
+    {
+      "id": "base_loup_014",
+      "name": "Loup - Technique 14",
+      "seq": [
+        "O",
+        "X",
+        "~",
+        "!"
+      ],
+      "description": "Technique de base loup equilibree (cout/pression/defense).",
+      "rarity": "uncommon",
+      "category": "economy",
+      "tier": "base",
+      "lore": "Doctrine Loup: progression de base stable.",
+      "_profile": "loup"
+    },
+    {
+      "id": "base_loup_015",
+      "name": "Loup - Technique 15",
+      "seq": [
+        "PARRY",
+        "~",
+        "GUARD",
+        "X"
+      ],
+      "description": "Technique de base loup equilibree (cout/pression/defense).",
+      "rarity": "uncommon",
+      "category": "mixed",
+      "tier": "base",
+      "lore": "Doctrine Loup: progression de base stable.",
+      "_profile": "loup"
+    },
+    {
+      "id": "base_loup_016",
+      "name": "Loup - Technique 16",
+      "seq": [
+        "~",
+        "ROLL",
+        "!",
+        "PARRY"
+      ],
+      "description": "Technique de base loup equilibree (cout/pression/defense).",
+      "rarity": "uncommon",
+      "category": "offense",
+      "tier": "base",
+      "lore": "Doctrine Loup: progression de base stable.",
+      "_profile": "loup"
+    },
+    {
+      "id": "base_loup_017",
+      "name": "Loup - Technique 17",
+      "seq": [
+        "!",
+        "GUARD",
+        "~",
+        "O"
+      ],
+      "description": "Technique de base loup equilibree (cout/pression/defense).",
       "rarity": "rare",
       "category": "defense",
       "tier": "base",
-      "lore": "Style royal: cadence stricte, execution et autorite martiale.",
-      "_profile": "royale"
+      "lore": "Doctrine Loup: progression de base stable.",
+      "_profile": "loup"
     },
     {
-      "id": "base_091",
-      "name": "Transition de ligne d elite",
+      "id": "base_loup_018",
+      "name": "Loup - Technique 18",
+      "seq": [
+        "~",
+        "X",
+        "O",
+        "PARRY"
+      ],
+      "description": "Technique de base loup equilibree (cout/pression/defense).",
+      "rarity": "rare",
+      "category": "evasion",
+      "tier": "base",
+      "lore": "Doctrine Loup: progression de base stable.",
+      "_profile": "loup"
+    },
+    {
+      "id": "base_loup_019",
+      "name": "Loup - Technique 19",
+      "seq": [
+        "GUARD",
+        "~",
+        "ROLL",
+        "!"
+      ],
+      "description": "Technique de base loup equilibree (cout/pression/defense).",
+      "rarity": "rare",
+      "category": "economy",
+      "tier": "base",
+      "lore": "Doctrine Loup: progression de base stable.",
+      "_profile": "loup"
+    },
+    {
+      "id": "base_loup_020",
+      "name": "Loup - Technique 20",
+      "seq": [
+        "PARRY",
+        "O",
+        "~",
+        "X"
+      ],
+      "description": "Technique de base loup equilibree (cout/pression/defense).",
+      "rarity": "epic",
+      "category": "mixed",
+      "tier": "base",
+      "lore": "Doctrine Loup: progression de base stable.",
+      "_profile": "loup"
+    },
+    {
+      "id": "base_construct_001",
+      "name": "Construct - Technique 01",
+      "seq": [
+        "BULWARK",
+        "GUARD",
+        "O"
+      ],
+      "description": "Technique de base construct equilibree (cout/pression/defense).",
+      "rarity": "common",
+      "category": "offense",
+      "tier": "base",
+      "lore": "Doctrine Construct: progression de base stable.",
+      "_profile": "construct"
+    },
+    {
+      "id": "base_construct_002",
+      "name": "Construct - Technique 02",
+      "seq": [
+        "GUARD",
+        "BULWARK",
+        "PARRY"
+      ],
+      "description": "Technique de base construct equilibree (cout/pression/defense).",
+      "rarity": "common",
+      "category": "defense",
+      "tier": "base",
+      "lore": "Doctrine Construct: progression de base stable.",
+      "_profile": "construct"
+    },
+    {
+      "id": "base_construct_003",
+      "name": "Construct - Technique 03",
       "seq": [
         "O",
-        "O",
+        "PARRY",
+        "BULWARK"
+      ],
+      "description": "Technique de base construct equilibree (cout/pression/defense).",
+      "rarity": "common",
+      "category": "evasion",
+      "tier": "base",
+      "lore": "Doctrine Construct: progression de base stable.",
+      "_profile": "construct"
+    },
+    {
+      "id": "base_construct_004",
+      "name": "Construct - Technique 04",
+      "seq": [
         "BULWARK",
         "X",
+        "GUARD"
+      ],
+      "description": "Technique de base construct equilibree (cout/pression/defense).",
+      "rarity": "common",
+      "category": "economy",
+      "tier": "base",
+      "lore": "Doctrine Construct: progression de base stable.",
+      "_profile": "construct"
+    },
+    {
+      "id": "base_construct_005",
+      "name": "Construct - Technique 05",
+      "seq": [
+        "PARRY",
+        "BULWARK",
+        "ROLL"
+      ],
+      "description": "Technique de base construct equilibree (cout/pression/defense).",
+      "rarity": "common",
+      "category": "mixed",
+      "tier": "base",
+      "lore": "Doctrine Construct: progression de base stable.",
+      "_profile": "construct"
+    },
+    {
+      "id": "base_construct_006",
+      "name": "Construct - Technique 06",
+      "seq": [
+        "ROLL",
+        "O",
+        "BULWARK"
+      ],
+      "description": "Technique de base construct equilibree (cout/pression/defense).",
+      "rarity": "common",
+      "category": "offense",
+      "tier": "base",
+      "lore": "Doctrine Construct: progression de base stable.",
+      "_profile": "construct"
+    },
+    {
+      "id": "base_construct_007",
+      "name": "Construct - Technique 07",
+      "seq": [
+        "BULWARK",
+        "?",
         "PARRY"
       ],
-      "description": "Technique mixte de ligne. Palier epique: puissance de pointe et lecture necessaire. La parade sert de pivot de contre. Conserve une respiration d energie lisible.",
+      "description": "Technique de base construct equilibree (cout/pression/defense).",
+      "rarity": "common",
+      "category": "defense",
+      "tier": "base",
+      "lore": "Doctrine Construct: progression de base stable.",
+      "_profile": "construct"
+    },
+    {
+      "id": "base_construct_008",
+      "name": "Construct - Technique 08",
+      "seq": [
+        "X",
+        "BULWARK",
+        "?"
+      ],
+      "description": "Technique de base construct equilibree (cout/pression/defense).",
+      "rarity": "common",
+      "category": "evasion",
+      "tier": "base",
+      "lore": "Doctrine Construct: progression de base stable.",
+      "_profile": "construct"
+    },
+    {
+      "id": "base_construct_009",
+      "name": "Construct - Technique 09",
+      "seq": [
+        "GUARD",
+        "ROLL",
+        "BULWARK"
+      ],
+      "description": "Technique de base construct equilibree (cout/pression/defense).",
+      "rarity": "common",
+      "category": "economy",
+      "tier": "base",
+      "lore": "Doctrine Construct: progression de base stable.",
+      "_profile": "construct"
+    },
+    {
+      "id": "base_construct_010",
+      "name": "Construct - Technique 10",
+      "seq": [
+        "BULWARK",
+        "PARRY",
+        "X",
+        "GUARD"
+      ],
+      "description": "Technique de base construct equilibree (cout/pression/defense).",
+      "rarity": "common",
+      "category": "mixed",
+      "tier": "base",
+      "lore": "Doctrine Construct: progression de base stable.",
+      "_profile": "construct"
+    },
+    {
+      "id": "base_construct_011",
+      "name": "Construct - Technique 11",
+      "seq": [
+        "O",
+        "BULWARK",
+        "GUARD",
+        "ROLL"
+      ],
+      "description": "Technique de base construct equilibree (cout/pression/defense).",
+      "rarity": "uncommon",
+      "category": "offense",
+      "tier": "base",
+      "lore": "Doctrine Construct: progression de base stable.",
+      "_profile": "construct"
+    },
+    {
+      "id": "base_construct_012",
+      "name": "Construct - Technique 12",
+      "seq": [
+        "?",
+        "X",
+        "BULWARK",
+        "O"
+      ],
+      "description": "Technique de base construct equilibree (cout/pression/defense).",
+      "rarity": "uncommon",
+      "category": "defense",
+      "tier": "base",
+      "lore": "Doctrine Construct: progression de base stable.",
+      "_profile": "construct"
+    },
+    {
+      "id": "base_construct_013",
+      "name": "Construct - Technique 13",
+      "seq": [
+        "BULWARK",
+        "ROLL",
+        "PARRY",
+        "?"
+      ],
+      "description": "Technique de base construct equilibree (cout/pression/defense).",
+      "rarity": "uncommon",
+      "category": "evasion",
+      "tier": "base",
+      "lore": "Doctrine Construct: progression de base stable.",
+      "_profile": "construct"
+    },
+    {
+      "id": "base_construct_014",
+      "name": "Construct - Technique 14",
+      "seq": [
+        "PARRY",
+        "GUARD",
+        "BULWARK",
+        "X"
+      ],
+      "description": "Technique de base construct equilibree (cout/pression/defense).",
+      "rarity": "uncommon",
+      "category": "economy",
+      "tier": "base",
+      "lore": "Doctrine Construct: progression de base stable.",
+      "_profile": "construct"
+    },
+    {
+      "id": "base_construct_015",
+      "name": "Construct - Technique 15",
+      "seq": [
+        "ROLL",
+        "BULWARK",
+        "?",
+        "GUARD"
+      ],
+      "description": "Technique de base construct equilibree (cout/pression/defense).",
+      "rarity": "uncommon",
+      "category": "mixed",
+      "tier": "base",
+      "lore": "Doctrine Construct: progression de base stable.",
+      "_profile": "construct"
+    },
+    {
+      "id": "base_construct_016",
+      "name": "Construct - Technique 16",
+      "seq": [
+        "BULWARK",
+        "O",
+        "X",
+        "ROLL"
+      ],
+      "description": "Technique de base construct equilibree (cout/pression/defense).",
+      "rarity": "uncommon",
+      "category": "offense",
+      "tier": "base",
+      "lore": "Doctrine Construct: progression de base stable.",
+      "_profile": "construct"
+    },
+    {
+      "id": "base_construct_017",
+      "name": "Construct - Technique 17",
+      "seq": [
+        "X",
+        "?",
+        "BULWARK",
+        "PARRY"
+      ],
+      "description": "Technique de base construct equilibree (cout/pression/defense).",
+      "rarity": "rare",
+      "category": "defense",
+      "tier": "base",
+      "lore": "Doctrine Construct: progression de base stable.",
+      "_profile": "construct"
+    },
+    {
+      "id": "base_construct_018",
+      "name": "Construct - Technique 18",
+      "seq": [
+        "BULWARK",
+        "GUARD",
+        "PARRY",
+        "ROLL"
+      ],
+      "description": "Technique de base construct equilibree (cout/pression/defense).",
+      "rarity": "rare",
+      "category": "evasion",
+      "tier": "base",
+      "lore": "Doctrine Construct: progression de base stable.",
+      "_profile": "construct"
+    },
+    {
+      "id": "base_construct_019",
+      "name": "Construct - Technique 19",
+      "seq": [
+        "?",
+        "BULWARK",
+        "O",
+        "X"
+      ],
+      "description": "Technique de base construct equilibree (cout/pression/defense).",
+      "rarity": "rare",
+      "category": "economy",
+      "tier": "base",
+      "lore": "Doctrine Construct: progression de base stable.",
+      "_profile": "construct"
+    },
+    {
+      "id": "base_construct_020",
+      "name": "Construct - Technique 20",
+      "seq": [
+        "ROLL",
+        "PARRY",
+        "BULWARK",
+        "GUARD"
+      ],
+      "description": "Technique de base construct equilibree (cout/pression/defense).",
       "rarity": "epic",
       "category": "mixed",
       "tier": "base",
-      "lore": "Technique de ligne: progression reguliere et execution propre.",
-      "_profile": "ligne"
-    },
-    {
-      "id": "base_092",
-      "name": "Roulade royale d elite",
-      "seq": [
-        "O",
-        "PARRY",
-        "X",
-        "ROLL",
-        "O"
-      ],
-      "description": "Technique evasive royale. Palier epique: puissance de pointe et lecture necessaire. La parade sert de pivot de contre. La roulade porte le tempo d esquive. Conserve une respiration d energie lisible.",
-      "rarity": "epic",
-      "category": "evasion",
-      "tier": "base",
-      "lore": "Style royal: cadence stricte, execution et autorite martiale.",
-      "_profile": "royale"
-    },
-    {
-      "id": "base_093",
-      "name": "Souffle de ligne d elite",
-      "seq": [
-        "PARRY",
-        "<>",
-        "O",
-        "O",
-        "?"
-      ],
-      "description": "Technique de gestion de ligne. Palier epique: puissance de pointe et lecture necessaire. Inclut une attaque lourde pour la fenetre de rupture. La parade sert de pivot de contre. Conserve une respiration d energie lisible.",
-      "rarity": "epic",
-      "category": "economy",
-      "tier": "base",
-      "lore": "Technique de ligne: progression reguliere et execution propre.",
-      "_profile": "ligne"
-    },
-    {
-      "id": "base_094",
-      "name": "Frappe de ligne d elite",
-      "seq": [
-        "O",
-        "X",
-        "X",
-        "<>",
-        "GUARD"
-      ],
-      "description": "Technique offensive de ligne. Palier epique: puissance de pointe et lecture necessaire. Inclut une attaque lourde pour la fenetre de rupture.",
-      "rarity": "epic",
-      "category": "offense",
-      "tier": "base",
-      "lore": "Technique de ligne: progression reguliere et execution propre.",
-      "_profile": "ligne"
-    },
-    {
-      "id": "base_095",
-      "name": "Garde de ligne d elite",
-      "seq": [
-        "O",
-        "O",
-        "?",
-        "ROLL",
-        "BULWARK"
-      ],
-      "description": "Technique defensive de ligne. Palier epique: puissance de pointe et lecture necessaire. La roulade porte le tempo d esquive. Conserve une respiration d energie lisible.",
-      "rarity": "epic",
-      "category": "defense",
-      "tier": "base",
-      "lore": "Technique de ligne: progression reguliere et execution propre.",
-      "_profile": "ligne"
-    },
-    {
-      "id": "base_096",
-      "name": "Frappe royale d elite",
-      "seq": [
-        "O",
-        "X",
-        "O",
-        "ROLL",
-        "BULWARK"
-      ],
-      "description": "Technique offensive royale. Palier epique: puissance de pointe et lecture necessaire. La roulade porte le tempo d esquive. Conserve une respiration d energie lisible.",
-      "rarity": "epic",
-      "category": "offense",
-      "tier": "base",
-      "lore": "Style royal: cadence stricte, execution et autorite martiale.",
-      "_profile": "royale"
-    },
-    {
-      "id": "base_097",
-      "name": "Rempart de ligne d elite",
-      "seq": [
-        "O",
-        "O",
-        "GUARD",
-        "PARRY",
-        "GUARD"
-      ],
-      "description": "Technique defensive de ligne. Palier epique: puissance de pointe et lecture necessaire. La parade sert de pivot de contre. Conserve une respiration d energie lisible.",
-      "rarity": "epic",
-      "category": "defense",
-      "tier": "base",
-      "lore": "Technique de ligne: progression reguliere et execution propre.",
-      "_profile": "ligne"
-    },
-    {
-      "id": "base_098",
-      "name": "Assaut royale d elite",
-      "seq": [
-        "X",
-        "O",
-        "O",
-        "ROLL",
-        "ROLL"
-      ],
-      "description": "Technique offensive royale. Palier epique: puissance de pointe et lecture necessaire. La roulade porte le tempo d esquive. Conserve une respiration d energie lisible.",
-      "rarity": "epic",
-      "category": "offense",
-      "tier": "base",
-      "lore": "Style royal: cadence stricte, execution et autorite martiale.",
-      "_profile": "royale"
-    },
-    {
-      "id": "base_099",
-      "name": "Assaut de ligne d elite",
-      "seq": [
-        "X",
-        "O",
-        "ROLL",
-        "GUARD",
-        "ROLL"
-      ],
-      "description": "Technique offensive de ligne. Palier epique: puissance de pointe et lecture necessaire. La roulade porte le tempo d esquive.",
-      "rarity": "epic",
-      "category": "offense",
-      "tier": "base",
-      "lore": "Technique de ligne: progression reguliere et execution propre.",
-      "_profile": "ligne"
-    },
-    {
-      "id": "base_100",
-      "name": "Serment royal de Soara",
-      "seq": [
-        "GUARD",
-        "GUARD",
-        "X",
-        "<>",
-        "X"
-      ],
-      "description": "Technique offensive royale. Palier legendaire: signature de fin de progression. Inclut une attaque lourde pour la fenetre de rupture.",
-      "rarity": "legendary",
-      "category": "offense",
-      "tier": "base",
-      "lore": "Style royal: cadence stricte, execution et autorite martiale.",
-      "_profile": "royale"
+      "lore": "Doctrine Construct: progression de base stable.",
+      "_profile": "construct"
     }
   ]
 }

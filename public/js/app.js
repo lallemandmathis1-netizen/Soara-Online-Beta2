@@ -15,21 +15,22 @@ import { createCameraController } from "./pixi/cameraController.js";
 import { createPinsRenderer } from "./pixi/pinsRenderer.js";
 import { createVisitedOverlay } from "./pixi/visitedOverlay.js";
 
-import { createCampaignRunner } from "./features/campaignRunner.js";
 import { createCombatScreen } from "./features/combatScreen.js";
 import { createPlayerState } from "./state/playerState.js";
-import { runTutorialDialogue } from "./features/campaignTutorialDialogue.js";
 import { TECH_CATALOGUE, buildCatalogueMap, buildRuntimeCatalogue } from "./data/techCatalogue.js";
 import { formatTechniqueSequence } from "./features/tokenModel.js";
 import { SYMBOLS_V6_UI } from "./data/symbolsV6.js";
 import { computeEquipmentStats, getEquipmentLabel, STARTER_EQUIPMENT } from "./data/equipmentBase.js";
+import { resolveInventoryObject } from "./data/inventoryObjects.js";
 import { computeResolution } from "./features/resolutionSandbox.js";
 import { escapeHtml } from "./utils/escapeHtml.js";
 
 let runtimeTechCatalogue = [...TECH_CATALOGUE];
 let CATALOGUE_MAP = buildCatalogueMap(runtimeTechCatalogue);
 const CAMPAIGN_C01_POS = { x: 0.5, y: 0.58 };
-const PLAYER_SPAWN_POS = { x: 0.515, y: 0.58 };
+const PLAYER_SPAWN_POS = { x: CAMPAIGN_C01_POS.x, y: CAMPAIGN_C01_POS.y };
+const MAP_REVEAL_RADIUS_NORM = 0.12;
+const MAX_EXPLORED_POINTS = 800;
 const ENABLE_MULTI_MODE = false;
 const PROGRESS_MARKERS = {
   dialogue: "prog_dialogue_done_v1",
@@ -42,9 +43,31 @@ const REWARD_TECHNIQUES = {
   pveU: "base_008",
   narrativeN: "base_009"
 };
+const REWARD_ITEMS = {
+  c01Food: "food_bread_ration",
+  c01FoodCount: 3
+};
+const PROGRESS_ITEM_MARKERS = {
+  c01Food: "prog_c01_food_reward_v1"
+};
+const RACE_STARTER_PACKS = {
+  humain: {
+    techniques: ["base_punch", "base_guard", "base_wait"],
+    reflex: "r_base_009"
+  },
+  gobelin: {
+    techniques: ["base_quick", "base_feint", "base_024"],
+    reflex: "r_base_010"
+  },
+  orc: {
+    techniques: ["base_double", "base_turtle", "base_027"],
+    reflex: "r_base_004"
+  }
+};
 
   function createNarrativeMusicController() {
   const VOLUME_KEY = "soara_music_volume";
+  const DEFAULT_VOLUME = 0.03;
   const TRACK_URL = "/assets/narrative_combat.mp3";
   const audio = new Audio(TRACK_URL);
   audio.loop = true;
@@ -56,9 +79,18 @@ const REWARD_TECHNIQUES = {
 
   function readStoredVolume() {
     const raw = window.localStorage.getItem(VOLUME_KEY);
-    if (raw == null) return 0.03;
-    const v = clampVolume(raw);
-    return Number.isFinite(v) ? v : 0.03;
+    if (raw == null) {
+      window.localStorage.setItem(VOLUME_KEY, String(DEFAULT_VOLUME));
+      return DEFAULT_VOLUME;
+    }
+    const n = Number(raw);
+    if (!Number.isFinite(n)) {
+      window.localStorage.setItem(VOLUME_KEY, String(DEFAULT_VOLUME));
+      return DEFAULT_VOLUME;
+    }
+    const v = clampVolume(n);
+    if (v !== n) window.localStorage.setItem(VOLUME_KEY, String(v));
+    return v;
   }
 
   function setVolume(v) {
@@ -122,6 +154,9 @@ const REWARD_TECHNIQUES = {
   }
 
   const dom = getDomRefs();
+  const mapDialogueEl = document.getElementById("mapDialogue");
+  const mapDialogueTitleEl = document.getElementById("mapDialogueTitle");
+  const mapDialogueBodyEl = document.getElementById("mapDialogueBody");
 
   const api = createApiClient();
   const auth = createAuthService({ api, storageKey: "soara_token" });
@@ -173,6 +208,40 @@ const REWARD_TECHNIQUES = {
   let musicRequestedByCombatOpen = false;
   let musicStartedForCurrentCombat = false;
   let pendingProgressCombat = null;
+  let travelInProgress = false;
+  let sessionExploredPoints = [];
+  const progressionRewardInFlight = new Set();
+  const POS_CACHE_PREFIX = "soara_last_pos_v1:";
+
+  function posCacheKeyForUser(usernameLike) {
+    const u = String(usernameLike || "").trim().toLowerCase();
+    return u ? `${POS_CACHE_PREFIX}${u}` : "";
+  }
+
+  function readCachedPosForUser(usernameLike) {
+    const key = posCacheKeyForUser(usernameLike);
+    if (!key) return null;
+    try {
+      const raw = window.localStorage.getItem(key);
+      if (!raw) return null;
+      const parsed = JSON.parse(raw);
+      const x = Number(parsed?.x);
+      const y = Number(parsed?.y);
+      if (!Number.isFinite(x) || !Number.isFinite(y)) return null;
+      return { x, y };
+    } catch {
+      return null;
+    }
+  }
+
+  function cacheCurrentPos(pos = null) {
+    const key = posCacheKeyForUser(userState?.username || userState?.name || "");
+    if (!key) return;
+    const x = Number((pos || userState?.pos)?.x);
+    const y = Number((pos || userState?.pos)?.y);
+    if (!Number.isFinite(x) || !Number.isFinite(y)) return;
+    window.localStorage.setItem(key, JSON.stringify({ x, y, t: Date.now() }));
+  }
 
   async function tryStartNarrativeMusic() {
     const ok = await narrativeMusic.start();
@@ -234,10 +303,18 @@ const REWARD_TECHNIQUES = {
     },
     onClose: () => {
       const completedStage = pendingProgressCombat;
+      const snap = lastCombatSyncSnapshot;
       pendingProgressCombat = null;
       narrativeMusic.stop();
       musicRequestedByCombatOpen = false;
       musicStartedForCurrentCombat = false;
+      const p = snap?.snapshot?.player;
+      const e = snap?.snapshot?.enemy;
+      const combatType = String(snap?.combatType || completedStage || "combat");
+      if (p && e) {
+        const summary = `${combatType.toUpperCase()} | ${String(p.name || "Joueur")} PV ${Number(p.hp || 0)}/${Number(p.hpMax || 0)} vs ${String(e.name || "Ennemi")} PV ${Number(e.hp || 0)}/${Number(e.hpMax || 0)}`;
+        void appendCombatHistoryEntry(summary);
+      }
       if (completedStage) void applyProgressionReward(completedStage);
     },
     onOpenSettings: openSettings,
@@ -345,11 +422,19 @@ const REWARD_TECHNIQUES = {
   }
 
   function isAlkaneUser() {
-    return String(userState?.username || "").trim().toLowerCase() === "alkane";
+    const playerName = String(getPlayerSnapshot()?.displayName || "").trim().toLowerCase();
+    const username = String(userState?.username || "").trim().toLowerCase();
+    const name = String(userState?.name || "").trim().toLowerCase();
+    return username === "alkane" || name === "alkane" || playerName === "alkane";
   }
 
   function getUserHistory() {
     return Array.isArray(userState?.history) ? userState.history : [];
+  }
+
+  function getCombatHistoryEntries(limit = 20) {
+    const hist = getUserHistory();
+    return hist.filter((x) => String(x || "").startsWith("[combat]")).slice(-Math.max(1, Number(limit || 20)));
   }
 
   function hasHistoryMarker(marker) {
@@ -410,14 +495,41 @@ const REWARD_TECHNIQUES = {
 
   function refreshProgressionUi() {
     hud.render(userState || {});
-    if (pins && staticData) pins.render(getRuntimePins(), userState || {});
+    renderPinsUi();
+  }
+
+  async function appendCombatHistoryEntry(line) {
+    const txt = String(line || "").trim();
+    if (!txt) return false;
+    return appendHistoryEntries([`[combat] ${txt}`]);
   }
 
   async function applyProgressionReward(stage) {
+    const stageKey = String(stage || "").trim();
+    if (!stageKey) return;
+    if (progressionRewardInFlight.has(stageKey)) return;
+    progressionRewardInFlight.add(stageKey);
+    try {
     if (stage === "dialogue") {
       if (!hasHistoryMarker(PROGRESS_MARKERS.dialogue)) {
         applyEquipmentReward({ rightHand: "weapon_training_sword" });
-        await appendHistoryEntries([PROGRESS_MARKERS.dialogue, "Recompense: epee en bois (+2 ATK)."]);
+        const requestedFood = Math.max(1, Number(REWARD_ITEMS.c01FoodCount || 1));
+        const grantedFood = grantInventoryItemsIfSpace(REWARD_ITEMS.c01Food, requestedFood);
+        const missingFood = Math.max(0, requestedFood - grantedFood);
+        let rewardLine = "";
+        if (grantedFood >= requestedFood) {
+          rewardLine = `Recompense: epee en bois (+2 ATK) + ${grantedFood} rations de pain.`;
+        } else if (grantedFood > 0) {
+          rewardLine = `Recompense: epee en bois (+2 ATK) + ${grantedFood} ration(s) de pain. Inventaire plein: ${missingFood} non ajoutee(s).`;
+        } else {
+          rewardLine = "Recompense: epee en bois (+2 ATK). Inventaire plein: rations non ajoutees.";
+        }
+        await syncInventoryToAccount({ silent: true });
+        await appendHistoryEntries([
+          PROGRESS_MARKERS.dialogue,
+          PROGRESS_ITEM_MARKERS.c01Food,
+          rewardLine
+        ]);
         refreshProgressionUi();
       }
       return;
@@ -449,6 +561,9 @@ const REWARD_TECHNIQUES = {
         await appendHistoryEntries([PROGRESS_MARKERS.narrativeN, "Recompense N: technique commune."]);
         refreshProgressionUi();
       }
+    }
+    } finally {
+      progressionRewardInFlight.delete(stageKey);
     }
   }
 
@@ -528,58 +643,592 @@ const REWARD_TECHNIQUES = {
   }
 
   function tutorialCombatPin() {
-    return { id: "pin_tutorial_combat", type: "tutorialCombat", name: "Tutoriel Combat", x: 0.54, y: 0.56, icon: "T" };
+    return {
+      id: "pin_tutorial_combat",
+      type: "tutorialCombat",
+      name: "Tutoriel Combat",
+      x: 0.54,
+      y: 0.56,
+      icon: "T",
+      enemyEntityId: "entity_dummy_training_v1"
+    };
   }
 
-  function getRuntimePins() {
+  function normalizePinOverridesMap(raw) {
+    const out = {};
+    const src = raw && typeof raw === "object" ? raw : {};
+    for (const [rawId, rawPos] of Object.entries(src)) {
+      const id = String(rawId || "").trim();
+      const x = Number(rawPos?.x);
+      const y = Number(rawPos?.y);
+      if (!id) continue;
+      if (!Number.isFinite(x) || !Number.isFinite(y)) continue;
+      out[id] = { x: Math.max(0, Math.min(1, x)), y: Math.max(0, Math.min(1, y)) };
+    }
+    return out;
+  }
+
+  function getPinOverridesMap() {
+    return normalizePinOverridesMap(userState?.pinOverrides);
+  }
+
+  function applyPinOverride(pin, overrides) {
+    const id = String(pin?.id || "").trim();
+    if (!id) return { ...pin };
+    const ov = overrides?.[id];
+    if (!ov) return { ...pin };
+    return { ...pin, x: Number(ov.x), y: Number(ov.y) };
+  }
+
+  function getEntitySheetById(entityId) {
+    const id = String(entityId || "").trim();
+    if (!id) return null;
+    const rows = Array.isArray(staticData?.entitySheets) ? staticData.entitySheets : [];
+    return rows.find((e) => String(e?.id || "").trim() === id) || null;
+  }
+
+  function buildEnemyPresetFromEntitySheet(entityId, fallbackName = "Ennemi") {
+    const sheet = getEntitySheetById(entityId);
+    if (!sheet) return { name: fallbackName };
+    const stats = sheet?.stats || {};
+    const info = sheet?.information || {};
+    const ai = sheet?.aiProfile || {};
+    const rawTechs = Array.isArray(info?.techniquesEquipees) ? info.techniquesEquipees : [];
+    const techniques = rawTechs
+      .map((x) => String(x || "").trim())
+      .filter((id) => id && CATALOGUE_MAP.has(id));
+    const mode = String(ai?.mode || "").trim();
+    return {
+      name: String(sheet?.identity?.nom || fallbackName),
+      hp: Number.isFinite(Number(stats?.pv)) ? Number(stats.pv) : undefined,
+      hpMax: Number.isFinite(Number(stats?.pvMax)) ? Number(stats.pvMax) : undefined,
+      energy: Number.isFinite(Number(stats?.energie)) ? Number(stats.energie) : undefined,
+      energyMax: Number.isFinite(Number(stats?.energieMax)) ? Number(stats.energieMax) : undefined,
+      regen: Number.isFinite(Number(stats?.regenEnergie)) ? Number(stats.regenEnergie) : undefined,
+      atkStat: Number.isFinite(Number(stats?.atk)) ? Number(stats.atk) : undefined,
+      defStat: Number.isFinite(Number(stats?.def)) ? Number(stats.def) : undefined,
+      esqStat: Number.isFinite(Number(stats?.esq)) ? Number(stats.esq) : undefined,
+      aiProfile: { mode },
+      preferredTechniques: techniques,
+      forcedSymbol: mode === "scripted" ? "O" : undefined
+    };
+  }
+
+  function distanceNorm(a, b) {
+    const ax = Number(a?.x);
+    const ay = Number(a?.y);
+    const bx = Number(b?.x);
+    const by = Number(b?.y);
+    if (!Number.isFinite(ax) || !Number.isFinite(ay) || !Number.isFinite(bx) || !Number.isFinite(by)) {
+      return Number.POSITIVE_INFINITY;
+    }
+    return Math.hypot(ax - bx, ay - by);
+  }
+
+  function getDiscoveredPinsSet() {
+    const list = Array.isArray(userState?.discoveredPins) ? userState.discoveredPins : [];
+    return new Set(list.map((x) => String(x || "").trim()).filter(Boolean));
+  }
+
+  function normalizeExploredPoints(rows) {
+    const out = [];
+    for (const p of (Array.isArray(rows) ? rows : [])) {
+      const x = Number(p?.x);
+      const y = Number(p?.y);
+      if (!Number.isFinite(x) || !Number.isFinite(y)) continue;
+      out.push({ x: Math.max(0, Math.min(1, x)), y: Math.max(0, Math.min(1, y)) });
+    }
+    return out.slice(-MAX_EXPLORED_POINTS);
+  }
+
+  function getExploredPoints() {
+    const persisted = normalizeExploredPoints(userState?.exploredPoints);
+    const merged = [...persisted, ...normalizeExploredPoints(sessionExploredPoints)];
+    // Dedup by coarse grid to keep size stable.
+    const seen = new Set();
+    const out = [];
+    for (const p of merged) {
+      const kx = Math.round(Number(p.x) * 1000);
+      const ky = Math.round(Number(p.y) * 1000);
+      const key = `${kx}:${ky}`;
+      if (seen.has(key)) continue;
+      seen.add(key);
+      out.push(p);
+    }
+    return out.slice(-MAX_EXPLORED_POINTS);
+  }
+
+  function pushSessionExploredPoint(pos, spacing = MAP_REVEAL_RADIUS_NORM * 0.22) {
+    const x = Number(pos?.x);
+    const y = Number(pos?.y);
+    if (!Number.isFinite(x) || !Number.isFinite(y)) return false;
+    const points = normalizeExploredPoints(sessionExploredPoints);
+    const near = points.some((p) => distanceNorm(p, { x, y }) <= spacing);
+    if (near) return false;
+    points.push({ x, y });
+    sessionExploredPoints = points.slice(-MAX_EXPLORED_POINTS);
+    return true;
+  }
+
+  async function flushSessionExploredPoints() {
+    const local = normalizeExploredPoints(sessionExploredPoints);
+    if (!local.length) return false;
+    const persisted = normalizeExploredPoints(userState?.exploredPoints);
+    const merged = [...persisted];
+    for (const p of local) {
+      const near = merged.some((q) => distanceNorm(p, q) <= (MAP_REVEAL_RADIUS_NORM * 0.2));
+      if (!near) merged.push(p);
+    }
+    const exploredPoints = merged.slice(-MAX_EXPLORED_POINTS);
+    await stateSvc.patchState({ exploredPoints });
+    userState = { ...(userState || {}), exploredPoints };
+    sessionExploredPoints = [];
+    return true;
+  }
+
+  function isPinRevealed(pin, discoveredSet = getDiscoveredPinsSet()) {
+    const id = String(pin?.id || "").trim();
+    if (id && discoveredSet.has(id)) return true;
+    if (distanceNorm(userState?.pos, pin) <= MAP_REVEAL_RADIUS_NORM) return true;
+    const explored = getExploredPoints();
+    for (const p of explored) {
+      if (distanceNorm(p, pin) <= MAP_REVEAL_RADIUS_NORM) return true;
+    }
+    return false;
+  }
+
+  function getRevealedPoints() {
+    return getExploredPoints();
+  }
+
+  async function ensureDiscoveryState() {
+    const current = getDiscoveredPinsSet();
+    const next = new Set(current);
+    if (!next.size) next.add("C");
+    for (const pin of getRuntimePins()) {
+      if (distanceNorm(userState?.pos, pin) <= 0.012) {
+        next.add(String(pin.id || ""));
+      }
+    }
+    const currentPoints = getExploredPoints();
+    const pos = userState?.pos;
+    let exploredPoints = [...currentPoints];
+    if (Number.isFinite(Number(pos?.x)) && Number.isFinite(Number(pos?.y))) {
+      const nearest = exploredPoints.some((p) => distanceNorm(p, pos) <= (MAP_REVEAL_RADIUS_NORM * 0.22));
+      if (!nearest) exploredPoints.push({ x: Number(pos.x), y: Number(pos.y) });
+      exploredPoints = exploredPoints.slice(-MAX_EXPLORED_POINTS);
+    }
+
+    const pinsChanged = next.size !== current.size;
+    const pointsChanged = exploredPoints.length !== currentPoints.length;
+    if (!pinsChanged && !pointsChanged) return;
+
+    const discoveredPins = [...next].filter(Boolean);
+    const patch = { discoveredPins, exploredPoints };
+    try {
+      await stateSvc.patchState(patch);
+      userState = { ...(userState || {}), ...patch };
+    } catch (e) {
+      console.warn("Echec sync exploration:", e);
+    }
+  }
+
+  function isPlayerOnPin(pin, threshold = 0.012) {
+    return distanceNorm(userState?.pos, pin) <= threshold;
+  }
+
+  function hasTravelFood() {
+    const inventory = Array.isArray(userState?.inventory)
+      ? Array.from({ length: 9 }, (_, i) => userState.inventory[i] ?? null)
+      : [];
+    for (const raw of inventory) {
+      const obj = resolveInventoryObject(raw);
+      if (String(obj?.id || "") === "food_bread_ration") return true;
+    }
+    return false;
+  }
+
+  async function travelToPin(pin) {
+    if (travelInProgress) return { ok: false, reason: "travel_in_progress" };
+    const inventory = Array.isArray(userState?.inventory)
+      ? Array.from({ length: 9 }, (_, i) => userState.inventory[i] ?? null)
+      : Array.from({ length: 9 }, () => null);
+    let consumeIndex = -1;
+    for (let i = 0; i < inventory.length; i += 1) {
+      const obj = resolveInventoryObject(inventory[i]);
+      if (String(obj?.id || "") === "food_bread_ration") {
+        consumeIndex = i;
+        break;
+      }
+    }
+    if (consumeIndex < 0) return { ok: false, reason: "no_food" };
+
+    const consumedObj = resolveInventoryObject(inventory[consumeIndex]);
+    inventory[consumeIndex] = null;
+    const nextPos = { x: Number(pin?.x), y: Number(pin?.y) };
+    if (!Number.isFinite(nextPos.x) || !Number.isFinite(nextPos.y)) {
+      return { ok: false, reason: "invalid_pin_pos" };
+    }
+
+    const discoveredPins = [...getDiscoveredPinsSet(), String(pin?.id || "")]
+      .map((x) => String(x || "").trim())
+      .filter(Boolean)
+      .filter((v, idx, arr) => arr.indexOf(v) === idx);
+    const exploredPoints = (() => {
+      const points = getExploredPoints();
+      const nearest = points.some((p) => distanceNorm(p, nextPos) <= (MAP_REVEAL_RADIUS_NORM * 0.45));
+      if (!nearest) points.push({ x: nextPos.x, y: nextPos.y });
+      return points.slice(-MAX_EXPLORED_POINTS);
+    })();
+
+    const patch = { pos: nextPos, inventory, discoveredPins, exploredPoints };
+    const startPos = { x: Number(userState?.pos?.x), y: Number(userState?.pos?.y) };
+    const hasStart = Number.isFinite(startPos.x) && Number.isFinite(startPos.y);
+    const distance = hasStart ? Math.hypot(nextPos.x - startPos.x, nextPos.y - startPos.y) : 0;
+    const speedNormPerSec = 0.03;
+    const durationMs = Math.max(1200, Math.min(45000, (distance / speedNormPerSec) * 1000));
+
+    travelInProgress = true;
+    try {
+      // Commit food consumption first (server-authoritative) before movement.
+      await stateSvc.patchState({ inventory });
+      userState = { ...(userState || {}), inventory };
+      playerState.patch((s) => {
+        s.player.inventorySlots = [...inventory];
+      });
+
+      // Persist destination early so a page refresh during long travel keeps the new pin.
+      // Final sync still runs at travel end to keep state authoritative.
+      try {
+        await stateSvc.patchState({ pos: nextPos, discoveredPins, exploredPoints });
+      } catch (e) {
+        console.warn("Echec pre-sync position voyage:", e);
+      }
+
+      if (hasStart && mapView?.setPlayerPosNorm) {
+        await new Promise((resolve) => {
+          const t0 = performance.now();
+          const step = (tNow) => {
+            const p = Math.max(0, Math.min(1, (tNow - t0) / durationMs));
+            const x = startPos.x + (nextPos.x - startPos.x) * p;
+            const y = startPos.y + (nextPos.y - startPos.y) * p;
+            userState = { ...(userState || {}), pos: { x, y } };
+            cacheCurrentPos({ x, y });
+            mapView.setPlayerPosNorm({ x, y });
+            mapView.appendTrailPointNorm?.({ x, y });
+            pushSessionExploredPoint({ x, y });
+            mapView.centerOnPlayer?.();
+            visitedOverlay.update({
+              playerPos: { x, y },
+              exploredPoints: getRevealedPoints(),
+              revealRadiusNorm: MAP_REVEAL_RADIUS_NORM
+            });
+            if (p >= 1) {
+              resolve();
+              return;
+            }
+            requestAnimationFrame(step);
+          };
+          requestAnimationFrame(step);
+        });
+      }
+
+      await stateSvc.patchState({ pos: nextPos, discoveredPins, exploredPoints });
+      userState = { ...(userState || {}), ...patch };
+      cacheCurrentPos(nextPos);
+      await flushSessionExploredPoints().catch(() => {});
+      mapView?.setPlayerPosNorm?.(nextPos);
+      mapView?.appendTrailPointNorm?.(nextPos);
+      mapView?.centerOnPlayer?.();
+      renderPinsUi();
+    } finally {
+      travelInProgress = false;
+    }
+    return { ok: true, consumedName: consumedObj?.name || "Vivre" };
+  }
+
+  function normalizeRaceKey(input) {
+    const txt = String(input || "").trim().toLowerCase();
+    if (!txt) return "";
+    const ascii = txt
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "");
+    if (ascii === "humain" || ascii === "human") return "humain";
+    if (ascii === "gobelin" || ascii === "goblin") return "gobelin";
+    if (ascii === "orc" || ascii === "orque") return "orc";
+    return ascii;
+  }
+
+  function getRaceStarterPack(race) {
+    const key = normalizeRaceKey(race);
+    return { key, pack: RACE_STARTER_PACKS[key] || null };
+  }
+
+  async function applyRaceStarterPackIfNeeded() {
+    const { key: raceKey, pack } = getRaceStarterPack(userState?.race);
+    if (!pack) return false;
+    if (String(userState?.starterRacePackV1 || "") === raceKey) return false;
+
+    const techSlotsTotal = Math.max(4, Math.min(10, Number(userState?.techSlotsTotal || 10) || 10));
+    const preferredStarter = [...pack.techniques, pack.reflex]
+      .map((id) => String(id || "").trim())
+      .filter((id) => id && CATALOGUE_MAP.has(id))
+      .slice(0, 4);
+    if (!preferredStarter.length) return false;
+
+    const previousLearned = Array.isArray(userState?.learnedTechniques)
+      ? userState.learnedTechniques.map((x) => (typeof x === "string" ? x : x?.id)).filter(Boolean)
+      : [];
+    const learnedTechniques = [...new Set([...previousLearned, ...preferredStarter])];
+    const slots = Array.isArray(userState?.techniquesBySlot)
+      ? [...userState.techniquesBySlot]
+      : Array.from({ length: techSlotsTotal }, () => null);
+    while (slots.length < techSlotsTotal) slots.push(null);
+    for (let i = 0; i < preferredStarter.length && i < techSlotsTotal; i += 1) {
+      slots[i] = preferredStarter[i];
+    }
+
+    const previousReflexes = Array.isArray(userState?.learnedReflexes)
+      ? userState.learnedReflexes.map((x) => String(x || "").trim()).filter(Boolean)
+      : [];
+    const learnedReflexes = pack.reflex
+      ? [...new Set([...previousReflexes, pack.reflex])]
+      : previousReflexes;
+
+    const patch = {
+      learnedTechniques,
+      techniquesBySlot: slots.slice(0, techSlotsTotal),
+      techSlotsTotal,
+      learnedReflexes,
+      hasStarterKitV2: true,
+      starterRacePackV1: raceKey
+    };
+
+    try {
+      await stateSvc.patchState(patch);
+      userState = { ...(userState || {}), ...patch };
+    } catch (e) {
+      const msg = String(e?.data?.message || e?.data?.error || e?.message || "");
+      const shouldRetryWithoutMarker = msg.includes("starterRacePackV1") || msg.includes("unknown_fields");
+      if (!shouldRetryWithoutMarker) throw e;
+      const fallbackPatch = { ...patch };
+      delete fallbackPatch.starterRacePackV1;
+      await stateSvc.patchState(fallbackPatch);
+      userState = { ...(userState || {}), ...fallbackPatch };
+    }
+
+    playerState.patch((s) => {
+      s.player.learnedTechniques = [...learnedTechniques];
+      s.player.techniquesBySlot = [...patch.techniquesBySlot];
+      s.player.techSlotsTotal = techSlotsTotal;
+      s.player.hasStarterKitV2 = true;
+    });
+    return true;
+  }
+
+  function getRuntimePinsBase() {
     const flags = getProgressFlags();
     const sourcePins = Array.isArray(staticData?.pins) ? staticData.pins : [];
     const campPin = sourcePins.find((pin) => pin?.id === "C");
     const pvePin = sourcePins.find((pin) => pin?.id === "U");
     const narrativePin = sourcePins.find((pin) => pin?.id === "N");
     const out = [];
-    if (campPin) out.push(campPin);
+    if (campPin) out.push({ ...campPin });
     if (flags.dialogueDone) out.push(tutorialCombatPin());
-    if (flags.tutorialDone && pvePin) out.push(pvePin);
-    if (flags.pveUDone && narrativePin) out.push(narrativePin);
+    if (flags.tutorialDone && pvePin) out.push({ ...pvePin });
+    if (flags.pveUDone && narrativePin) out.push({ ...narrativePin });
     return out;
+  }
+
+  function getRuntimePins() {
+    const base = getRuntimePinsBase();
+    if (!isAlkaneUser()) return base;
+    const overrides = getPinOverridesMap();
+    return base.map((pin) => applyPinOverride(pin, overrides));
+  }
+
+  function renderPinsUi() {
+    if (!pins || !staticData) return;
+    const runtimePins = getRuntimePins();
+    const revealedPins = runtimePins.filter((pin) => isPinRevealed(pin));
+    pins.render(revealedPins, userState || {});
+    visitedOverlay.update({
+      playerPos: userState?.pos || null,
+      exploredPoints: getRevealedPoints(),
+      revealRadiusNorm: MAP_REVEAL_RADIUS_NORM
+    });
+    if (selectedPinId) {
+      const selected = revealedPins.find((p) => String(p?.id || "") === selectedPinId);
+      if (selected) selectPinAndRenderDialogue(selected);
+      else renderDefaultMapDialogue();
+    }
   }
 
   function onStateChanged(next){
     userState = next;
+    cacheCurrentPos(userState?.pos);
     hud.render(userState);
-    if (pins && staticData) pins.render(getRuntimePins(), userState);
+    renderPinsUi();
   }
 
-  const campaignRunner = createCampaignRunner({
-    modal,
-    stateSvc,
-    onStateChanged,
-    openCombatScreen: (options) => openCombatScreen(options),
-    onApplyLoadout: async (patch) => {
-      playerState.patch((s) => {
-        s.player.learnedTechniques = Array.isArray(patch?.learnedTechniques)
-          ? [...patch.learnedTechniques]
-          : s.player.learnedTechniques;
-        s.player.techniquesBySlot = Array.isArray(patch?.techniquesBySlot)
-          ? [...patch.techniquesBySlot]
-          : s.player.techniquesBySlot;
-        s.player.techSlotsTotal = Number.isFinite(Number(patch?.techSlotsTotal))
-          ? Number(patch.techSlotsTotal)
-          : s.player.techSlotsTotal;
-        if (Array.isArray(patch?.learnedReflexes)) {
-          s.player.learnedReflexes = [...patch.learnedReflexes];
-        }
-        s.player.hasStarterKitV2 = true;
-      });
-      await syncTechniquesToAccount({ silent: true });
+  function hasCompleteCharacterProfile(stateLike) {
+    const name = String(stateLike?.name || "").trim();
+    const race = String(stateLike?.race || "").trim();
+    return !!(name && race);
+  }
+
+  function normalizeInventoryFromAccount(value) {
+    if (!Array.isArray(value)) return Array.from({ length: 9 }, () => null);
+    const out = Array.from({ length: 9 }, (_, i) => {
+      const v = value[i];
+      if (v == null) return null;
+      return String(v).trim() || null;
+    });
+    return out;
+  }
+
+  function sanitizeInventoryForProgress(rawInventory) {
+    const inv = normalizeInventoryFromAccount(rawInventory);
+    const hasFoodReward = hasHistoryMarker(PROGRESS_ITEM_MARKERS.c01Food);
+    if (hasFoodReward) return inv;
+    let changed = false;
+    const next = inv.map((entry) => {
+      const obj = resolveInventoryObject(entry);
+      if (obj?.type === "food") {
+        changed = true;
+        return null;
+      }
+      return entry;
+    });
+    return changed ? next : inv;
+  }
+
+  function sanitizeTravelFoodInventory(rawInventory) {
+    const inv = normalizeInventoryFromAccount(rawInventory);
+    const hasRationReward = hasHistoryMarker(PROGRESS_ITEM_MARKERS.c01Food);
+    let changed = false;
+    const next = inv.map((entry) => {
+      const obj = resolveInventoryObject(entry);
+      if (obj?.type !== "food") return entry;
+      if (String(obj?.id || "") === "food_bread_ration" && hasRationReward) return entry;
+      changed = true;
+      return null;
+    });
+    return changed ? next : inv;
+  }
+
+  function buildInventoryCounts(inventory) {
+    const counts = new Map();
+    const inv = Array.isArray(inventory) ? inventory : [];
+    for (const raw of inv) {
+      const item = resolveInventoryObject(raw);
+      const key = String(item?.id || item?.name || "").trim();
+      if (!key) continue;
+      counts.set(key, Number(counts.get(key) || 0) + 1);
     }
-  });
+    return counts;
+  }
+
+  function formatInventoryItemLabel(raw, countsMap) {
+    const item = resolveInventoryObject(raw);
+    const key = String(item?.id || item?.name || "").trim();
+    if (!key || !item?.name) return "";
+    const count = Number(countsMap?.get(key) || 0);
+    const qty = Math.max(1, count);
+    return `x${qty} ${item.name}`;
+  }
+
+  async function syncInventoryToAccount({ silent = false } = {}) {
+    const inv = Array.from({ length: 9 }, (_, i) => getPlayerSnapshot()?.inventorySlots?.[i] ?? null);
+    try {
+      await stateSvc.patchState({ inventory: inv });
+      userState = { ...(userState || {}), inventory: inv };
+      return true;
+    } catch (e) {
+      if (!silent) console.warn("Echec synchro inventaire compte:", e);
+      return false;
+    }
+  }
+
+  function grantInventoryItemIfSpace(itemId) {
+    const id = String(itemId || "").trim();
+    if (!id) return false;
+    let granted = false;
+    playerState.patch((s) => {
+      const inv = Array.isArray(s.player.inventorySlots)
+        ? Array.from({ length: 9 }, (_, i) => s.player.inventorySlots[i] ?? null)
+        : Array.from({ length: 9 }, () => null);
+      const emptyIndex = inv.findIndex((x) => x == null);
+      if (emptyIndex < 0) return;
+      inv[emptyIndex] = id;
+      s.player.inventorySlots = inv;
+      granted = true;
+    });
+    return granted;
+  }
+
+  function grantInventoryItemsIfSpace(itemId, count) {
+    const qty = Math.max(0, Number(count) || 0);
+    if (!qty) return 0;
+    let granted = 0;
+    for (let i = 0; i < qty; i += 1) {
+      if (!grantInventoryItemIfSpace(itemId)) break;
+      granted += 1;
+    }
+    return granted;
+  }
+
+  async function ensureCharacterProfileOnGate() {
+    if (hasCompleteCharacterProfile(userState)) return;
+    if (!dom.characterGate) return;
+
+    setAuthMode(false);
+    dom.characterName.value = String(userState?.name || userState?.username || "").trim();
+    dom.characterRace.value = String(userState?.race || "Humain");
+    dom.characterMsg.textContent = "";
+    dom.characterGate.style.display = "block";
+
+    await new Promise((resolve) => {
+      const submit = async () => {
+        try {
+          const name = String(dom.characterName?.value || "").trim();
+          const race = String(dom.characterRace?.value || "").trim();
+          if (!name) {
+            dom.characterMsg.textContent = "Nom requis.";
+            return;
+          }
+          if (!race) {
+            dom.characterMsg.textContent = "Espece requise.";
+            return;
+          }
+          dom.characterMsg.textContent = "";
+          const patch = { name, race };
+          await stateSvc.patchState(patch);
+          userState = { ...(userState || {}), ...patch };
+          playerState.patch((s) => {
+            s.player.displayName = name || s.player.displayName;
+          });
+          dom.characterGate.style.display = "none";
+          setAuthMode(true);
+          resolve();
+        } catch (e) {
+          dom.characterMsg.textContent = String(e?.data?.message || e?.data?.error || e?.message || "Erreur de validation.");
+        }
+      };
+
+      dom.btnCharacterSubmit.onclick = () => { void submit(); };
+      dom.characterName.onkeydown = (ev) => {
+        if (ev.key !== "Enter") return;
+        ev.preventDefault();
+        void submit();
+      };
+    });
+  }
 
   const pinModal = createPinModal({
     modal,
     getCampaigns: () => (staticData?.campaigns || {}),
-    campaignRunner,
+    campaignRunner: { start: () => {} },
     openCombatScreen: (options) => openCombatScreen(options),
     pvpApi,
     onCombatLaunch: (stage) => {
@@ -588,6 +1237,474 @@ const REWARD_TECHNIQUES = {
       if (stage === "narrative") pendingProgressCombat = "narrativeN";
     }
   });
+
+  let selectedPinId = null;
+  let mapDialogueActions = new Map();
+
+  function normalizeMapDialogueType(type) {
+    const key = String(type || "info").toLowerCase();
+    if (key === "dialogue") return "dialogue";
+    if (key === "carte") return "carte";
+    if (key === "tutoriel") return "tutoriel";
+    return "info";
+  }
+
+  function renderMapDialogue({ type = "info", title = "Boite de dialogue", lines = [], choices = [], dialogue = null } = {}) {
+    if (!mapDialogueEl || !mapDialogueTitleEl || !mapDialogueBodyEl) return;
+    const uiType = normalizeMapDialogueType(type);
+    mapDialogueEl.setAttribute("data-type", uiType);
+    mapDialogueTitleEl.textContent = String(title || "Boite de dialogue");
+    mapDialogueActions = new Map();
+
+    const safeLines = Array.isArray(lines) ? lines : [];
+    const safeChoices = Array.isArray(choices) ? choices : [];
+    const renderChoices = (asLines = false) => safeChoices.map((choice, i) => {
+      const key = `choice_${i}`;
+      mapDialogueActions.set(key, choice?.onClick);
+      if (asLines) {
+        return `<div class="mapDialogueLine"><button class="mapDialogueChoice" data-choice="${key}">${escapeHtml(String(choice?.label || "Choix"))}</button></div>`;
+      }
+      return `<button class="mapDialogueChoice" data-choice="${key}">${escapeHtml(String(choice?.label || "Choix"))}</button>`;
+    }).join("");
+    let htmlBody = "";
+
+    if (uiType === "dialogue") {
+      const leftEntity = escapeHtml(String(dialogue?.leftEntity || "Entite A"));
+      const rightEntity = escapeHtml(String(dialogue?.rightEntity || "Entite B"));
+      const leftLines = Array.isArray(dialogue?.leftLines) ? dialogue.leftLines : [];
+      const rightLines = Array.isArray(dialogue?.rightLines) ? dialogue.rightLines : [];
+      htmlBody += `
+        <div class="mapDialogueSplit">
+          <section class="mapDialoguePane">
+            <div class="mapDialogueSpeaker">${leftEntity}</div>
+            ${leftLines.map((line) => `<div class="mapDialogueLine">${escapeHtml(String(line || ""))}</div>`).join("")}
+            ${safeChoices.length ? `<div class="mapDialogueChoices mapDialogueChoicesInPane">${renderChoices(true)}</div>` : ``}
+          </section>
+          <section class="mapDialoguePane">
+            <div class="mapDialogueSpeaker">${rightEntity}</div>
+            ${rightLines.map((line) => `<div class="mapDialogueLine">${escapeHtml(String(line || ""))}</div>`).join("")}
+          </section>
+        </div>
+      `;
+    } else {
+      htmlBody += safeLines.map((line) => `<div class="mapDialogueLine">${escapeHtml(String(line || ""))}</div>`).join("");
+    }
+
+    if (safeChoices.length && uiType !== "dialogue") {
+      htmlBody += `<div class="mapDialogueChoices">${renderChoices()}</div>`;
+    }
+    mapDialogueBodyEl.innerHTML = htmlBody;
+
+    for (const btn of Array.from(mapDialogueBodyEl.querySelectorAll(".mapDialogueChoice"))) {
+      btn.onclick = () => {
+        const key = String(btn.getAttribute("data-choice") || "");
+        const fn = mapDialogueActions.get(key);
+        if (typeof fn === "function") fn();
+      };
+    }
+  }
+
+  function renderDefaultMapDialogue() {
+    selectedPinId = null;
+    renderMapDialogue({
+      type: "info",
+      title: "Boite de dialogue",
+      lines: [
+        "Clique sur un pin pour afficher ses informations et ses choix."
+      ],
+      choices: []
+    });
+  }
+
+  function ensureCampaignState(campaignId, startNode) {
+    if (!userState) return;
+    if (!userState.campaign || typeof userState.campaign !== "object") userState.campaign = {};
+    if (!userState.campaign[campaignId]) userState.campaign[campaignId] = { node: startNode, completed: false };
+    if (!userState.campaign[campaignId].node) userState.campaign[campaignId].node = startNode;
+  }
+
+  async function applyCampaignPatch(patch) {
+    if (!userState || !patch || typeof patch !== "object") return;
+    Object.assign(userState, patch);
+    if (patch.campaign) {
+      userState.campaign = { ...(userState.campaign || {}), ...patch.campaign };
+    }
+    await stateSvc.patchState(patch);
+    onStateChanged(userState);
+  }
+
+  async function handleCampaignChoiceInMap(campaign, nodeId, choice) {
+    if (!campaign || !choice) return;
+    const patch = {};
+    let grantedLoadoutPatch = null;
+    if (choice.effects && typeof choice.effects === "object") {
+      for (const [k, v] of Object.entries(choice.effects)) {
+        if (k === "grantLoadout") {
+          const grant = v && typeof v === "object" ? v : {};
+          const baseTechs = Array.isArray(grant.techniques)
+            ? grant.techniques.filter((x) => typeof x === "string" && x.trim())
+            : [];
+          const reflexId = typeof grant.reflex === "string" && grant.reflex.trim() ? grant.reflex : null;
+          const grantedTechniques = reflexId ? [...baseTechs, reflexId] : [...baseTechs];
+          const techSlotsTotal = Math.max(4, Number(userState?.techSlotsTotal || 10) || 10);
+          const previousLearned = Array.isArray(userState?.learnedTechniques) ? userState.learnedTechniques : [];
+          const learnedTechniques = [...new Set([...previousLearned, ...grantedTechniques])];
+          const slots = Array.isArray(userState?.techniquesBySlot)
+            ? [...userState.techniquesBySlot]
+            : Array.from({ length: techSlotsTotal }, () => null);
+          while (slots.length < techSlotsTotal) slots.push(null);
+          const starterSlots = [...baseTechs, reflexId].filter(Boolean).slice(0, techSlotsTotal);
+          for (let i = 0; i < starterSlots.length; i += 1) slots[i] = starterSlots[i];
+          const previousReflexes = Array.isArray(userState?.learnedReflexes) ? userState.learnedReflexes : [];
+          const learnedReflexes = reflexId ? [...new Set([...previousReflexes, reflexId])] : previousReflexes;
+          grantedLoadoutPatch = {
+            learnedTechniques,
+            techniquesBySlot: slots.slice(0, techSlotsTotal),
+            techSlotsTotal,
+            learnedReflexes,
+            hasStarterKitV2: true
+          };
+          continue;
+        }
+        if (k === "historiqueC01") {
+          const previous = Array.isArray(userState?.historiqueC01) ? userState.historiqueC01 : [];
+          const nextItems = Array.isArray(v) ? v : (v == null ? [] : [v]);
+          patch.historiqueC01 = [...previous, ...nextItems].map((x) => String(x));
+          continue;
+        }
+        if (k === "tagsProfil" && v && typeof v === "object") {
+          patch.tagsProfil = { ...(userState?.tagsProfil || {}), ...v };
+          continue;
+        }
+        if (k === "complete") continue;
+        patch[k] = v;
+      }
+    }
+
+    ensureCampaignState(campaign.id, campaign.start || "n0");
+    const nextNode = choice.next || nodeId;
+    const newProg = { ...userState.campaign[campaign.id], node: nextNode };
+    if (choice.effects?.complete === true) {
+      newProg.completed = true;
+      newProg.node = "end";
+    }
+    patch.campaign = { [campaign.id]: newProg };
+    if (grantedLoadoutPatch) Object.assign(patch, grantedLoadoutPatch);
+
+    await applyCampaignPatch(patch);
+    if (grantedLoadoutPatch) {
+      playerState.patch((s) => {
+        s.player.learnedTechniques = Array.isArray(grantedLoadoutPatch.learnedTechniques)
+          ? [...grantedLoadoutPatch.learnedTechniques]
+          : s.player.learnedTechniques;
+        s.player.techniquesBySlot = Array.isArray(grantedLoadoutPatch.techniquesBySlot)
+          ? [...grantedLoadoutPatch.techniquesBySlot]
+          : s.player.techniquesBySlot;
+        s.player.techSlotsTotal = Number.isFinite(Number(grantedLoadoutPatch.techSlotsTotal))
+          ? Number(grantedLoadoutPatch.techSlotsTotal)
+          : s.player.techSlotsTotal;
+      });
+      await syncTechniquesToAccount({ silent: true });
+    }
+    if (choice.effects?.complete === true) {
+      await applyProgressionReward("dialogue");
+    }
+    renderCampaignNodeInMap(campaign);
+  }
+
+  function renderCampaignNodeInMap(campaign) {
+    if (!campaign || !campaign.nodes) return;
+    ensureCampaignState(campaign.id, campaign.start || "n0");
+    const prog = userState?.campaign?.[campaign.id] || { node: campaign.start || "n0", completed: false };
+    const nodeId = String(prog.node || campaign.start || "n0");
+    const node = campaign.nodes[nodeId];
+    if (!node) {
+      renderMapDialogue({
+        type: "dialogue",
+        title: campaign.title || "Campagne",
+        dialogue: {
+          leftEntity: "Soara",
+          leftLines: [`Noeud introuvable: ${nodeId}`],
+          rightEntity: "Joueur",
+          rightLines: ["Retour carte"]
+        },
+        choices: []
+      });
+      return;
+    }
+
+    const nodeChoices = Array.isArray(node.choices) ? node.choices : [];
+    const leftLines = (Array.isArray(node.text) ? node.text : [])
+      .map((line) => String(line && typeof line === "object" ? line.text || "" : line || ""))
+      .filter(Boolean);
+    const rightLines = nodeChoices.length
+      ? ["Choisissez une reponse dans votre panneau."]
+      : ["Le joueur est en attente de la suite."];
+    const choices = nodeChoices.map((c) => ({
+      label: String(c?.label || "Choix"),
+      onClick: () => { void handleCampaignChoiceInMap(campaign, nodeId, c); }
+    }));
+
+    renderMapDialogue({
+      type: "dialogue",
+      title: campaign.title || "Campagne",
+      dialogue: {
+        leftEntity: (userState?.name || userState?.username || "Joueur"),
+        leftLines: rightLines,
+        rightEntity: "Soara",
+        rightLines: leftLines.length ? leftLines : ["..."]
+      },
+      choices
+    });
+  }
+
+  function openPinFromDialogue(pin) {
+    if (travelInProgress) {
+      renderMapDialogue({
+        type: "carte",
+        title: String(pin?.name || "Voyage"),
+        lines: ["Voyage en cours..."],
+        choices: []
+      });
+      return;
+    }
+    if (!isPlayerOnPin(pin)) {
+      const canTravel = hasTravelFood();
+      renderMapDialogue({
+        type: "carte",
+        title: String(pin?.name || "Voyage"),
+        lines: [
+          "Vous n'etes pas sur ce pin.",
+          "Voyagez d'abord pour interagir.",
+          `Deplacement: ${canTravel ? "possible" : "impossible (aucun vivre)"}.`
+        ],
+        choices: [
+          {
+            label: "Voyager (consomme 1 vivre)",
+            onClick: () => {
+              void (async () => {
+                const moved = await travelToPin(pin);
+                if (!moved.ok) {
+                  renderMapDialogue({
+                    type: "carte",
+                    title: String(pin?.name || "Voyage"),
+                    lines: [
+                      moved.reason === "travel_in_progress"
+                        ? "Voyage deja en cours."
+                        : "Voyage impossible: aucun vivre disponible."
+                    ],
+                    choices: []
+                  });
+                  return;
+                }
+                renderPinsUi();
+                renderMapDialogue({
+                  type: "carte",
+                  title: String(pin?.name || "Voyage"),
+                  lines: [`Voyage termine. Vivre consomme: ${String(moved.consumedName || "Vivre")}.`],
+                  choices: [
+                    { label: "Interagir avec le pin", onClick: () => openPinFromDialogue(pin) }
+                  ]
+                });
+              })();
+            }
+          }
+        ]
+      });
+      return;
+    }
+
+    const pinKind = String(pin?.kind || pin?.type || "").toLowerCase();
+
+    if (pinKind === "campaign") {
+      const campaigns = staticData?.campaigns || {};
+      const camp = campaigns[pin?.campaignId];
+      if (!camp) {
+        renderMapDialogue({
+          type: "carte",
+          title: pin?.name || "Campagne",
+          lines: [`Campagne introuvable: ${String(pin?.campaignId || "-")}`],
+          choices: []
+        });
+        return;
+      }
+      renderCampaignNodeInMap(camp);
+      return;
+    }
+
+    if (pinKind === "combat_pve") {
+      pendingProgressCombat = "pveU";
+      const enemyPreset = buildEnemyPresetFromEntitySheet(pin?.enemyEntityId, "Loup");
+      openCombatScreen({
+        combatType: "pve",
+        phaseDurations: { askRoll: 1, revealRoll: 5, runTimer: 20, endWait: 6 },
+        enemyPreset
+      });
+      return;
+    }
+
+    if (pinKind === "combat_narrative_music") {
+      pendingProgressCombat = "narrativeN";
+      openCombatScreen({
+        combatType: "narrative",
+        withMusic: true,
+        uiNarrativeOnly: true,
+        uiNarrativeOnlyNoFade: true,
+        narrativeIntroSequence: true,
+        narrativeLoopTimer: true,
+        unitDurationMs: 526,
+        phaseDurations: { askRoll: 10, revealRoll: 8, runTimer: 64, endWait: 0 },
+        enemyPreset: { name: "Conteur spectral" }
+      });
+      return;
+    }
+
+    if (pinKind === "combat_pvp") {
+      pinModal.open(pin, userState);
+      return;
+    }
+
+    if (pin?.type === "tutorialCombat" || pinKind === "combat_tutorial") {
+      pendingProgressCombat = "tutorial";
+      const enemyPreset = buildEnemyPresetFromEntitySheet(pin?.enemyEntityId, "DUMMY");
+      openCombatScreen({ enemyPreset });
+      return;
+    }
+  }
+
+  function describePinDialogue(pin) {
+    const name = String(pin?.name || pin?.id || "Pin");
+    const pinKind = String(pin?.kind || pin?.type || "").toLowerCase();
+    if (!isPlayerOnPin(pin)) {
+      const canTravel = hasTravelFood();
+      return {
+        type: "carte",
+        title: name,
+        lines: [
+          "Vous devez etre sur ce pin pour lancer son action.",
+          `Deplacement: ${canTravel ? "possible" : "impossible (aucun vivre)"}.`
+        ],
+        choices: [
+          {
+            label: "Voyager (consomme 1 vivre)",
+            onClick: () => {
+              void (async () => {
+                const moved = await travelToPin(pin);
+                if (!moved.ok) {
+                  renderMapDialogue({
+                    type: "carte",
+                    title: name,
+                    lines: [
+                      moved.reason === "travel_in_progress"
+                        ? "Voyage deja en cours."
+                        : "Voyage impossible: aucun vivre disponible."
+                    ],
+                    choices: []
+                  });
+                  return;
+                }
+                renderPinsUi();
+                renderMapDialogue({
+                  type: "carte",
+                  title: name,
+                  lines: [`Vous etes arrive sur ${name}. Vivre consomme: ${String(moved.consumedName || "Vivre")}.`],
+                  choices: [{ label: "Interagir", onClick: () => openPinFromDialogue(pin) }]
+                });
+              })();
+            }
+          }
+        ]
+      };
+    }
+
+    if (pinKind === "campaign") {
+      return {
+        type: "dialogue",
+        title: name,
+        dialogue: {
+          leftEntity: "Soara",
+          leftLines: [
+            "Ce point ouvre la suite narrative."
+          ],
+          rightEntity: "Joueur",
+          rightLines: [
+            "Je choisis de poursuivre la campagne."
+          ]
+        },
+        choices: [
+          { label: "Lancer campagne", onClick: () => openPinFromDialogue(pin) }
+        ]
+      };
+    }
+
+    if (pin?.type === "tutorialCombat" || pinKind === "combat_tutorial") {
+      return {
+        type: "tutoriel",
+        title: name,
+        lines: [
+          "Tutoriel de combat.",
+          "Combat d'apprentissage contre un mannequin d'entrainement."
+        ],
+        choices: [
+          { label: "Commencer tutoriel", onClick: () => openPinFromDialogue(pin) }
+        ]
+      };
+    }
+
+    if (pinKind === "combat_pve") {
+      return {
+        type: "carte",
+        title: name,
+        lines: [
+          "Combat PVE standard contre un loup.",
+          "Recompenses et progression via resultat du combat."
+        ],
+        choices: [
+          { label: "Entrer en combat PVE", onClick: () => openPinFromDialogue(pin) }
+        ]
+      };
+    }
+
+    if (pinKind === "combat_narrative_music") {
+      return {
+        type: "carte",
+        title: name,
+        lines: [
+          "Combat narratif.",
+          "Sequence de narration et tempo specifique."
+        ],
+        choices: [
+          { label: "Entrer en combat narratif", onClick: () => openPinFromDialogue(pin) }
+        ]
+      };
+    }
+
+    if (pinKind === "combat_pvp") {
+      return {
+        type: "carte",
+        title: name,
+        lines: [
+          "Combat joueur contre joueur.",
+          "Ouvre le panneau de salle PVP."
+        ],
+        choices: [
+          { label: "Ouvrir panneau PVP", onClick: () => openPinFromDialogue(pin) }
+        ]
+      };
+    }
+
+    return {
+      type: "info",
+      title: name,
+      lines: ["Aucune action definie pour ce point."],
+      choices: []
+    };
+  }
+
+  function selectPinAndRenderDialogue(pin) {
+    selectedPinId = String(pin?.id || "");
+    renderMapDialogue(describePinDialogue(pin));
+  }
 
   function openReputation(){
     const rep = userState.reputation || {};
@@ -605,53 +1722,53 @@ const REWARD_TECHNIQUES = {
 
   function openPlayer(){
     const rep = userState.reputation || {};
-    const tagsProfil = userState.tagsProfil || {};
     const ps = getPlayerSnapshot();
     const eqStats = computeEquipmentStats(ps.equipment || {});
-    const learnedIds = new Set((ps.learnedTechniques || []).map((x) => (typeof x === "string" ? x : x?.id)).filter(Boolean));
-    const counts = { offense: 0, defense: 0, evasion: 0, economy: 0, reflex: 0 };
-    for (const id of learnedIds) {
-      const t = CATALOGUE_MAP.get(id);
-      if (!t) continue;
-      if (t.type === "reflex") counts.reflex += 1;
-      else if (counts[t.category] !== undefined) counts[t.category] += 1;
-    }
+    const learnedIds = (ps.learnedTechniques || [])
+      .map((x) => (typeof x === "string" ? x : x?.id))
+      .filter(Boolean);
+    const learnedSet = new Set(learnedIds);
+    const equippedIds = (Array.isArray(ps.techniquesBySlot) ? ps.techniquesBySlot : []).filter(Boolean);
+    const equippedNames = equippedIds.map((id) => CATALOGUE_MAP.get(id)?.name || id);
+    const inventory = Array.isArray(ps.inventorySlots) ? ps.inventorySlots : Array.from({ length: 9 }, () => null);
+    const inventoryCounts = buildInventoryCounts(inventory);
+    const equipRows = [
+      { key: "rightHand", slot: "MD", label: "Main droite", value: getEquipmentLabel(ps.equipment.rightHand) },
+      { key: "leftHand", slot: "MG", label: "Main gauche", value: getEquipmentLabel(ps.equipment.leftHand) },
+      { key: "armor", slot: "AR", label: "Armure", value: getEquipmentLabel(ps.equipment.armor) },
+      { key: "accessory", slot: "AC", label: "Accessoire", value: getEquipmentLabel(ps.equipment.accessory) }
+    ];
+    const inventoryGrid = Array.from({ length: 9 }, (_, i) => {
+      const item = resolveInventoryObject(inventory[i]);
+      const hasItem = !!item?.name;
+      const icon = hasItem && item?.icon ? escapeHtml(item.icon) : "";
+      const label = hasItem ? formatInventoryItemLabel(inventory[i], inventoryCounts) : "";
+      const name = label ? escapeHtml(label) : "";
+      return `
+        <div class="invCell" title="Slot ${i + 1}">
+          <div class="invSlot invSlot--icon">${icon}</div>
+          <div class="small invItemName">${name}</div>
+        </div>
+      `;
+    }).join("");
 
     modal.open("Fiche Entite", `
       <div class="playerSheetGrid">
         <section class="card playerSheetCard">
           <div class="playerSheetTitle">Identite</div>
-          <div><b>${escapeHtml(ps.displayName || userState.name || userState.username || "Joueur")}</b></div>
+          <div class="small">Nom: <b>${escapeHtml(ps.displayName || userState.name || userState.username || "Joueur")}</b></div>
           <div class="small">Race: ${escapeHtml(userState.race || "-")}</div>
           <div class="small">Faction: ${escapeHtml(userState.faction || "-")}</div>
         </section>
 
         <section class="card playerSheetCard">
-          <div class="playerSheetTitle">Stats</div>
+          <div class="playerSheetTitle">Statistique</div>
           <div class="small">PV: ${ps.stats.hp}/${ps.stats.hpMax}</div>
           <div class="small">Energie: ${ps.stats.energy}/${ps.stats.energyMax}</div>
-          <div class="small">Regen: ${ps.stats.regen}</div>
-        </section>
-
-        <section class="card playerSheetCard">
-          <div class="playerSheetTitle">Parametres Combat</div>
-          <div class="small">ATK: ${eqStats.atk}</div>
-          <div class="small">DEF: ${eqStats.def}</div>
-          <div class="small">ESQ: ${eqStats.esq}</div>
-          <div style="height:6px"></div>
-          <button class="btn" id="btnToggleAutoTempoPlayer" style="width:100%;"></button>
-          <div id="autoTempoPlayerStatus" class="small" style="margin-top:4px;"></div>
-        </section>
-
-        <section class="card playerSheetCard">
-          <div class="playerSheetTitle">Profil</div>
-          <div class="small">Objectif: ${escapeHtml(ps.profile.objectif || "-")}</div>
-          <div class="small">Temperament: ${escapeHtml(ps.profile.temperament || "-")}</div>
-          <div class="small">Style: ${escapeHtml(ps.profile.style || "-")}</div>
-          <div class="small">Tag prudence: ${Number(tagsProfil.prudence ?? 0)}</div>
-          <div class="small">Tag agressivite: ${Number(tagsProfil.agressivite ?? 0)}</div>
-          <div class="small">Tag tempo: ${Number(tagsProfil.tempo ?? 0)}</div>
-          <div class="small">Reputation locale: ${Number(userState.reputationLocale ?? 0)}</div>
+          <div class="small">Regeneration energie: ${ps.stats.regen}</div>
+          <div class="small"><span class="soaraSymbol">&#9876;</span> ${eqStats.atk}</div>
+          <div class="small"><span class="soaraSymbol">&#x26E8;</span> ${eqStats.def}</div>
+          <div class="small"><span class="soaraSymbol">&#x21BA;</span> ${eqStats.esq}</div>
         </section>
 
         <section class="card playerSheetCard">
@@ -663,42 +1780,35 @@ const REWARD_TECHNIQUES = {
         </section>
 
         <section class="card playerSheetCard">
-          <div class="playerSheetTitle">Equipement</div>
-          <div class="small">Main droite: ${escapeHtml(getEquipmentLabel(ps.equipment.rightHand))}</div>
-          <div class="small">Main gauche: ${escapeHtml(getEquipmentLabel(ps.equipment.leftHand))}</div>
-          <div class="small">Armure: ${escapeHtml(getEquipmentLabel(ps.equipment.armor))}</div>
-          <div class="small">Accessoire: ${escapeHtml(getEquipmentLabel(ps.equipment.accessory))}</div>
+          <div class="playerSheetTitle">Information</div>
+          <div class="small">Techniques apprises: ${learnedSet.size}</div>
+          <div class="small">Slots techniques debloques: ${Number(ps.techSlotsTotal ?? 10)}</div>
+          <div class="small">Techniques equipees:</div>
+          <div class="small playerSheetList">
+            ${equippedNames.length ? equippedNames.map((name, idx) => `<div>${idx + 1}. ${escapeHtml(String(name || "-"))}</div>`).join("") : `<div>-</div>`}
+          </div>
         </section>
 
         <section class="card playerSheetCard">
-          <div class="playerSheetTitle">Synthese Technique</div>
-          <div class="small">Techniques apprises: ${learnedIds.size}</div>
-          <div class="small">Offense: ${counts.offense} | Defense: ${counts.defense}</div>
-          <div class="small">Esquive: ${counts.evasion} | Economie: ${counts.economy}</div>
-          <div class="small">Reflexes: ${counts.reflex}</div>
+          <div class="playerSheetTitle">Equipement</div>
+          <div class="equipList">
+            ${equipRows.map((row) => `
+              <div class="equipRow">
+                <div class="invSlot equipSquare" title="${escapeHtml(row.label)}">${escapeHtml(row.slot)}</div>
+                <div class="small"><b>${escapeHtml(row.label)}:</b> ${escapeHtml(row.value)}</div>
+              </div>
+            `).join("")}
+          </div>
+        </section>
+
+        <section class="card playerSheetCard">
+          <div class="playerSheetTitle">Inventaire</div>
+          <div class="hudInvBagGrid">
+            ${inventoryGrid}
+          </div>
         </section>
       </div>
     `);
-    const renderAutoTempoInPlayerSheet = () => {
-      const btn = document.getElementById("btnToggleAutoTempoPlayer");
-      const status = document.getElementById("autoTempoPlayerStatus");
-      if (!btn || !status) return;
-      const enabled = !!(getPlayerSnapshot()?.combatConfig?.autoTempo);
-      btn.textContent = `Tempo automatique: ${enabled ? "ON" : "OFF"}`;
-      status.textContent = enabled
-        ? "Actif: roll Tutoriel/PVE en 1u."
-        : "Inactif: roll standard.";
-    };
-    const toggleAutoTempoInPlayerSheet = () => {
-      playerState.patch((s) => {
-        if (!s.player.combatConfig || typeof s.player.combatConfig !== "object") s.player.combatConfig = {};
-        s.player.combatConfig.autoTempo = !s.player.combatConfig.autoTempo;
-      });
-      renderAutoTempoInPlayerSheet();
-    };
-    const autoTempoBtn = document.getElementById("btnToggleAutoTempoPlayer");
-    if (autoTempoBtn) autoTempoBtn.onclick = toggleAutoTempoInPlayerSheet;
-    renderAutoTempoInPlayerSheet();
   }
 
   function openTech(){
@@ -915,17 +2025,12 @@ const REWARD_TECHNIQUES = {
   }
 
   function openHistory(){
-    const hist = userState.history || [];
-    const c01 = userState.historiqueC01 || [];
+    const combats = getCombatHistoryEntries(20);
     modal.open("Historique", `
       <div class="card">
-        <div class="small">Dernieres entrees</div>
+        <div class="small">Derniers combats</div>
         <div style="height:10px"></div>
-        ${hist.slice(-20).map((x) => `<div>${escapeHtml(x)}</div>`).join("") || "<div>-</div>"}
-        <div style="height:12px"></div>
-        <div class="small">C01</div>
-        <div style="height:8px"></div>
-        ${c01.slice(-20).map((x) => `<div>${escapeHtml(x)}</div>`).join("") || "<div>-</div>"}
+        ${combats.map((x) => `<div>${escapeHtml(x)}</div>`).join("") || "<div>-</div>"}
       </div>
     `);
   }
@@ -933,34 +2038,47 @@ const REWARD_TECHNIQUES = {
   function openInventory(){
     const ps = getPlayerSnapshot();
     const inv = ps.inventorySlots || [];
+    const inventoryCounts = buildInventoryCounts(inv);
     const equip = ps.equipment || {};
-    const eqVals = [
-      escapeHtml(getEquipmentLabel(equip.rightHand)),
-      escapeHtml(getEquipmentLabel(equip.leftHand)),
-      escapeHtml(getEquipmentLabel(equip.armor)),
-      escapeHtml(getEquipmentLabel(equip.accessory))
+    const equipRows = [
+      { key: "rightHand", slot: "MD", label: "Main droite", value: getEquipmentLabel(equip.rightHand) },
+      { key: "leftHand", slot: "MG", label: "Main gauche", value: getEquipmentLabel(equip.leftHand) },
+      { key: "armor", slot: "AR", label: "Armure", value: getEquipmentLabel(equip.armor) },
+      { key: "accessory", slot: "AC", label: "Accessoire", value: getEquipmentLabel(equip.accessory) }
     ];
+    const inventoryGrid = Array.from({ length: 9 }, (_, i) => {
+      const item = resolveInventoryObject(inv[i]);
+      const hasItem = !!item?.name;
+      const icon = hasItem && item?.icon ? escapeHtml(item.icon) : "";
+      const label = hasItem ? formatInventoryItemLabel(inv[i], inventoryCounts) : "";
+      const name = label ? escapeHtml(label) : "";
+      return `
+        <div class="invCell" title="Slot ${i + 1}">
+          <div class="invSlot invSlot--icon" id="inv${i}">${icon}</div>
+          <div class="small invItemName">${name}</div>
+        </div>
+      `;
+    }).join("");
     let html = `
       <div class="card">
         <div class="hudInvTitle">INVENTAIRE D'ENTITE</div>
         <div style="height:8px"></div>
         <div class="invPanelSection">
           <div class="invPanelLabel">Equipement actif</div>
-          <div class="hudInvEquipGrid">
-            <div class="invSlot" id="eq0" title="Main droite">${eqVals[0]}</div>
-            <div class="invSlot" id="eq1" title="Main gauche">${eqVals[1]}</div>
-            <div class="invSlot" id="eq2" title="Armure">${eqVals[2]}</div>
-            <div class="invSlot" id="eq3" title="Accessoire">${eqVals[3]}</div>
+          <div class="equipList">
+            ${equipRows.map((row, idx) => `
+              <div class="equipRow">
+                <div class="invSlot equipSquare" id="eq${idx}" title="${escapeHtml(row.label)}">${escapeHtml(row.slot)}</div>
+                <div class="small"><b>${escapeHtml(row.label)}:</b> ${escapeHtml(row.value)}</div>
+              </div>
+            `).join("")}
           </div>
         </div>
         <div style="height:8px"></div>
         <div class="invPanelSection">
           <div class="invPanelLabel">Sac (9 emplacements)</div>
-          <div class="hudInvBagGrid">`;
-    for (let i = 0; i < 9; i += 1) {
-      html += `<div class="invSlot" id="inv${i}" title="Slot ${i + 1}">${escapeHtml(inv[i] || "")}</div>`;
-    }
-    html += `
+          <div class="hudInvBagGrid">
+            ${inventoryGrid}
           </div>
         </div>
       </div>`;
@@ -1003,8 +2121,17 @@ const REWARD_TECHNIQUES = {
       modal.open("Codex Soara", `<div class="card" style="max-height:72vh; overflow-y:auto;">${body}</div>`);
     }
 
-    function openPatchNotesModal() {
-      const rows = Array.isArray(staticData?.patchNotes) ? staticData.patchNotes : [];
+    async function openPatchNotesModal() {
+      let rows = Array.isArray(staticData?.patchNotes) ? staticData.patchNotes : [];
+      if (!rows.length) {
+        try {
+          const r = await fetch("/data/patch_notes.json", { cache: "no-store" });
+          if (r.ok) {
+            const raw = await r.json();
+            rows = Array.isArray(raw?.items) ? raw.items : [];
+          }
+        } catch {}
+      }
       if (!rows.length) {
         modal.open("Notes de patch", `<div class="card"><div class="small">Aucune note de patch disponible.</div></div>`);
         return;
@@ -1026,6 +2153,127 @@ const REWARD_TECHNIQUES = {
           `).join("")}
         </div>
       `);
+    }
+
+    function openPinEditorModal() {
+      if (!isAlkane) return;
+      const pinsSource = getRuntimePinsBase();
+      const byId = new Map(pinsSource.map((p) => [String(p?.id || ""), { ...p }]));
+      let selectedId = pinsSource[0]?.id ? String(pinsSource[0].id) : "C";
+      let step = 0.001;
+
+      const render = async (hint = "") => {
+        const pins = getRuntimePins();
+        const options = pins.map((p) => `<option value="${escapeHtml(String(p.id))}" ${String(p.id) === selectedId ? "selected" : ""}>${escapeHtml(String(p.id))} - ${escapeHtml(String(p.name || p.id))}</option>`).join("");
+        const cur = pins.find((p) => String(p.id) === selectedId) || pins[0] || null;
+        if (!cur) {
+          modal.open("Editeur Pins", `<div class="card"><div class="small">Aucun pin disponible.</div></div>`);
+          return;
+        }
+        const base = byId.get(String(cur.id)) || cur;
+        modal.open("Editeur Pins (Alkane)", `
+          <div class="card">
+            <div class="small">Placement manuel des pins (persistant par compte Alkane).</div>
+            <div style="height:8px"></div>
+            <div class="small">Pin</div>
+            <select id="pinEditSelect" style="width:100%; height:34px;">${options}</select>
+            <div style="height:8px"></div>
+            <div class="row" style="gap:8px;">
+              <div style="flex:1 1 140px;">
+                <div class="small">X</div>
+                <input id="pinEditX" value="${Number(cur.x).toFixed(4)}" />
+              </div>
+              <div style="flex:1 1 140px;">
+                <div class="small">Y</div>
+                <input id="pinEditY" value="${Number(cur.y).toFixed(4)}" />
+              </div>
+            </div>
+            <div style="height:8px"></div>
+            <div class="row" style="gap:8px;">
+              <button class="btn" id="pinEditLeft" style="flex:1;">X -</button>
+              <button class="btn" id="pinEditRight" style="flex:1;">X +</button>
+              <button class="btn" id="pinEditUp" style="flex:1;">Y -</button>
+              <button class="btn" id="pinEditDown" style="flex:1;">Y +</button>
+            </div>
+            <div style="height:8px"></div>
+            <div class="row" style="gap:8px;">
+              <div style="flex:1;">
+                <div class="small">Pas</div>
+                <input id="pinEditStep" value="${Number(step).toFixed(4)}" />
+              </div>
+              <button class="btn" id="pinEditApply" style="flex:1; align-self:end;">Appliquer</button>
+            </div>
+            <div style="height:8px"></div>
+            <button class="btn" id="pinEditReset" style="width:100%; margin-bottom:6px;">Reset pin selectionne</button>
+            <button class="btn" id="pinEditResetAll" style="width:100%;">Reset tous les pins</button>
+            <div style="height:8px"></div>
+            <div class="small">Base: X=${Number(base.x).toFixed(4)} / Y=${Number(base.y).toFixed(4)}</div>
+            <div class="small" id="pinEditHint">${escapeHtml(hint || "-")}</div>
+          </div>
+        `);
+
+        const q = (id) => document.getElementById(id);
+        const persist = async (id, x, y, mode = "set") => {
+          const overrides = normalizePinOverridesMap(userState?.pinOverrides);
+          const key = String(id || "").trim();
+          if (!key) return;
+          if (mode === "unset") delete overrides[key];
+          else overrides[key] = { x: Math.max(0, Math.min(1, Number(x))), y: Math.max(0, Math.min(1, Number(y))) };
+          await stateSvc.patchState({ pinOverrides: overrides });
+          userState = { ...(userState || {}), pinOverrides: overrides };
+          renderPinsUi();
+        };
+        const readStep = () => {
+          const n = Number(q("pinEditStep")?.value || step);
+          if (!Number.isFinite(n)) return step;
+          return Math.max(0.0001, Math.min(0.05, n));
+        };
+        const applyFromInputs = async () => {
+          const x = Number(q("pinEditX")?.value);
+          const y = Number(q("pinEditY")?.value);
+          if (!Number.isFinite(x) || !Number.isFinite(y)) {
+            await render("Coordonnees invalides.");
+            return;
+          }
+          step = readStep();
+          await persist(selectedId, x, y, "set");
+          await render(`Sauve: ${selectedId} -> (${x.toFixed(4)}, ${y.toFixed(4)})`);
+        };
+
+        q("pinEditSelect").onchange = () => {
+          selectedId = String(q("pinEditSelect")?.value || selectedId);
+          void render();
+        };
+        q("pinEditApply").onclick = () => { void applyFromInputs(); };
+        q("pinEditLeft").onclick = () => {
+          const x = Number(q("pinEditX")?.value || 0) - readStep();
+          q("pinEditX").value = String(x);
+        };
+        q("pinEditRight").onclick = () => {
+          const x = Number(q("pinEditX")?.value || 0) + readStep();
+          q("pinEditX").value = String(x);
+        };
+        q("pinEditUp").onclick = () => {
+          const y = Number(q("pinEditY")?.value || 0) - readStep();
+          q("pinEditY").value = String(y);
+        };
+        q("pinEditDown").onclick = () => {
+          const y = Number(q("pinEditY")?.value || 0) + readStep();
+          q("pinEditY").value = String(y);
+        };
+        q("pinEditReset").onclick = () => { void (async () => {
+          await persist(selectedId, 0, 0, "unset");
+          await render(`Reset: ${selectedId}`);
+        })(); };
+        q("pinEditResetAll").onclick = () => { void (async () => {
+          await stateSvc.patchState({ pinOverrides: {} });
+          userState = { ...(userState || {}), pinOverrides: {} };
+          renderPinsUi();
+          await render("Reset: tous les pins");
+        })(); };
+      };
+
+      void render();
     }
 
     function openResolutionTestModal() {
@@ -1189,16 +2437,9 @@ const REWARD_TECHNIQUES = {
           <input id="musicVolumeRange" type="range" min="0" max="100" step="1" style="width:100%;" />
           <div id="musicVolumeValue" class="small">-</div>
         </div>
-        <div style="height:8px"></div>
-        <div class="card">
-          <div><b>Tempo automatique</b></div>
-          <div class="small">Active: roll PVE/Tutoriel reduit a 1u. Desactive: comportement normal.</div>
-          <div style="height:6px"></div>
-          <button class="btn" id="btnToggleAutoTempo" style="width:100%;"></button>
-          <div id="autoTempoStatus" class="small" style="margin-top:4px;"></div>
-        </div>
         <div style="height:12px"></div>
         ${isAlkane ? `<button class="btn" id="btnOpenResolutionTest" style="width:100%; margin-bottom:8px;">Test de resolution</button>` : ``}
+        ${isAlkane ? `<button class="btn" id="btnOpenPinEditor" style="width:100%; margin-bottom:8px;">Editeur de pins</button>` : ``}
         <button class="btn" id="btnOpenCombatRules" style="width:100%; margin-bottom:8px;">Regles de resolution</button>
         <button class="btn" id="btnOpenSymbolsGuide" style="width:100%; margin-bottom:8px;">Reference symboles</button>
         <button class="btn" id="btnOpenTechList" style="width:100%; margin-bottom:8px;">Catalogue technique</button>
@@ -1221,58 +2462,101 @@ const REWARD_TECHNIQUES = {
       volRange.addEventListener("input", onVol);
       volRange.addEventListener("change", onVol);
     }
-    const readAutoTempoEnabled = () => !!(getPlayerSnapshot()?.combatConfig?.autoTempo);
-    const renderAutoTempoToggle = () => {
-      const btn = document.getElementById("btnToggleAutoTempo");
-      const status = document.getElementById("autoTempoStatus");
-      if (!btn || !status) return;
-      const enabled = readAutoTempoEnabled();
-      btn.textContent = `Tempo automatique: ${enabled ? "ON" : "OFF"}`;
-      status.textContent = enabled
-        ? "Active: animation de roll fixee a 1u en Tutoriel/PVE."
-        : "Desactive: animation de roll standard.";
-    };
-    const toggleAutoTempo = () => {
-      playerState.patch((s) => {
-        if (!s.player.combatConfig || typeof s.player.combatConfig !== "object") s.player.combatConfig = {};
-        s.player.combatConfig.autoTempo = !s.player.combatConfig.autoTempo;
-      });
-      renderAutoTempoToggle();
-    };
-    renderAutoTempoToggle();
-
     const bindClick = (id, handler) => {
       const el = document.getElementById(id);
       if (el) el.onclick = handler;
     };
-    bindClick("btnToggleAutoTempo", toggleAutoTempo);
     bindClick("btnOpenResolutionTest", openResolutionTestModal);
+    bindClick("btnOpenPinEditor", openPinEditorModal);
     bindClick("btnOpenPatchNotes", openPatchNotesModal);
     bindClick("btnOpenCombatRules", () => {
       modal.open("Regles de resolution", `
         <div class="card" style="max-height:72vh; overflow-y:auto;">
-          <div><b>Systeme deterministe (sans des)</b></div>
-          <div class="small" style="margin-top:6px;">Les degats ne lancent plus de des.</div>
-          <div class="small">Formule: <b>Degats = max(0, ATK - (DEF + Armure))</b></div>
-          <div class="small" style="margin-top:6px;">Exemple: ATK 4 vs DEF 2 + Armure 1 = 1 degat.</div>
+          <div><b>Vue d'ensemble du combat</b></div>
+          <div class="small" style="margin-top:6px;">Un combat oppose votre entite a une entite ennemie.</div>
+          <div class="small">Chaque tour, vous choisissez une technique (ou un reflexe), puis les actions sont resolues selon le tempo.</div>
           <div style="height:10px"></div>
-          <div><b>Symboles multi-impact</b></div>
-          <div class="small">Multiplicateurs deterministes: <b>stat x2</b>, <b>stat x3</b>, etc.</div>
+          <div><b>Le rythme du tour</b></div>
+          <div class="small">Votre <b>Tempo</b> determine l'ordre de resolution entre vous et l'ennemi.</div>
+          <div class="small">Le tempo est la partie dynamique du systeme; le reste de la resolution reste stable et lisible.</div>
           <div style="height:10px"></div>
-          <div><b>Parade</b></div>
-          <div class="small">Si une entite pare une attaque, elle renvoie:</div>
-          <div class="small"><b>min(attaque entrante, 2xATK du pareur)</b></div>
-          <div class="small">L'attaque paree est annulee pour ce cote.</div>
+          <div><b>Attaquer, defendre, esquiver</b></div>
+          <div class="small">Un <b>symbole d'attaque</b> utilise votre <b>ATK</b> pour mettre la pression sur l'ennemi.</div>
+          <div class="small">Votre <b>DEF</b> et votre equipement reduisent les degats recus.</div>
+          <div class="small">Votre <b>ESQ</b> aide a eviter ou limiter des actions ennemies selon la situation.</div>
           <div style="height:10px"></div>
-          <div><b>Etat Vulnerable</b></div>
-          <div class="small">Quand une entite joue Vulnerable, elle prend <b>x2 degats recus</b> sur le tour courant.</div>
+          <div><b>Techniques et energie</b></div>
+          <div class="small">Chaque technique consomme de l'energie.</div>
+          <div class="small">Vous devez gerer votre reserve d'energie pour rester dangereux sur la duree du combat.</div>
           <div style="height:10px"></div>
-          <div><b>Grammaire visuelle</b></div>
-          <div class="small">( ) : technique, cout normal</div>
-          <div class="small">[ ] : reflexe, cout double</div>
-          <div class="small">{ } : phase aerienne, cout triple</div>
+          <div><b>Objectif d'un combat</b></div>
+          <div class="small">Choisir les bons timings, utiliser vos techniques au bon moment et faire tomber les PV ennemis a zero.</div>
+          <div class="small">Le systeme privilegie la lecture tactique: vous voyez ce qui se passe et pourquoi.</div>
+          <div style="height:12px"></div>
+          <button class="btn" id="btnCombatRulesDetails" style="width:100%;">Detail</button>
         </div>
       `);
+      const detailsBtn = document.getElementById("btnCombatRulesDetails");
+      if (detailsBtn) {
+        detailsBtn.onclick = () => {
+          modal.open("Regles de resolution - Detail", `
+            <div class="card combatRulesDetails" style="max-height:72vh; overflow-y:auto;">
+              <div><b>Vue complete du systeme</b></div>
+              <div class="small" style="margin-top:6px;">Le combat est un systeme tactique sequentiel: chaque camp choisit une action, puis le moteur applique les effets dans un ordre lisible.</div>
+              <div class="small">La resolution est deterministe sur les effets (degats, mitigation, couts), avec un element dynamique sur le tempo.</div>
+              <div style="height:10px"></div>
+
+              <div><b>Cycle d'un tour</b></div>
+              <div class="small">1) Selection des actions: chaque camp choisit sa technique/reflexe selon son energie disponible.</div>
+              <div class="small">2) Tempo: l'ordre du tour est decide.</div>
+              <div class="small">3) Resolution: attaques, defenses, esquives, parades et etats sont appliques.</div>
+              <div class="small">4) Cloture: PV/energie sont mis a jour, puis un nouveau tour commence.</div>
+              <div style="height:10px"></div>
+
+              <div><b>Tempo et priorite</b></div>
+              <div class="small">Le tempo decide qui impose le rythme sur le tour courant.</div>
+              <div class="small">A tempo favorable, vous forcez plus souvent l'adversaire a reagir.</div>
+              <div class="small">A tempo defavorable, vous jouez plus defensif et visez le tour suivant.</div>
+              <div style="height:10px"></div>
+
+              <div><b>Energie, couts et endurance</b></div>
+              <div class="small">Chaque technique a un cout en energie.</div>
+              <div class="small">Sans energie, vos options diminuent et votre plan devient previsible.</div>
+              <div class="small">La regeneration d'energie structure la duree d'un duel: depenser trop tot peut vous bloquer ensuite.</div>
+              <div class="small">Les techniques normales, reflexes et phases aeriennes n'ont pas la meme pression energetique.</div>
+              <div style="height:10px"></div>
+
+              <div><b>Techniques, reflexes, prefixes et suffixes</b></div>
+              <div class="small">Une technique combine intention offensive, defensive et gestion du risque.</div>
+              <div class="small">Un reflexe est une reponse rapide, plus couteuse, pour reprendre ou proteger le tempo.</div>
+              <div class="small">Les prefixes modifient le comportement d'une action avant sa resolution (orientation, protection, retombee, etc.).</div>
+              <div class="small">Les suffixes modifient l'apres-effet (annulation, extension, limitation, etc.).</div>
+              <div class="small">L'efficacite reelle depend de la lecture du tour, pas seulement de la puissance brute.</div>
+              <div style="height:10px"></div>
+
+              <div><b>Degats, mitigation et parade</b></div>
+              <div class="small">Les degats partent de votre pression offensive (ATK) et sont reduits par la defense adverse (DEF) et l'armure.</div>
+              <div class="small">Formule de base: <b>Degats = max(0, ATK - (DEF + Armure))</b>.</div>
+              <div class="small">Mitigation totale: <b>Mitigation = DEF + Armure</b>.</div>
+              <div class="small">La parade peut renvoyer une partie de l'attaque entrante, avec un plafond lie a l'ATK du pareur.</div>
+              <div class="small">Renvoi de parade: <b>min(attaque entrante, 2xATK du pareur)</b>.</div>
+              <div class="small">Les etats temporaires (ex: vulnerable) amplifient ou reduisent l'impact final recu.</div>
+              <div class="small">Vulnerable: <b>Degats recus finaux = Degats recus x 2</b> pendant le tour actif.</div>
+              <div style="height:10px"></div>
+
+              <div><b>Equipement et profil de combat</b></div>
+              <div class="small">L'equipement module votre profil: attaque, defense, esquive, et stabilite generale.</div>
+              <div class="small">Main droite/gauche, armure et accessoire changent vos marges de survie et votre capacite a conclure.</div>
+              <div class="small">Un bon loadout aligne vos stats avec votre style: pression, controle, ou endurance.</div>
+              <div style="height:10px"></div>
+
+              <div><b>Objectif tactique global</b></div>
+              <div class="small">Controler le tempo, convertir votre energie en actions utiles, encaisser intelligemment et forcer l'adversaire a l'erreur.</div>
+              <div class="small">Le meilleur resultat vient de la coherence entre techniques, equipement, timing et lecture du log.</div>
+            </div>
+          `);
+        };
+      }
     });
     bindClick("btnOpenSymbolsGuide", () => {
       const learnedSet = new Set(
@@ -1474,41 +2758,6 @@ const REWARD_TECHNIQUES = {
     bindClick("btnLogoutInSettings", doLogout);
   }
 
-  function openCampaignTutorDialogue() {
-    runTutorialDialogue({
-      modal,
-      playerState,
-      onDone: () => {
-        void applyProgressionReward("dialogue");
-        hud.render(userState || {});
-        if (pins && staticData) pins.render(getRuntimePins(), userState || {});
-      }
-    });
-  }
-
-  async function openWelcomeIntroModal() {
-    await new Promise((resolve) => {
-      modal.open("Accueil", `
-        <div class="card">
-          <div><b>Bienvenue sur Soara.</b></div>
-          <div class="small">Commence par C-01 (dialogue), puis debloque T, ensuite U puis N.</div>
-          <div style="height:10px"></div>
-          <button class="btn" id="btnWelcomeSoara" style="width:100%;">Continuer</button>
-        </div>
-      `);
-      const btn = document.getElementById("btnWelcomeSoara");
-      if (!btn) {
-        modal.close();
-        resolve();
-        return;
-      }
-      btn.onclick = () => {
-        modal.close();
-        resolve();
-      };
-    });
-  }
-
   async function doLogout(){
     auth.logout();
     api.clearToken();
@@ -1517,18 +2766,21 @@ const REWARD_TECHNIQUES = {
     userState = null;
 
     hud.hide();
+    if (dom.characterGate) dom.characterGate.style.display = "none";
     setMapOnlyMode(false);
     gate.show("");
     setAuthMode(false);
     modal.close();
 
     try{ camera?.detach?.(); }catch{}
+    try{ visitedOverlay?.detach?.(); }catch{}
     try{ pixi.destroy(); }catch{}
     stopMultiSync();
     mapView = null;
     camera = null;
     pins = null;
     dom.canvasWrap.innerHTML = "";
+    renderDefaultMapDialogue();
   }
 
   const hud = mountHud(dom, {
@@ -1562,17 +2814,24 @@ const REWARD_TECHNIQUES = {
     if (dom.modal?.style.display === "block") modal.close();
   });
   playerState.subscribe(() => {
-    if (pins && staticData) pins.render(getRuntimePins(), userState || {});
+    renderPinsUi();
   });
 
   hud.hide();
+  if (dom.characterGate) dom.characterGate.style.display = "none";
   setMapOnlyMode(false);
   gate.show("");
   setAuthMode(false);
 
+  window.addEventListener("beforeunload", () => {
+    cacheCurrentPos(userState?.pos);
+  });
+  document.addEventListener("visibilitychange", () => {
+    if (document.visibilityState === "hidden") cacheCurrentPos(userState?.pos);
+  });
+
   async function startGame(){
     gate.hide();
-    hud.show();
     setAuthMode(true);
 
     staticData = await dataSvc.loadAll();
@@ -1583,6 +2842,20 @@ const REWARD_TECHNIQUES = {
     CATALOGUE_MAP = buildCatalogueMap(runtimeTechCatalogue);
     playerState.setCatalogue(runtimeTechCatalogue);
     userState = await stateSvc.getState();
+    playerState.bindAccount?.(userState?.username || userState?.name || "");
+    await ensureCharacterProfileOnGate();
+    let accountInventory = sanitizeInventoryForProgress(userState?.inventory);
+    accountInventory = sanitizeTravelFoodInventory(accountInventory);
+    const rawInventory = normalizeInventoryFromAccount(userState?.inventory);
+    const inventoryChanged = JSON.stringify(accountInventory) !== JSON.stringify(rawInventory);
+    if (inventoryChanged) {
+      try {
+        await stateSvc.patchState({ inventory: accountInventory });
+        userState = { ...(userState || {}), inventory: accountInventory };
+      } catch (e) {
+        console.warn("Echec migration inventaire:", e);
+      }
+    }
     const accountTechProfile = normalizeTechniqueProfileFromAccount(userState || {});
     playerState.patch((s) => {
       if (!s.player.displayName || s.player.displayName === "Joueur1") {
@@ -1592,19 +2865,27 @@ const REWARD_TECHNIQUES = {
       s.player.techniquesBySlot = accountTechProfile.techniquesBySlot;
       s.player.techSlotsTotal = accountTechProfile.techSlotsTotal;
       s.player.hasStarterKitV2 = !!accountTechProfile.hasStarterKitV2;
+      s.player.inventorySlots = [...accountInventory];
     });
-    playerState.grantStarterTechniques();
+    await applyRaceStarterPackIfNeeded();
     await applyProgressionFromHistory();
     await syncTechniquesToAccount({ silent: true });
 
-    const isLegacySpawnOnCampaignPin = userState.pos
-      && Math.abs(Number(userState.pos.x) - CAMPAIGN_C01_POS.x) < 0.000001
-      && Math.abs(Number(userState.pos.y) - CAMPAIGN_C01_POS.y) < 0.000001;
-
-    if (!userState.pos || isLegacySpawnOnCampaignPin) {
-      userState.pos = { ...PLAYER_SPAWN_POS };
+    const savedX = Number(userState?.pos?.x);
+    const savedY = Number(userState?.pos?.y);
+    const hasSavedPos = Number.isFinite(savedX) && Number.isFinite(savedY);
+    const cachedPos = readCachedPosForUser(userState?.username || userState?.name || "");
+    if (hasSavedPos) {
+      userState.pos = { x: savedX, y: savedY };
+      if (cachedPos && distanceNorm(cachedPos, userState.pos) > 0.0005) {
+        userState.pos = { ...cachedPos };
+        await stateSvc.patchState({ pos: userState.pos });
+      }
+    } else {
+      userState.pos = cachedPos || { ...PLAYER_SPAWN_POS };
       await stateSvc.patchState({ pos: userState.pos });
     }
+    cacheCurrentPos(userState.pos);
 
     await pixi.init();
     applyRuntimeModeNotice();
@@ -1613,8 +2894,11 @@ const REWARD_TECHNIQUES = {
       stopMultiSync();
     }
 
-    mapView = createMapView({ pixi, mapUrl: ["/assets/20260301_201801.jpg", "/assets/map.jpg"] });
+    mapView = createMapView({ pixi, mapUrl: ["/assets/map.jpg", "/assets/map.png"] });
     await mapView.load();
+    visitedOverlay.attach({ pixi, mapView });
+    mapView.resetTrail?.();
+    sessionExploredPoints = [];
     mapView.fitToScreen();
     mapView.setPlayerPosNorm(userState.pos);
     mapView.centerOnPlayer();
@@ -1627,34 +2911,16 @@ const REWARD_TECHNIQUES = {
 
     pins = createPinsRenderer({ pixi, mapView });
     pins.onPinClick((pin) => {
-      if (pin.type === "tutorialCombat") {
-        modal.open("Tutoriel Combat", `
-          <div class="card">
-            <div>Pret pour le tutoriel combat ?</div>
-            <div style="height:10px"></div>
-            <button class="btn" id="btnStartTutorialCombat" style="width:100%; margin-bottom:6px;">Commencer</button>
-            <button class="btn" id="btnLaterTutorialCombat" style="width:100%;">Plus tard</button>
-          </div>
-        `);
-        document.getElementById("btnStartTutorialCombat").onclick = () => {
-          modal.close();
-          pendingProgressCombat = "tutorial";
-          openCombatScreen({ enemyPreset: { name: "Gobelin" } });
-        };
-        document.getElementById("btnLaterTutorialCombat").onclick = () => modal.close();
-        return;
-      }
-      pinModal.open(pin, userState);
+      selectPinAndRenderDialogue(pin);
     });
 
-    visitedOverlay.enable(!!staticData?.config?.features?.visitedOverlay);
+    visitedOverlay.enable(true);
+    await ensureDiscoveryState();
 
     hud.render(userState);
-    pins.render(getRuntimePins(), userState);
-    if (!hasHistoryMarker(PROGRESS_MARKERS.dialogue)) {
-      await openWelcomeIntroModal();
-      openCampaignTutorDialogue();
-    }
+    hud.show();
+    renderDefaultMapDialogue();
+    renderPinsUi();
   }
 
   const restored = auth.restore();

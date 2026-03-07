@@ -81,23 +81,26 @@ export function createPinsRenderer({ pixi, mapView }) {
     center.circle(0, -12, 5).fill({ color: 0xffffff, alpha: 0.95 });
     marker.addChild(center);
 
-    const iconText = new PIXI.Text(String(pin?.icon || "P"), {
-      fontSize: 15,
+    const nameText = new PIXI.Text(String(pin?.name || pin?.id || ""), {
+      fontSize: 12,
       fill: 0x111827,
-      fontWeight: "900",
+      fontWeight: "700",
       stroke: 0xffffff,
-      strokeThickness: 2
+      strokeThickness: 3
     });
-    iconText.anchor.set(0.5);
-    iconText.x = 0;
-    iconText.y = -12;
-    marker.addChild(iconText);
+    nameText.anchor.set(0.5, 1);
+    nameText.x = 0;
+    nameText.y = -34;
+    nameText.visible = false;
+    nameText.eventMode = "none";
+    marker.addChild(nameText);
+    marker.pinNameLabel = nameText;
 
     marker.sortableChildren = true;
     body.zIndex = 2;
     highlight.zIndex = 3;
     center.zIndex = 4;
-    iconText.zIndex = 5;
+    nameText.zIndex = 5;
     tip.zIndex = 1;
     shadow.zIndex = 0;
     marker.pivot.set(0, 24);
@@ -116,12 +119,26 @@ export function createPinsRenderer({ pixi, mapView }) {
     for (const p of pins) {
       if (!isVisible(p, userState)) continue;
       const marker = createMapPinMarker(PIXI, p);
+      const nameLabel = marker.pinNameLabel || null;
       marker.x = p.x * map.width;
       marker.y = p.y * map.height;
-      marker.eventMode = "static";
+      marker.eventMode = "dynamic";
       marker.cursor = "pointer";
+      marker.hitArea = new PIXI.Circle(0, -8, 24);
       marker.on("pointertap", () => {
         if (onClick) onClick(p);
+      });
+      marker.on("pointerenter", () => {
+        if (nameLabel) nameLabel.visible = true;
+      });
+      marker.on("pointerleave", () => {
+        if (nameLabel) nameLabel.visible = false;
+      });
+      marker.on("pointerover", () => {
+        if (nameLabel) nameLabel.visible = true;
+      });
+      marker.on("pointerout", () => {
+        if (nameLabel) nameLabel.visible = false;
       });
       world.addChild(marker);
       sprites.push(marker);
